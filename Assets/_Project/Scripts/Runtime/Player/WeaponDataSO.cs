@@ -22,7 +22,7 @@ namespace UnderTheRain.Player
         public DamageType damageType = DamageType.Physical;
 
         [Header("Attack & Combo")]
-        [Min(1)] public int damage = 1;
+        [Min(1)] public int damage = 2;
         [Tooltip("Extra damage applied on the final step of the combo.")]
         [Min(0)] public int finalComboDamageBonus = 1;
         [Min(0.2f)] public float attackRange = 1.4f;

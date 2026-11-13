@@ -16,13 +16,15 @@ namespace UnderTheRain.Player
         [SerializeField] private LayerMask solidMask;
 
         [Header("Tuning")]
-        [SerializeField, Min(1f)] private float shotCost = 25f;
+        [SerializeField, Min(1f)] private float shotCost = 5f;
         [SerializeField, Min(1)] private int damage = 1;
         [SerializeField, Min(1f)] private float projectileSpeed = 16f;
         [SerializeField, Min(0.05f)] private float fireCooldown = 0.25f;
-        [SerializeField] private Vector2 knockback = new Vector2(4f, 1.5f);
+        [SerializeField] private Vector2 knockback = new Vector2(2f, 0.5f);
 
         private float _cooldownTimer;
+
+        public event System.Action OnShotFired;
 
         private void Awake()
         {
@@ -74,6 +76,7 @@ namespace UnderTheRain.Player
 
             bolt.Launch(new Vector2(dir * projectileSpeed, 0f), ctx, solidMask);
             _cooldownTimer = fireCooldown;
+            OnShotFired?.Invoke();
             return true;
         }
     }

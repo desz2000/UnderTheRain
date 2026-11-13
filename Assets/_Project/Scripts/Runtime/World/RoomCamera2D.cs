@@ -9,6 +9,7 @@ namespace UnderTheRain.World
     public sealed class RoomCamera2D : MonoBehaviour
     {
         [SerializeField] private Transform target;
+        [SerializeField] private RoomBounds initialRoom;
         [SerializeField] private float smoothTime = 0.08f;
 
         private Camera _camera;
@@ -18,6 +19,10 @@ namespace UnderTheRain.World
         private void Awake()
         {
             _camera = GetComponent<Camera>();
+            if (initialRoom != null)
+            {
+                SetRoom(initialRoom, snapImmediately: true);
+            }
         }
 
         private void LateUpdate()

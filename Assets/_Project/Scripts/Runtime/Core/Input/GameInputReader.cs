@@ -17,6 +17,7 @@ namespace UnderTheRain.Core.Input
 
         private InputActionAsset _runtimeActions;
         private InputActionMap _playerMap;
+        private InputActionMap _fallbackMap;
         private InputActionMap _uiMap;
 
         private InputAction _moveAction;
@@ -28,6 +29,7 @@ namespace UnderTheRain.Core.Input
         private InputAction _shootAction;
         private InputAction _healAction;
         private InputAction _craftAction;
+        private InputAction _catCommandAction;
 
         public Vector2 MoveInput => _moveAction != null ? _moveAction.ReadValue<Vector2>() : Vector2.zero;
         public bool IsJumpHeld => _jumpAction != null && _jumpAction.IsPressed();
@@ -41,6 +43,7 @@ namespace UnderTheRain.Core.Input
         public event Action OnCraftPressed;
         public event Action OnInteractPressed;
         public event Action OnDashPressed;
+        public event Action OnCatCommandPressed;
 
         private void Awake()
         {
@@ -53,6 +56,7 @@ namespace UnderTheRain.Core.Input
             _runtimeActions = Instantiate(inputActions);
             _playerMap = _runtimeActions.FindActionMap(PlayerMapName, throwIfNotFound: true);
             _uiMap = _runtimeActions.FindActionMap(UiMapName, throwIfNotFound: true);
+            _fallbackMap = new InputActionMap("PlayerFallbacks");
 
             _moveAction = _playerMap.FindAction("Move", throwIfNotFound: true);
             _jumpAction = _playerMap.FindAction("Jump", throwIfNotFound: true);
@@ -61,19 +65,23 @@ namespace UnderTheRain.Core.Input
             _crouchAction = _playerMap.FindAction("Crouch", throwIfNotFound: true);
             _sprintAction = _playerMap.FindAction("Sprint", throwIfNotFound: true);
 
-            // Runtime fallbacks on the cloned map until dedicated bindings are authored in InputSystem_Actions.
-            _interactAction.AddBinding("<Gamepad>/buttonNorth"); // Y (Xbox) / Triangle (PS5), matching E on keyboard
+            // Keep runtime fallbacks in a separate standalone map so we never mutate the cloned asset's internal action state.
+            _interactFallbackAction = CreateFallbackAction("InteractFallback", "<Gamepad>/buttonNorth");
             _shootAction = _playerMap.FindAction("Shoot", throwIfNotFound: false)
                            ?? CreateFallbackAction("Shoot", "<Mouse>/rightButton", "<Keyboard>/f", "<Gamepad>/rightTrigger");
             _healAction = _playerMap.FindAction("Heal", throwIfNotFound: false)
                           ?? CreateFallbackAction("Heal", "<Keyboard>/q", "<Gamepad>/leftShoulder");
             _craftAction = _playerMap.FindAction("Craft", throwIfNotFound: false)
                            ?? CreateFallbackAction("Craft", "<Keyboard>/c", "<Gamepad>/dpad/down");
+            _catCommandAction = _playerMap.FindAction("CatCommand", throwIfNotFound: false)
+                                ?? CreateFallbackAction("CatCommand", "<Keyboard>/r", "<Gamepad>/rightShoulder");
         }
+
+        private InputAction _interactFallbackAction;
 
         private InputAction CreateFallbackAction(string actionName, params string[] bindings)
         {
-            var action = _playerMap.AddAction(actionName, InputActionType.Button);
+            var action = _fallbackMap.AddAction(actionName, InputActionType.Button);
             foreach (string binding in bindings)
             {
                 action.AddBinding(binding);
@@ -92,7 +100,9 @@ namespace UnderTheRain.Core.Input
             _healAction.performed += HandleHealPerformed;
             _craftAction.performed += HandleCraftPerformed;
             _interactAction.performed += HandleInteractPerformed;
+            if (_interactFallbackAction != null) _interactFallbackAction.performed += HandleInteractPerformed;
             _sprintAction.performed += HandleDashPerformed;
+            _catCommandAction.performed += HandleCatCommandPerformed;
 
             EnableGameplay();
         }
@@ -108,9 +118,12 @@ namespace UnderTheRain.Core.Input
             _healAction.performed -= HandleHealPerformed;
             _craftAction.performed -= HandleCraftPerformed;
             _interactAction.performed -= HandleInteractPerformed;
+            if (_interactFallbackAction != null) _interactFallbackAction.performed -= HandleInteractPerformed;
             _sprintAction.performed -= HandleDashPerformed;
+            _catCommandAction.performed -= HandleCatCommandPerformed;
 
             _playerMap.Disable();
+            _fallbackMap?.Disable();
             _uiMap?.Disable();
         }
 
@@ -127,11 +140,13 @@ namespace UnderTheRain.Core.Input
         {
             _uiMap?.Disable();
             _playerMap?.Enable();
+            _fallbackMap?.Enable();
         }
 
         public void EnableUI()
         {
             _playerMap?.Disable();
+            _fallbackMap?.Disable();
             _uiMap?.Enable();
         }
 
@@ -143,5 +158,6 @@ namespace UnderTheRain.Core.Input
         private void HandleCraftPerformed(InputAction.CallbackContext ctx) => OnCraftPressed?.Invoke();
         private void HandleInteractPerformed(InputAction.CallbackContext ctx) => OnInteractPressed?.Invoke();
         private void HandleDashPerformed(InputAction.CallbackContext ctx) => OnDashPressed?.Invoke();
+        private void HandleCatCommandPerformed(InputAction.CallbackContext ctx) => OnCatCommandPressed?.Invoke();
     }
 }

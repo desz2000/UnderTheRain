@@ -163,10 +163,28 @@ namespace UnderTheRain.Player
         private bool CheckGround()
         {
             Bounds b = _collider.bounds;
-            RaycastHit2D hit = Physics2D.BoxCast(b.center, new Vector2(b.size.x * 0.95f, b.size.y), 0f,
+            RaycastHit2D[] hits = Physics2D.BoxCastAll(b.center, new Vector2(b.size.x * 0.95f, b.size.y), 0f,
                 Vector2.down, GroundProbeDistance, groundMask);
-            _groundCollider = hit.collider;
-            return hit.collider != null && hit.normal.y > 0.5f;
+
+            for (int i = 0; i < hits.Length; i++)
+            {
+                RaycastHit2D hit = hits[i];
+                if (hit.collider == null || hit.normal.y <= 0.5f) continue;
+
+                bool isOneWay = (oneWayMask.value & (1 << hit.collider.gameObject.layer)) != 0;
+                if (isOneWay)
+                {
+                    // Ignore one-way platforms while ascending or while Dante's feet are still inside them.
+                    if (_body.linearVelocity.y > 0.05f) continue;
+                    if (b.min.y < hit.collider.bounds.max.y - 0.1f) continue;
+                }
+
+                _groundCollider = hit.collider;
+                return true;
+            }
+
+            _groundCollider = null;
+            return false;
         }
 
         // Only solid walls (exclude one-way platforms) allow wall slide and wall jump.
@@ -187,21 +205,23 @@ namespace UnderTheRain.Player
 
         private bool HeadBlocked()
         {
+            LayerMask solidMask = groundMask & ~oneWayMask;
             Bounds b = _collider.bounds;
-            return Physics2D.BoxCast(b.center, b.size, 0f, Vector2.up, CeilingProbeDistance, groundMask).collider != null;
+            return Physics2D.BoxCast(b.center, b.size, 0f, Vector2.up, CeilingProbeDistance, solidMask).collider != null;
         }
 
         // Nudges Dante sideways around a ceiling corner so near-misses still count as jumps.
         private bool TryCornerCorrection()
         {
+            LayerMask solidMask = groundMask & ~oneWayMask;
             Bounds b = _collider.bounds;
             for (float offset = CornerStep; offset <= config.cornerCorrectionDistance; offset += CornerStep)
             {
                 foreach (float side in new[] { -1f, 1f })
                 {
                     Vector2 origin = (Vector2)b.center + Vector2.right * (side * offset);
-                    bool blocked = Physics2D.BoxCast(origin, b.size, 0f, Vector2.up, CeilingProbeDistance, groundMask).collider != null;
-                    bool overlapping = Physics2D.OverlapBox(origin, b.size * 0.98f, 0f, groundMask) != null;
+                    bool blocked = Physics2D.BoxCast(origin, b.size, 0f, Vector2.up, CeilingProbeDistance, solidMask).collider != null;
+                    bool overlapping = Physics2D.OverlapBox(origin, b.size, 0f, solidMask) != null;
                     if (!blocked && !overlapping)
                     {
                         _body.position += Vector2.right * (side * offset);

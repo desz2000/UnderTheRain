@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e34911543f3afc840847ab575f1d0587, type: 3}
+  m_Name: IcarusBeforeEvidenceDialogue
+  m_EditorClassIdentifier: UnderTheRain.Runtime::UnderTheRain.Narrative.DialogueSequenceSO
+  lines:
+  - speakerName: ICARUS
+    speakerColor: {r: 0.88, g: 0.72, b: 0.42, a: 1}
+    text: "Fique abaixado, Dante. Ou\xE7a a garoa l\xE1 fora \u2014 enquanto ficarmos
+      nos esgotos, as patrulhas n\xE3o nos acham."
+  - speakerName: DANTE
+    speakerColor: {r: 0.75, g: 0.9, b: 0.96, a: 1}
+    text: "Se nos escondermos para sempre, j\xE1 perdemos. Vou checar aquele terminal
+      antigo antes de decidir qualquer coisa."

@@ -59,7 +59,7 @@ Assets/
 ## 2. Dados em ScriptableObjects (Zero Números Mágicos)
 
 Toda configuração balanceável vive em `ScriptableObject`s em `Assets/_Project/Data/`:
-- **`PlayerMovementConfigSO`**: velocidades, aceleração (`~0.08s`), desaceleração (`~0.06s`), parâmetros de pulo variável, *coyote time* (`~0.10s`), *input buffer* (`~0.12s`), parâmetros de *Wall Slide/Jump*, *Dash*, *Double Jump* e *Grapple*.
+- **`PlayerMovementConfigSO`**: velocidades, aceleração (`~0.08s`), desaceleração (`~0.06s`), parâmetros de pulo variável, *coyote time* (`~0.04s`), *input buffer* (`~0.12s`), parâmetros de *Wall Slide/Jump*, *Dash*, *Double Jump* e *Grapple*.
 - **`WeaponDataSO`**: estágio (`SimpleBaton`, `ElectrifiedBaton`, `HighFreqBlade`), dano, alcance, janela de combo, *hitstop* (`~0.04–0.06s`), custo/efeito de acoplamento.
 - **`EnemyDataSO`**: vida, velocidade, tipo de facção (`CollectiveMachine`, `MisanthropeHuman`, `OfflinePrototype`), `isAffectedByCat` (`true` apenas para `CollectiveMachine`), multiplicadores de agressividade por estágio do **Colapso da IA**.
 - **`ItemDataSO` / `DocumentDataSO`**: itens de acoplamento, acessórios, textos e registros de áudio do Pai / Domus Corp.

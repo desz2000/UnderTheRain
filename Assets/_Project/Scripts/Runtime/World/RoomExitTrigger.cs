@@ -10,6 +10,7 @@ namespace UnderTheRain.World
     {
         [SerializeField] private RoomBounds targetRoom;
         [SerializeField] private string targetSpawnId = "default";
+        [SerializeField] private string targetSceneName;
         [SerializeField] private string playerTag = "Player";
 
         private RoomTransitionController _controller;
@@ -27,12 +28,18 @@ namespace UnderTheRain.World
 
         private void OnTriggerEnter2D(Collider2D other)
         {
-            if (targetRoom == null) return;
+            if (targetRoom == null && string.IsNullOrEmpty(targetSceneName)) return;
             if (!string.IsNullOrEmpty(playerTag) && !other.CompareTag(playerTag)) return;
 
             if (_controller == null)
             {
                 _controller = FindFirstObjectByType<RoomTransitionController>();
+            }
+
+            if (!string.IsNullOrEmpty(targetSceneName))
+            {
+                _controller?.TransitionToScene(targetSceneName);
+                return;
             }
 
             _controller?.TransitionToRoom(other.transform, targetRoom, targetSpawnId);
@@ -42,6 +49,13 @@ namespace UnderTheRain.World
         {
             targetRoom = destination;
             targetSpawnId = spawnId;
+            targetSceneName = null;
+        }
+
+        public void ConfigureScene(string sceneName)
+        {
+            targetSceneName = sceneName;
+            targetRoom = null;
         }
     }
 }

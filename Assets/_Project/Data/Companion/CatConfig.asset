@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b1c992c3bb8e9064caa7400657bcef10, type: 3}
+  m_Name: CatConfig
+  m_EditorClassIdentifier: UnderTheRain.Runtime::UnderTheRain.Companion.CatConfigSO
+  followOffset: {x: -0.68, y: 0}
+  shoulderOffset: {x: -0.22, y: 0.52}
+  followSpeed: 10
+  acceleration: 48
+  deceleration: 56
+  stopDistance: 0.08
+  gravity: 32
+  maxFallSpeed: 16
+  teleportDistance: 11
+  perchTransitionDuration: 0.18
+  combatPerchHoldDuration: 1.4
+  traversalPerchHoldDuration: 2
+  highGroundPerchThresholdY: 0.9
+  highGroundPerchDelay: 0.15
+  interferenceRadius: 4.5
+  interferenceCooldown: 3
+  hesitationDuration: 1.35
+  interferenceBatteryCost: 50

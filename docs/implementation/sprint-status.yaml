@@ -15,25 +15,25 @@ development_status:
   1-3-room-transition-fade-and-camera-confiner: done
   epic-1-retrospective: done
 
-  epic-2: backlog
-  2-1-base-locomotion-and-responsive-jump: backlog
-  2-2-wall-slide-and-wall-jump: backlog
+  epic-2: done
+  2-1-base-locomotion-and-responsive-jump: done
+  2-2-wall-slide-and-wall-jump: done
   epic-2-retrospective: optional
 
-  epic-3: backlog
-  3-1-melee-combat-simple-baton-and-game-feel: backlog
-  3-2-battery-shot-and-medkit: backlog
-  3-3-parts-pack-death-and-dropped-pack-recovery: backlog
+  epic-3: done
+  3-1-melee-combat-simple-baton-and-game-feel: done
+  3-2-battery-shot-and-medkit: done
+  3-3-parts-pack-death-and-dropped-pack-recovery: done
   epic-3-retrospective: optional
 
-  epic-4: backlog
-  4-1-cat-follow-and-shoulder-perch: backlog
-  4-2-cat-active-interference-command: backlog
-  4-3-cat-exploration-duct-or-terminal: backlog
+  epic-4: done
+  4-1-cat-follow-and-shoulder-perch: done
+  4-2-cat-active-interference-command: done
+  4-3-cat-exploration-duct-or-terminal: done
   epic-4-retrospective: optional
 
-  epic-5: backlog
-  5-1-sewers-rooms-initial-shelter-and-icarus: backlog
+  epic-5: in-progress
+  5-1-sewers-rooms-initial-shelter-and-icarus: review
   5-2-wall-jump-gate-rewarded-backtrack-and-surface: backlog
   5-3-first-misanthrope-boss-and-encrypted-map: backlog
   epic-5-retrospective: optional

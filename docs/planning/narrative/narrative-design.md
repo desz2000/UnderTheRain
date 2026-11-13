@@ -15,7 +15,7 @@ canonical_source: 'docs/narrativa/biblia-narrativa.md'
 ## 1. Personagens e Facções
 
 - **Dante (30 anos):** ex-desenvolvedor (tinha 20 anos na Queda), combatente solitário. Movido por orgulho ferido e pela busca da verdade sobre o colapso e o pai.
-- **Gatinho de Metal:** robô branco isolado da rede, construído por Dante antes da Queda. Companheiro ativo que causa hesitação/travamento nos robôs da colmeia sem entender o próprio papel.
+- **Kitty (Gatinha de Metal):** robô branca isolada da rede, construída por Dante antes da Queda. Companheira ativa que causa hesitação/travamento nos robôs da colmeia sem entender o próprio papel.
 - **O Pai (55 anos):** ex-desenvolvedor brilhante da Domus Corp que criou o código de livre-arbítrio para libertar os robôs; sobreviveu 10 anos escondido em um laboratório secreto, consumido pela culpa.
 - **Icarus (Líder da Resistência nos Esgotos):** ex-engenheiro de manutenção urbana que perdeu a família nos primeiros dias da Queda. Acredita que enfrentar a Domus Corp é suicídio e que sobreviver escondido é a única vitória possível. Vê as provas de Dante como ameaça ao esconderijo e o expulsa.
 - **Humanos Misantropos:** facção humana aliada às máquinas por ódio à própria espécie; imunes à interferência do gato.
@@ -25,10 +25,9 @@ canonical_source: 'docs/narrativa/biblia-narrativa.md'
 
 ## 2. Mapa de Beats por Zona (Estrutura em 3 Atos)
 
-### Ato I — A Fagulha na Garoa (Zona 1: Esgotos → Transição para Zona 2: Superfície)
-1. **Abertura (Esgotos — Abrigo Inicial):** Dante vive nos esgotos úmidos com o gatinho de metal. Som abafado da garoa acima. Introdução ao bastão simples e movimento base.
-2. **Descoberta nos Terminais:** Dante investiga terminais antigos e encontra documentos confidenciais da Domus Corp provando que o colapso foi um projeto sabotado e acobertado — e que seu pai pode estar vivo.
-3. **O Confronto com Icarus:** Dante leva as provas a Icarus, que o chama de louco e o ameaça de expulsão. Ruptura: Dante abandona os esgotos.
+### Ato I — A Fagulha na Garoa (Prólogo nos Escombros → Zona 1: Esgotos → Transição para Zona 2: Superfície)
+1. **Prólogo / Tutorial (Escombros entre Esgotos e Superfície):** Dante e Kitty exploram os escombros sob a garoa (tutorial de movimento, pulo, interferência de Kitty e combate básico) e encontram um terminal antigo da Domus Corp com documentos confidenciais provando que o colapso foi sabotado/acobertado — e que o pai pode estar vivo.
+2. **Abrigo Inicial e Confronto com Icarus (Esgotos):** Dante retorna ao abrigo subterrâneo e leva as provas a Icarus, que o chama de louco e o ameaça de expulsão. Ruptura: Dante e Kitty abandonam os esgotos rumo à superfície.
 4. **Subida e Primeiro Gate (Wall Jump):** Na subida para a superfície, Dante obtém/desbloqueia o **Wall Slide & Wall Jump** e testa o retorno recompensado.
 5. **Anomalia e Primeiro Boss (Transição → Superfície):** O gato provoca curto-circuito/hesitação em um robô batedor. Logo depois, Dante enfrenta o **1º Humano Misantropo (Boss 1)** e obtém o **Mapa Criptografado**, contemplando as torres da Domus Corp na neblina.
 

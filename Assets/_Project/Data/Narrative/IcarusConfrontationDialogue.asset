@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e34911543f3afc840847ab575f1d0587, type: 3}
+  m_Name: IcarusConfrontationDialogue
+  m_EditorClassIdentifier: UnderTheRain.Runtime::UnderTheRain.Narrative.DialogueSequenceSO
+  lines:
+  - speakerName: DANTE
+    speakerColor: {r: 0.75, g: 0.9, b: 0.96, a: 1}
+    text: "Icarus, olha estes registros da Domus Corp. O colapso foi sabotado e acobertado.
+      As credenciais do meu pai ainda est\xE3o ativas!"
+  - speakerName: ICARUS
+    speakerColor: {r: 0.88, g: 0.72, b: 0.42, a: 1}
+    text: "Voc\xEA enlouqueceu?! Trazer esses dados para c\xE1 \xE9 assinar a senten\xE7a
+      de morte deste abrigo!"
+  - speakerName: ICARUS
+    speakerColor: {r: 0.88, g: 0.72, b: 0.42, a: 1}
+    text: "Seu pai morreu na Queda, garoto. Se insistir nessa obsess\xE3o suicida,
+      est\xE1 fora da resist\xEAncia. Suma daqui antes que atraia os batedores!"
+  - speakerName: DANTE
+    speakerColor: {r: 0.75, g: 0.9, b: 0.96, a: 1}
+    text: "Ent\xE3o eu vou sozinho. Vamos, garoto \u2014 a superf\xEDcie nos espera."

@@ -4,8 +4,8 @@
 # Date: 2026-11-12T23:06:27.072Z
 
 game_dev_experience: intermediate
-planning_artifacts: "{project-root}/docs/planning-artifacts"
-implementation_artifacts: "{project-root}/docs/implementation-artifacts"
+planning_artifacts: "{project-root}/docs/planning"
+implementation_artifacts: "{project-root}/docs/implementation"
 project_knowledge: "{project-root}/docs"
 primary_platform:
   - unity

@@ -1,0 +1,20 @@
+{
+    "name": "UnderTheRain.Editor",
+    "rootNamespace": "UnderTheRain.Editor",
+    "references": [
+        "Unity.InputSystem",
+        "UnityEngine.UI",
+        "UnderTheRain.Runtime"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

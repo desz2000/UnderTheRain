@@ -27,6 +27,7 @@ namespace UnderTheRain.Core.Input
         private InputAction _sprintAction;
         private InputAction _shootAction;
         private InputAction _healAction;
+        private InputAction _craftAction;
 
         public Vector2 MoveInput => _moveAction != null ? _moveAction.ReadValue<Vector2>() : Vector2.zero;
         public bool IsJumpHeld => _jumpAction != null && _jumpAction.IsPressed();
@@ -37,6 +38,7 @@ namespace UnderTheRain.Core.Input
         public event Action OnAttackPressed;
         public event Action OnShootPressed;
         public event Action OnHealPressed;
+        public event Action OnCraftPressed;
         public event Action OnInteractPressed;
         public event Action OnDashPressed;
 
@@ -60,10 +62,13 @@ namespace UnderTheRain.Core.Input
             _sprintAction = _playerMap.FindAction("Sprint", throwIfNotFound: true);
 
             // Runtime fallbacks on the cloned map until dedicated bindings are authored in InputSystem_Actions.
+            _interactAction.AddBinding("<Gamepad>/buttonNorth"); // Y (Xbox) / Triangle (PS5), matching E on keyboard
             _shootAction = _playerMap.FindAction("Shoot", throwIfNotFound: false)
                            ?? CreateFallbackAction("Shoot", "<Mouse>/rightButton", "<Keyboard>/f", "<Gamepad>/rightTrigger");
             _healAction = _playerMap.FindAction("Heal", throwIfNotFound: false)
                           ?? CreateFallbackAction("Heal", "<Keyboard>/q", "<Gamepad>/leftShoulder");
+            _craftAction = _playerMap.FindAction("Craft", throwIfNotFound: false)
+                           ?? CreateFallbackAction("Craft", "<Keyboard>/c", "<Gamepad>/dpad/down");
         }
 
         private InputAction CreateFallbackAction(string actionName, params string[] bindings)
@@ -85,6 +90,7 @@ namespace UnderTheRain.Core.Input
             _attackAction.performed += HandleAttackPerformed;
             _shootAction.performed += HandleShootPerformed;
             _healAction.performed += HandleHealPerformed;
+            _craftAction.performed += HandleCraftPerformed;
             _interactAction.performed += HandleInteractPerformed;
             _sprintAction.performed += HandleDashPerformed;
 
@@ -100,6 +106,7 @@ namespace UnderTheRain.Core.Input
             _attackAction.performed -= HandleAttackPerformed;
             _shootAction.performed -= HandleShootPerformed;
             _healAction.performed -= HandleHealPerformed;
+            _craftAction.performed -= HandleCraftPerformed;
             _interactAction.performed -= HandleInteractPerformed;
             _sprintAction.performed -= HandleDashPerformed;
 
@@ -133,6 +140,7 @@ namespace UnderTheRain.Core.Input
         private void HandleAttackPerformed(InputAction.CallbackContext ctx) => OnAttackPressed?.Invoke();
         private void HandleShootPerformed(InputAction.CallbackContext ctx) => OnShootPressed?.Invoke();
         private void HandleHealPerformed(InputAction.CallbackContext ctx) => OnHealPressed?.Invoke();
+        private void HandleCraftPerformed(InputAction.CallbackContext ctx) => OnCraftPressed?.Invoke();
         private void HandleInteractPerformed(InputAction.CallbackContext ctx) => OnInteractPressed?.Invoke();
         private void HandleDashPerformed(InputAction.CallbackContext ctx) => OnDashPressed?.Invoke();
     }

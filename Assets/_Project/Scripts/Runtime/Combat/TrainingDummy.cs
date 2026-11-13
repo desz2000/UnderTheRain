@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using UnderTheRain.World;
 
 namespace UnderTheRain.Combat
 {
@@ -13,6 +14,8 @@ namespace UnderTheRain.Combat
         [SerializeField] private Color hitFlashColor = Color.white;
         [SerializeField] private float flashDuration = 0.08f;
         [SerializeField] private float knockbackDamping = 12f;
+        [SerializeField] private PartsPickup partsPickupPrefab;
+        [SerializeField, Min(1)] private int partsDropAmount = 15;
 
         private HealthComponent _health;
         private Rigidbody2D _body;
@@ -63,6 +66,12 @@ namespace UnderTheRain.Combat
 
         private void HandleDied()
         {
+            if (partsPickupPrefab != null)
+            {
+                var drop = Instantiate(partsPickupPrefab, transform.position + Vector3.up * 0.4f, Quaternion.identity);
+                drop.SetAmount(partsDropAmount);
+            }
+
             // Dummy resets to full health so playtesters can keep testing combos.
             _health.RestoreFull();
         }

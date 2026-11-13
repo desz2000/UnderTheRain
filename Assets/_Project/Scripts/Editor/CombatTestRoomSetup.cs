@@ -19,6 +19,8 @@ namespace UnderTheRain.Editor
         private const string MovementConfigPath = "Assets/_Project/Data/Abilities/PlayerMovementConfig.asset";
         private const string WeaponDataPath = "Assets/_Project/Data/Weapons/SimpleBaton.asset";
         private const string ProjectilePrefabPath = "Assets/_Project/Prefabs/Player/BatteryProjectile.prefab";
+        private const string DroppedPackPrefabPath = "Assets/_Project/Prefabs/Environment/DroppedPack.prefab";
+        private const string PartsPickupPrefabPath = "Assets/_Project/Prefabs/Environment/PartsPickup.prefab";
         private const string ScenePath = "Assets/_Project/Scenes/Zones/CombatTestRoom.unity";
         private const string InputActionsPath = "Assets/InputSystem_Actions.inputactions";
         private const string SquareSpritePath = "Assets/_Project/Art/Sprites/WhiteSquare.png";
@@ -56,6 +58,8 @@ namespace UnderTheRain.Editor
 
             EnsureSimpleBatonAsset();
             EnsureBatteryProjectilePrefab(pHit);
+            EnsureDroppedPackPrefab();
+            EnsurePartsPickupPrefab();
 
             var scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
             var sprite = AssetDatabase.LoadAssetAtPath<Sprite>(SquareSpritePath);
@@ -159,6 +163,23 @@ namespace UnderTheRain.Editor
             rangedSo.FindProperty("solidMask").intValue = 1 << ground;
             rangedSo.ApplyModifiedPropertiesWithoutUndo();
 
+            var partsPack = player.AddComponent<PartsPackComponent>();
+            var packSo = new SerializedObject(partsPack);
+            packSo.FindProperty("input").objectReferenceValue = reader;
+            packSo.FindProperty("medkitComponent").objectReferenceValue = medkit;
+            packSo.ApplyModifiedPropertiesWithoutUndo();
+
+            var deathHandler = player.AddComponent<PlayerDeathHandler>();
+            var deathSo = new SerializedObject(deathHandler);
+            deathSo.FindProperty("input").objectReferenceValue = reader;
+            deathSo.FindProperty("health").objectReferenceValue = playerHealth;
+            deathSo.FindProperty("battery").objectReferenceValue = battery;
+            deathSo.FindProperty("medkit").objectReferenceValue = medkit;
+            deathSo.FindProperty("partsPack").objectReferenceValue = partsPack;
+            var droppedGo = AssetDatabase.LoadAssetAtPath<GameObject>(DroppedPackPrefabPath);
+            deathSo.FindProperty("droppedPackPrefab").objectReferenceValue = droppedGo != null ? droppedGo.GetComponent<DroppedPack>() : null;
+            deathSo.ApplyModifiedPropertiesWithoutUndo();
+
             player.AddComponent<DebugCombatHud>();
 
             var camSo = new SerializedObject(roomCam);
@@ -179,7 +200,11 @@ namespace UnderTheRain.Editor
             var dummyHealthSo = new SerializedObject(dummyHealth);
             dummyHealthSo.FindProperty("invulnerabilityDuration").floatValue = 0.05f;
             dummyHealthSo.ApplyModifiedPropertiesWithoutUndo();
-            dummy.AddComponent<TrainingDummy>();
+            var dummyScript = dummy.AddComponent<TrainingDummy>();
+            var dummySo = new SerializedObject(dummyScript);
+            var pickupGo = AssetDatabase.LoadAssetAtPath<GameObject>(PartsPickupPrefabPath);
+            dummySo.FindProperty("partsPickupPrefab").objectReferenceValue = pickupGo != null ? pickupGo.GetComponent<PartsPickup>() : null;
+            dummySo.ApplyModifiedPropertiesWithoutUndo();
 
             var dHurtGo = new GameObject("EnemyHurtbox") { layer = eHurt };
             dHurtGo.transform.SetParent(dummy.transform, false);
@@ -222,6 +247,19 @@ namespace UnderTheRain.Editor
             restSo.FindProperty("input").objectReferenceValue = reader;
             restSo.ApplyModifiedPropertiesWithoutUndo();
 
+            // Battery Charge Station (right, recharges battery only, no HP/respawn)
+            var station = new GameObject("BatteryChargeStation");
+            station.transform.position = new Vector3(8.5f, 1f, 0f);
+            station.transform.localScale = new Vector3(1.2f, 2f, 1f);
+            var stSr = station.AddComponent<SpriteRenderer>();
+            stSr.sprite = sprite;
+            stSr.color = new Color(0.20f, 0.68f, 0.95f, 0.55f);
+            station.AddComponent<BoxCollider2D>().isTrigger = true;
+            var chargeStation = station.AddComponent<BatteryChargeStation>();
+            var stSo = new SerializedObject(chargeStation);
+            stSo.FindProperty("input").objectReferenceValue = reader;
+            stSo.ApplyModifiedPropertiesWithoutUndo();
+
             Directory.CreateDirectory(Path.GetDirectoryName(ScenePath));
             EditorSceneManager.SaveScene(scene, ScenePath);
             AssetDatabase.SaveAssets();
@@ -258,6 +296,44 @@ namespace UnderTheRain.Editor
             Object.DestroyImmediate(go);
             AssetDatabase.SaveAssets();
             return prefab.GetComponent<BatteryProjectile>();
+        }
+
+        private static void EnsureDroppedPackPrefab()
+        {
+            if (AssetDatabase.LoadAssetAtPath<GameObject>(DroppedPackPrefabPath) != null) return;
+
+            Directory.CreateDirectory(Path.GetDirectoryName(DroppedPackPrefabPath));
+            var sprite = AssetDatabase.LoadAssetAtPath<Sprite>(SquareSpritePath);
+            var go = new GameObject("DroppedPack");
+            go.transform.localScale = new Vector3(0.75f, 0.75f, 1f);
+            var sr = go.AddComponent<SpriteRenderer>();
+            sr.sprite = sprite;
+            sr.color = new Color(0.68f, 0.35f, 0.92f, 0.9f);
+            go.AddComponent<BoxCollider2D>().isTrigger = true;
+            go.AddComponent<DroppedPack>();
+
+            PrefabUtility.SaveAsPrefabAsset(go, DroppedPackPrefabPath);
+            Object.DestroyImmediate(go);
+            AssetDatabase.SaveAssets();
+        }
+
+        private static void EnsurePartsPickupPrefab()
+        {
+            if (AssetDatabase.LoadAssetAtPath<GameObject>(PartsPickupPrefabPath) != null) return;
+
+            Directory.CreateDirectory(Path.GetDirectoryName(PartsPickupPrefabPath));
+            var sprite = AssetDatabase.LoadAssetAtPath<Sprite>(SquareSpritePath);
+            var go = new GameObject("PartsPickup");
+            go.transform.localScale = new Vector3(0.38f, 0.38f, 1f);
+            var sr = go.AddComponent<SpriteRenderer>();
+            sr.sprite = sprite;
+            sr.color = new Color(0.96f, 0.78f, 0.22f, 1f);
+            go.AddComponent<BoxCollider2D>().isTrigger = true;
+            go.AddComponent<PartsPickup>();
+
+            PrefabUtility.SaveAsPrefabAsset(go, PartsPickupPrefabPath);
+            Object.DestroyImmediate(go);
+            AssetDatabase.SaveAssets();
         }
 
         private static void CreateBatteryCell(string name, Sprite sprite, Vector2 pos)

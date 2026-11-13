@@ -12,12 +12,22 @@ namespace UnderTheRain.World
     public sealed class ShelterRestSpot : MonoBehaviour
     {
         [SerializeField] private GameInputReader input;
+        [SerializeField] private bool isDefaultShelter = true;
 
         private GameObject _playerInRange;
 
         private void Awake()
         {
             GetComponent<Collider2D>().isTrigger = true;
+        }
+
+        private void Start()
+        {
+            if (isDefaultShelter)
+            {
+                var deathHandler = FindFirstObjectByType<PlayerDeathHandler>();
+                deathHandler?.SetRespawnPoint(transform.position);
+            }
         }
 
         private void OnEnable()
@@ -53,7 +63,8 @@ namespace UnderTheRain.World
             _playerInRange.GetComponent<HealthComponent>()?.RestoreFull();
             _playerInRange.GetComponent<BatteryComponent>()?.RestoreFull();
             _playerInRange.GetComponent<MedkitComponent>()?.RestoreFull();
-            Debug.Log("[ShelterRestSpot] Rested: health, battery and medkits restored to 100%.");
+            _playerInRange.GetComponent<PlayerDeathHandler>()?.SetRespawnPoint(transform.position);
+            Debug.Log("[ShelterRestSpot] Rested: health, battery and medkits restored to 100%, respawn updated.");
         }
     }
 }

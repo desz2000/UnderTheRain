@@ -69,6 +69,7 @@ namespace UnderTheRain.Tests.PlayMode
         [UnityTest]
         public IEnumerator LabArena_RobotsWakeLocksCloseThenReopenWhenCleared()
         {
+            ArenaEncounter.ResetSession();
             yield return Story54PrologueTests.LoadScene(PrologueScene);
             var lab = Activate(232f);
             yield return null;
@@ -97,6 +98,46 @@ namespace UnderTheRain.Tests.PlayMode
             Assert.IsTrue(arena.IsCleared);
             Assert.IsFalse(arena.IsActive);
             Assert.IsNull(GameObject.Find("Arena_Gate"), "Gate reopens (inactive) once every robot falls.");
+        }
+
+        [UnityTest]
+        public IEnumerator LabArena_FallingThroughTheHole_EndsInsideWithShutterClosedAbove()
+        {
+            // Regression (playtest): the shutter appeared inside Dante mid-fall and pushed him on top of it,
+            // leaving the robots below and the gate closed (soft-lock).
+            ArenaEncounter.ResetSession();
+            yield return Story54PrologueTests.LoadScene(PrologueScene);
+            var lab = Activate(232f);
+            yield return null;
+            var arena = lab.GetComponentInChildren<ArenaEncounter>(true);
+
+            Story54PrologueTests.TeleportPlayer(new Vector3(232f + 16.5f, 7.0f, 0f)); // inside the hole, at shutter height
+            yield return new WaitForSeconds(1.0f);
+
+            Assert.IsTrue(arena.IsActive, "The fight starts once Dante drops in.");
+            Assert.Less(Player.transform.position.y, 6.5f, "Dante must end up inside the test chamber, not on the shutter.");
+            Assert.IsTrue(GameObject.Find("Arena_Shutter").activeSelf, "The shutter closes above him once he is clear of it.");
+        }
+
+        [UnityTest]
+        public IEnumerator LabArena_LeavingTheArenaWhileActive_ReopensEverything()
+        {
+            ArenaEncounter.ResetSession();
+            yield return Story54PrologueTests.LoadScene(PrologueScene);
+            var lab = Activate(232f);
+            yield return null;
+            var arena = lab.GetComponentInChildren<ArenaEncounter>(true);
+
+            Story54PrologueTests.TeleportPlayer(new Vector3(232f + 2f, 1f, 0f));
+            yield return new WaitForSeconds(0.3f);
+            Assert.IsTrue(arena.IsActive);
+
+            Story54PrologueTests.TeleportPlayer(new Vector3(232f - 5f, 8.2f, 0f)); // up on the deck, outside the chamber
+            yield return new WaitForSeconds(1.2f);
+
+            Assert.IsFalse(arena.IsActive, "Safety net: being outside the arena aborts the fight.");
+            Assert.IsNull(GameObject.Find("Arena_Gate"), "Gate reopens so the path is never sealed.");
+            Assert.IsNull(GameObject.Find("Arena_Shutter"), "Shutter reopens too.");
         }
 
         [UnityTest]

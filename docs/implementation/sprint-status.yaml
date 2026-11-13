@@ -9,7 +9,7 @@ tracking_system: file-system
 story_location: "docs/implementation"
 
 # Foco inicial: Épicos 1 a 5 (Vertical Slice do Ato I)
-# Épico 5 — ordem de execução sugerida: 5.1 → 5.4 → 5.5 → 5.2 → 5.3 (ver docs/planning/epics.md)
+# Épico 5 — ordem de execução sugerida: 5.1 → 5.4 → 5.6 → 5.8 → 5.5 → 5.2 → 5.7 → 5.3 (ver docs/planning/epics.md)
 development_status:
   epic-1: done
   1-1-folder-structure-asmdefs-core-scene: done
@@ -38,8 +38,11 @@ development_status:
   5-1-sewers-rooms-initial-shelter-and-icarus: done
   5-2-wall-jump-gate-rewarded-backtrack-and-surface: backlog
   5-3-first-misanthrope-boss-and-encrypted-map: backlog
-  5-4-prologue-expansion-tutorial-rooms: review
+  5-4-prologue-expansion-tutorial-rooms: done
   5-5-sewers-gallery-duct-and-sealed-door: backlog
+  5-6-prologue-scale-and-complexity-pass: backlog
+  5-7-enemy-telegraphed-attacks-and-hazards: backlog
+  5-8-sewers-hub-expansion: backlog
   epic-5-retrospective: optional
 
   epic-6: backlog

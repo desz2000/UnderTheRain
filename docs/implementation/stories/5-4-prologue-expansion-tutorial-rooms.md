@@ -1,13 +1,13 @@
 ---
 story_id: '5-4-prologue-expansion-tutorial-rooms'
 epic: 'epic-5'
-status: review
+status: done
 created: 2026-11-13
 ---
 
 # Story 5.4: Expansão do Prólogo — Salas de Tutorial
 
-Status: review
+Status: done
 
 **Pilar reforçado:** Sensação de controle antes de qualquer gate (§5.9) e "Ato I ensina", ou seja, ensino pelo level design, sem muro de texto (§5.12, §5.14).
 
@@ -112,7 +112,7 @@ Claude Opus 5.5 (`claude-opus-5-5`)
 - `Act1SewersSetup`: a saída oeste vai para `prologue_descent` / `from_sewers`.
 - Validação via CLI (2026-11-13): cenas geradas sem erros nem warnings; **EditMode 48/48** e **PlayMode 13/13** (`Story51SceneFlowTests` atualizado + `Story54PrologueTests` com 8 testes: 6 salas na ordem; cadeias de saídas →/← sem vai e volta; P2 sem dano; P3 com Operário, célula e alvo alto; duto só em P4; plataformas de P6 escaláveis; volta dos esgotos chega no fundo de P6).
 - Conflito conhecido (não resolvido aqui): `Crouch` e `Craft` usam a mesma tecla `C`. A placa de P6 ensina `S` + `Espaço`. Remapeamento no Épico 6.
-- Falta: validação manual no Play Mode (sensação dos vãos, combate com o Operário, alcance do disparo e descida de P6).
+- Validação manual no Play Mode aprovada pelo usuário (2026-11-13), incluindo as correções de transição de sala, portas e diálogo. Fechada como **greybox v1**; a escala e a complexidade ficam na **5.6**.
 
 ### File List
 

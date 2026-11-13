@@ -85,7 +85,7 @@ sources:
 
 > **Mapa de referência:** [level-map.md](gdd/gdd-Under-The-Rain-2026-11-13/level-map.md) (Prólogo = Zona 0 com 6 salas; Zona 1 = Esgotos com 13 salas). Mudança de escopo registrada em [sprint-change-proposal-2026-11-13.md](sprint-change-proposal-2026-11-13.md).
 >
-> **Ordem de execução sugerida:** 5.1 → 5.4 → 5.5 → 5.2 → 5.3 (as chaves não foram renumeradas).
+> **Ordem de execução sugerida:** 5.1 ✓ → 5.4 ✓ (greybox v1) → **5.6** → **5.8** → 5.5 → 5.2 → **5.7** → 5.3 (as chaves não foram renumeradas). Escala e complexidade das salas: [proposta de level design](gdd/gdd-Under-The-Rain-2026-11-13/level-design-proposal-zone0-zone1.md), escopo aprovado em 2026-11-13.
 
 ### 5.1 Salas dos Esgotos, Abrigo Inicial e Confronto Narrativo (Icarus)
 - **Chave:** `5-1-sewers-rooms-initial-shelter-and-icarus`
@@ -116,6 +116,61 @@ sources:
 - **Pilar reforçado:** Gates legíveis (§5.3), Kitty como mecânica de exploração (§5.11) e "eu quero voltar ali" (§5.1).
 - **Objetivo:** Construir **Z1-03 Galeria** (`sewers_gallery`, opcional: combate com grupo de Operários, recompensa de peças/bateria), **Z1-04 Duto** (`sewers_duct`, salto de sala: Kitty abre a porta e é a única rota até a Base do Poço) e a **porta do Setor Selado** (`sewers_sealed_sector`, Z1-11) no Abrigo, visível desde o início, que dá feedback de "sem energia" e não abre (a sala jogável fica para o Épico 8, gate do Bastão Eletrificado). Inclui as salas **Z1-12** e **Z1-13** (estrutura detalhada a definir pelo level design; ver `level-map.md`).
 - **Aceite no Unity:** No Play Mode, a Galeria é opcional e recompensa o combate; a Base do Poço só é alcançável depois que Kitty atravessa o Duto; interagir com a porta do Selado mostra o feedback "sem energia" e ela continua fechada.
+
+### 5.6 Prólogo em Escala: Tamanho, Complexidade e Segredos
+- **Chave:** `5-6-prologue-scale-and-complexity-pass`
+- **Pilar reforçado:** Loop central e "eu quero voltar ali" (§5.1), descoberta e segredos (§5.8), "Ato I ensina" sem ser fácil demais (§5.12), abrigos como pontos de ritmo (§5.6).
+- **Objetivo:** Reconstruir P1–P6 nos tamanhos e layouts da [proposta de level design](gdd/gdd-Under-The-Rain-2026-11-13/level-design-proposal-zone0-zone1.md) §3: salas de 2–4 telas (P1 48×16, P2 56×16, P3 60×18, P4 44×20, P5 64×22, P6 28×40), dois níveis jogáveis por sala, uma rota opcional, um segredo com pista no cenário e a sequência ensinar → testar → combinar por mecânica.
+  - **Novos elementos:**
+    - ponto de descanso em P3 (gerador da estação; `ShelterRestSpot` não padrão, que já atualiza o respawn ao interagir);
+    - **Túnel de Serviço** (`prologue_service_tunnel`), atalho unilateral de P4 para P1;
+    - **Arquivo do Laboratório** opcional (`prologue_lab_archive`, P5a);
+    - chaminé de Wall Jump em P4, como gate de retorno legível;
+    - arena de P5 (2 Batedores + 1 Operário);
+    - dois usos de Kitty em P4 (duto + painel `Terminal`);
+    - alvo de disparo de P3 elevado para y 5,5.
+  - **Código novo (pacote pequeno):**
+    - `SecretWallReveal`: parede falsa com fade e `persistentId`;
+    - `ArenaEncounter`: fecha as portas até limpar os robôs registrados;
+    - robô dormente que acorda por proximidade ou dano;
+    - `UpgradePickup`: +25 de bateria ou +1 célula de vida, com flag de sessão até o save do Épico 8;
+    - `LinkRooms` com portas em alturas diferentes.
+- **Aceite no Unity:** No Play Mode:
+  1. o Prólogo leva **20–32 min** explorando;
+  2. cada sala tem rota opcional e segredo sugerido pelo cenário;
+  3. a parede falsa revela o segredo ao entrar e continua revelada ao recarregar;
+  4. a arena de P5 tranca as portas até os 3 robôs caírem;
+  5. o robô dormente acorda ao se aproximar ou levar dano;
+  6. descansar em P3 faz Dante renascer lá;
+  7. o Túnel de Serviço só abre pelo lado de P4 e depois leva de volta a P1;
+  8. a chaminé de P4 é visível e não pode ser subida sem Wall Jump;
+  9. P2 continua sem dano e P6 pode ser subida de volta sem Wall Jump;
+  10. nenhum spawn sobre trigger (testes PlayMode adaptados).
+- **Lore:** os textos novos (grafite da resistência, registro de manutenção da Linha 7, registros de teste do protótipo de guerra, fragmento do Pai como recompensa do retorno de P4) continuam *(proposta)* e precisam de aprovação antes da implementação.
+
+### 5.7 Ataques Telegrafados, Perigos de Cenário e Kitty Farejando Segredos
+- **Chave:** `5-7-enemy-telegraphed-attacks-and-hazards`
+- **Pilar reforçado:** Combate legível, com telegrafia e padrões aprendíveis (§5.10), e Kitty como mecânica de exploração (§5.11).
+- **Objetivo:** Dar ameaça ativa aos inimigos e ao cenário:
+  - **Ataques telegrafados:** investida do Operário (antecipação de 0,5 s, dano 1) e arrancada curta do Batedor, ambas legíveis (pose e brilho antes do golpe). A interferência de Kitty cancela a antecipação.
+  - **`HazardVolume`:** dano 1 e volta ao último chão seguro (água eletrificada e vapor intermitente). Só na Zona 1; **nunca** no Prólogo.
+  - **Kitty reage perto de segredos:** olha ou mia ao lado de `SecretWallReveal` (GDD §5.1).
+- **Aceite no Unity:** No Play Mode:
+  1. Operário e Batedor mostram a antecipação antes de cada ataque, e o jogador consegue esquivar ou interromper com `R`;
+  2. cair no perigo tira 1 de vida e devolve Dante ao último chão seguro;
+  3. Kitty sinaliza a parede falsa ao passar perto.
+- **Dependência:** vem antes da 5.3, porque o boss reaproveita a telegrafia.
+
+### 5.8 Esgotos: Abrigo como Hub e Passagem em Camadas
+- **Chave:** `5-8-sewers-hub-expansion`
+- **Pilar reforçado:** Mundo interconectado (§5.2) e abrigos como pontos de ritmo (§5.6).
+- **Objetivo:** Expandir **Z1-01 Abrigo** em um hub de dois andares (descanso, recarga, Icarus, porta do Setor Selado visível e alçapão de chegada do atalho Z1-09 por cima) e **Z1-02 Passagem** em três camadas (64×24), com o vão de 8 até a Cisterna (gate de Dash visível) e um ponto alcançável só com Wall Jump, conforme a proposta §4.
+- **Aceite no Unity:** No Play Mode:
+  1. o Abrigo tem dois andares navegáveis, com o alçapão do atalho visível de baixo;
+  2. a Passagem tem três camadas com pelo menos uma rota alternativa;
+  3. o vão da Cisterna é visível e intransponível sem Dash;
+  4. o ponto de Wall Jump é visível e inalcançável sem a habilidade;
+  5. as ligações com o Prólogo e com a 5.5 continuam funcionando, sem spawn sobre trigger.
 
 ---
 

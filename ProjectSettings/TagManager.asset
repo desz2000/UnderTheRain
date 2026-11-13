@@ -15,10 +15,10 @@ TagManager:
   - 
   - Ground
   - OneWayPlatform
-  - 
-  - 
-  - 
-  - 
+  - PlayerHitbox
+  - PlayerHurtbox
+  - EnemyHitbox
+  - EnemyHurtbox
   - 
   - 
   - 

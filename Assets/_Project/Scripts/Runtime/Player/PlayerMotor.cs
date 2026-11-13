@@ -10,6 +10,7 @@ namespace UnderTheRain.Player
         public bool jumpReleased;
         public int wallContactDir; // -1 = left wall, 0 = none, +1 = right wall
         public bool wallJumpUnlocked;
+        public bool lockHorizontal;
     }
 
     /// <summary>
@@ -47,12 +48,12 @@ namespace UnderTheRain.Player
                 _wallCoyoteTimer = 0f;
             }
 
-            // Horizontal: lock steering briefly after a wall jump so Dante clears the wall.
+            // Horizontal: lock steering briefly after a wall jump or damage knockback.
             if (_wallJumpLockTimer > 0f)
             {
                 _wallJumpLockTimer = Mathf.Max(0f, _wallJumpLockTimer - dt);
             }
-            else
+            else if (!input.lockHorizontal)
             {
                 float target = Mathf.Clamp(input.moveX, -1f, 1f) * _config.maxRunSpeed;
                 bool braking = Mathf.Approximately(target, 0f) || Mathf.Sign(target) != Mathf.Sign(Velocity.x) && !Mathf.Approximately(Velocity.x, 0f);

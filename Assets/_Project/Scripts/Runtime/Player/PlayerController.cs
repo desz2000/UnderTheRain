@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using UnderTheRain.Combat;
 using UnderTheRain.Core.Input;
 
 namespace UnderTheRain.Player
@@ -15,6 +16,7 @@ namespace UnderTheRain.Player
         private const float CeilingProbeDistance = 0.05f;
         private const float WallProbeDistance = 0.06f;
         private const float CornerStep = 0.05f;
+        private const float DamageKnockbackLockTime = 0.16f;
 
         [SerializeField] private GameInputReader input;
         [SerializeField] private PlayerMovementConfigSO config;
@@ -25,18 +27,25 @@ namespace UnderTheRain.Player
 
         private Rigidbody2D _body;
         private Collider2D _collider;
+        private HealthComponent _health;
+        private SpriteRenderer _sprite;
         private PlayerMotor _motor;
         private bool _jumpPressed;
         private bool _jumpReleased;
         private Collider2D _groundCollider;
+        private Coroutine _invulnFlashRoutine;
+        private float _knockbackLockTimer;
 
         public PlayerLocomotionState State => _motor != null ? _motor.State : PlayerLocomotionState.Idle;
         public ref PlayerAbilitySet Abilities => ref abilities;
+        public int FacingDirection { get; private set; } = 1;
 
         private void Awake()
         {
             _body = GetComponent<Rigidbody2D>();
             _collider = GetComponent<Collider2D>();
+            _health = GetComponent<HealthComponent>();
+            _sprite = GetComponent<SpriteRenderer>();
             _body.gravityScale = 0f; // gravity is owned by PlayerMotor for tunable game feel
             _body.freezeRotation = true;
             _body.interpolation = RigidbodyInterpolation2D.Interpolate;
@@ -46,16 +55,64 @@ namespace UnderTheRain.Player
 
         private void OnEnable()
         {
-            if (input == null) return;
-            input.OnJumpPressed += HandleJumpPressed;
-            input.OnJumpReleased += HandleJumpReleased;
+            if (input != null)
+            {
+                input.OnJumpPressed += HandleJumpPressed;
+                input.OnJumpReleased += HandleJumpReleased;
+            }
+
+            if (_health != null)
+            {
+                _health.OnDamaged += HandleDamaged;
+            }
         }
 
         private void OnDisable()
         {
-            if (input == null) return;
-            input.OnJumpPressed -= HandleJumpPressed;
-            input.OnJumpReleased -= HandleJumpReleased;
+            if (input != null)
+            {
+                input.OnJumpPressed -= HandleJumpPressed;
+                input.OnJumpReleased -= HandleJumpReleased;
+            }
+
+            if (_health != null)
+            {
+                _health.OnDamaged -= HandleDamaged;
+            }
+        }
+
+        public void ApplyRecoil(Vector2 velocity, float lockDuration = 0f)
+        {
+            if (_body == null) return;
+            _body.linearVelocity = new Vector2(velocity.x, Mathf.Abs(velocity.y) > 0.01f ? velocity.y : _body.linearVelocity.y);
+            if (lockDuration > _knockbackLockTimer)
+            {
+                _knockbackLockTimer = lockDuration;
+            }
+        }
+
+        private void HandleDamaged(DamageContext ctx)
+        {
+            ApplyRecoil(ctx.knockback, DamageKnockbackLockTime);
+            if (_sprite != null)
+            {
+                if (_invulnFlashRoutine != null) StopCoroutine(_invulnFlashRoutine);
+                _invulnFlashRoutine = StartCoroutine(InvulnerabilityFlashRoutine());
+            }
+        }
+
+        private IEnumerator InvulnerabilityFlashRoutine()
+        {
+            Color baseColor = _sprite.color;
+            while (_health != null && _health.IsInvulnerable)
+            {
+                _sprite.color = new Color(baseColor.r, baseColor.g, baseColor.b, 0.35f);
+                yield return new WaitForSeconds(0.08f);
+                _sprite.color = baseColor;
+                yield return new WaitForSeconds(0.08f);
+            }
+            _sprite.color = baseColor;
+            _invulnFlashRoutine = null;
         }
 
         private void HandleJumpPressed()
@@ -70,6 +127,16 @@ namespace UnderTheRain.Player
         {
             if (_motor == null || input == null) return;
 
+            if (_knockbackLockTimer > 0f)
+            {
+                _knockbackLockTimer = Mathf.Max(0f, _knockbackLockTimer - Time.fixedDeltaTime);
+            }
+
+            if (Mathf.Abs(input.MoveInput.x) > 0.1f)
+            {
+                FacingDirection = input.MoveInput.x > 0f ? 1 : -1;
+            }
+
             bool grounded = CheckGround();
             int wallDir = grounded ? 0 : CheckWall();
             var frame = new PlayerMotorInput
@@ -79,7 +146,8 @@ namespace UnderTheRain.Player
                 jumpHeld = input.IsJumpHeld,
                 jumpReleased = _jumpReleased,
                 wallContactDir = wallDir,
-                wallJumpUnlocked = abilities.wallJump
+                wallJumpUnlocked = abilities.wallJump,
+                lockHorizontal = _knockbackLockTimer > 0f
             };
             _jumpPressed = false;
             _jumpReleased = false;

@@ -1,7 +1,7 @@
 ---
 story_id: '5-1-sewers-rooms-initial-shelter-and-icarus'
 epic: 'epic-5'
-status: review
+status: done
 created: 2026-11-13
 ---
 
@@ -52,4 +52,4 @@ Montar a zona de **Prólogo / Tutorial** numa estação de metrô abandonada no 
 - [x] `NarrativeTerminal`, `IcarusNpc`, `NarrativeGate`, `SewerRainAmbience` e `PlayerController.SetControlLocked`.
 - [x] `NarrativeProgressTests` (EditMode).
 - [x] `Act1SewersSetup` (Editor menu `UnderTheRain/Setup/Create Act 1 Sewers Scene`).
-- [ ] Gerar `Act1_Sewers.unity` no Editor e validar no Play Mode do Unity.
+- [x] Cenas geradas, EditMode 48/48, PlayMode 5/5 e validação manual no Play Mode aprovada pelo usuário (2026-11-13).

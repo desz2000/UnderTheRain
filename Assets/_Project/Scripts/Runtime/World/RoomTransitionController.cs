@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace UnderTheRain.World
 {
@@ -12,6 +13,7 @@ namespace UnderTheRain.World
     {
         [SerializeField] private ScreenFader screenFader;
         [SerializeField] private RoomCamera2D roomCamera;
+        [SerializeField] private RoomBounds initialRoom;
         [SerializeField] private float fadeDuration = 0.25f;
 
         private RoomBounds _currentRoom;
@@ -21,6 +23,14 @@ namespace UnderTheRain.World
         public RoomBounds CurrentRoom => _currentRoom;
 
         public event Action<RoomBounds> OnRoomChanged;
+
+        private void Start()
+        {
+            if (_currentRoom == null && initialRoom != null)
+            {
+                SetActiveRoomImmediate(initialRoom);
+            }
+        }
 
         public void Initialize(ScreenFader fader, RoomCamera2D cameraFollower, RoomBounds initialRoom = null)
         {
@@ -90,6 +100,24 @@ namespace UnderTheRain.World
             }
 
             _isTransitioning = false;
+        }
+
+        public void TransitionToScene(string sceneName)
+        {
+            if (_isTransitioning || string.IsNullOrEmpty(sceneName)) return;
+            StartCoroutine(SceneTransitionRoutine(sceneName));
+        }
+
+        private IEnumerator SceneTransitionRoutine(string sceneName)
+        {
+            _isTransitioning = true;
+
+            if (screenFader != null)
+            {
+                yield return screenFader.FadeOut(fadeDuration);
+            }
+
+            SceneManager.LoadScene(sceneName);
         }
     }
 }

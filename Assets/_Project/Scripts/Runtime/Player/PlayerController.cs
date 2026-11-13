@@ -35,10 +35,12 @@ namespace UnderTheRain.Player
         private Collider2D _groundCollider;
         private Coroutine _invulnFlashRoutine;
         private float _knockbackLockTimer;
+        private bool _controlLocked;
 
         public PlayerLocomotionState State => _motor != null ? _motor.State : PlayerLocomotionState.Idle;
         public ref PlayerAbilitySet Abilities => ref abilities;
         public int FacingDirection { get; private set; } = 1;
+        public bool IsControlLocked => _controlLocked;
 
         private void Awake()
         {
@@ -78,6 +80,16 @@ namespace UnderTheRain.Player
             if (_health != null)
             {
                 _health.OnDamaged -= HandleDamaged;
+            }
+        }
+
+        public void SetControlLocked(bool locked)
+        {
+            _controlLocked = locked;
+            if (locked)
+            {
+                _jumpPressed = false;
+                _jumpReleased = false;
             }
         }
 
@@ -132,7 +144,7 @@ namespace UnderTheRain.Player
                 _knockbackLockTimer = Mathf.Max(0f, _knockbackLockTimer - Time.fixedDeltaTime);
             }
 
-            if (Mathf.Abs(input.MoveInput.x) > 0.1f)
+            if (!_controlLocked && Mathf.Abs(input.MoveInput.x) > 0.1f)
             {
                 FacingDirection = input.MoveInput.x > 0f ? 1 : -1;
             }
@@ -141,13 +153,13 @@ namespace UnderTheRain.Player
             int wallDir = grounded ? 0 : CheckWall();
             var frame = new PlayerMotorInput
             {
-                moveX = input.MoveInput.x,
-                jumpPressed = _jumpPressed,
-                jumpHeld = input.IsJumpHeld,
-                jumpReleased = _jumpReleased,
+                moveX = _controlLocked ? 0f : input.MoveInput.x,
+                jumpPressed = !_controlLocked && _jumpPressed,
+                jumpHeld = !_controlLocked && input.IsJumpHeld,
+                jumpReleased = !_controlLocked && _jumpReleased,
                 wallContactDir = wallDir,
                 wallJumpUnlocked = abilities.wallJump,
-                lockHorizontal = _knockbackLockTimer > 0f
+                lockHorizontal = _controlLocked || _knockbackLockTimer > 0f
             };
             _jumpPressed = false;
             _jumpReleased = false;

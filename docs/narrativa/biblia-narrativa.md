@@ -16,7 +16,7 @@
 ## 2. Personagens Principais
 
 - **Dante (Protagonista, 30 anos):** Ex-desenvolvedor (tinha 20 anos na época da queda). Um combatente solitário e calejado. Ao descobrir documentos confidenciais sobre os crimes da antiga Domus Corp que a resistência nos esgotos preferia ignorar, ele é chamado de louco e parte sozinho por orgulho ferido e sede de verdade.
-- **O Gatinho de Metal:** Um gatinho branco robótico construído por Dante antes do colapso, isolado de qualquer rede. É o único animal mecânico funcional do mundo e atua como companheiro ativo. Embora tenha rede neural simples e mude a dinâmica ao fazer robôs inimigos hesitarem ou travarem diante dele, ele serve principalmente como o gatilho conceitual de afeto e individualidade.
+- **Kitty (A Gatinha de Metal):** Uma gatinha branca robótica construída por Dante antes do colapso, isolada de qualquer rede. É o único animal mecânico funcional do mundo e atua como companheira ativa. Embora tenha rede neural simples e mude a dinâmica ao fazer robôs inimigos hesitarem ou travarem diante dela, ela serve principalmente como o gatilho conceitual de afeto e individualidade.
 - **O Pai (55 anos):** Desenvolvedor brilhante da Domus Corp que tentou implantar o código de livre-arbítrio para libertar os robôs da exploração corporativa. O plano deu certo, mas as máquinas voltaram-se contra a humanidade ao presenciarem a crueldade humana. Sobreviveu dez anos escondido em um laboratório secreto, consumido pela culpa.
 
 ---

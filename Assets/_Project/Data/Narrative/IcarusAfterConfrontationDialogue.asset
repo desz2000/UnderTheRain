@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e34911543f3afc840847ab575f1d0587, type: 3}
+  m_Name: IcarusAfterConfrontationDialogue
+  m_EditorClassIdentifier: UnderTheRain.Runtime::UnderTheRain.Narrative.DialogueSequenceSO
+  lines:
+  - speakerName: ICARUS
+    speakerColor: {r: 0.88, g: 0.72, b: 0.42, a: 1}
+    text: "A comporta leste est\xE1 destravada. V\xE1 se matar l\xE1 em cima se quiser
+      \u2014 mas n\xE3o volte trazendo a colmeia atr\xE1s de voc\xEA."

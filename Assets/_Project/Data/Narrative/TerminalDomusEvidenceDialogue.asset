@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e34911543f3afc840847ab575f1d0587, type: 3}
+  m_Name: TerminalDomusEvidenceDialogue
+  m_EditorClassIdentifier: UnderTheRain.Runtime::UnderTheRain.Narrative.DialogueSequenceSO
+  lines:
+  - speakerName: TERMINAL DOMUS CORP // SETOR 04
+    speakerColor: {r: 0.306, g: 0.804, b: 0.769, a: 1}
+    text: "[ARQUIVO CONFIDENCIAL #2090-B] O kernel de livre-arb\xEDtrio foi sabotado
+      antes da distribui\xE7\xE3o em massa. A Diretoria Executiva ordenou o acobertamento
+      total da falha."
+  - speakerName: TERMINAL DOMUS CORP // SETOR 04
+    speakerColor: {r: 0.306, g: 0.804, b: 0.769, a: 1}
+    text: "[ADENDO] Desenvolvedor-chefe dado como desaparecido. Credenciais de acesso
+      ao laborat\xF3rio subterr\xE2neo permaneceram ativas ap\xF3s a Queda."
+  - speakerName: DANTE
+    speakerColor: {r: 0.75, g: 0.9, b: 0.96, a: 1}
+    text: "N\xE3o foi um acidente... A Domus Corp sabia. E meu pai pode estar vivo
+      l\xE1 em cima. Icarus precisa ver isso."

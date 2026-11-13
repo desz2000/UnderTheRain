@@ -18,6 +18,7 @@ namespace UnderTheRain.Editor
     {
         private const string MovementConfigPath = "Assets/_Project/Data/Abilities/PlayerMovementConfig.asset";
         private const string WeaponDataPath = "Assets/_Project/Data/Weapons/SimpleBaton.asset";
+        private const string ProjectilePrefabPath = "Assets/_Project/Prefabs/Player/BatteryProjectile.prefab";
         private const string ScenePath = "Assets/_Project/Scenes/Zones/CombatTestRoom.unity";
         private const string InputActionsPath = "Assets/InputSystem_Actions.inputactions";
         private const string SquareSpritePath = "Assets/_Project/Art/Sprites/WhiteSquare.png";
@@ -54,6 +55,7 @@ namespace UnderTheRain.Editor
             int eHurt = LayerMask.NameToLayer(EnemyHurtboxLayer);
 
             EnsureSimpleBatonAsset();
+            EnsureBatteryProjectilePrefab(pHit);
 
             var scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
             var sprite = AssetDatabase.LoadAssetAtPath<Sprite>(SquareSpritePath);
@@ -140,6 +142,25 @@ namespace UnderTheRain.Editor
             meleeSo.FindProperty("combatFeedback").objectReferenceValue = feedback;
             meleeSo.ApplyModifiedPropertiesWithoutUndo();
 
+            var battery = player.AddComponent<BatteryComponent>();
+            var medkit = player.AddComponent<MedkitComponent>();
+            var medkitSo = new SerializedObject(medkit);
+            medkitSo.FindProperty("input").objectReferenceValue = reader;
+            medkitSo.FindProperty("healthComponent").objectReferenceValue = playerHealth;
+            medkitSo.ApplyModifiedPropertiesWithoutUndo();
+
+            var ranged = player.AddComponent<PlayerRangedCombat>();
+            var rangedSo = new SerializedObject(ranged);
+            rangedSo.FindProperty("input").objectReferenceValue = reader;
+            rangedSo.FindProperty("playerController").objectReferenceValue = controller;
+            rangedSo.FindProperty("battery").objectReferenceValue = battery;
+            var projGo = AssetDatabase.LoadAssetAtPath<GameObject>(ProjectilePrefabPath);
+            rangedSo.FindProperty("projectilePrefab").objectReferenceValue = projGo != null ? projGo.GetComponent<BatteryProjectile>() : null;
+            rangedSo.FindProperty("solidMask").intValue = 1 << ground;
+            rangedSo.ApplyModifiedPropertiesWithoutUndo();
+
+            player.AddComponent<DebugCombatHud>();
+
             var camSo = new SerializedObject(roomCam);
             camSo.FindProperty("target").objectReferenceValue = player.transform;
             camSo.ApplyModifiedPropertiesWithoutUndo();
@@ -184,6 +205,23 @@ namespace UnderTheRain.Editor
             hSo.FindProperty("alwaysActive").boolValue = true;
             hSo.ApplyModifiedPropertiesWithoutUndo();
 
+            // Battery Cell Pickups
+            CreateBatteryCell("BatteryCell_1", sprite, new Vector2(2f, 0.5f));
+            CreateBatteryCell("BatteryCell_2", sprite, new Vector2(-2.5f, 0.5f));
+
+            // Shelter Rest Spot (center-left)
+            var shelter = new GameObject("ShelterRestSpot");
+            shelter.transform.position = new Vector3(-9f, 1f, 0f);
+            shelter.transform.localScale = new Vector3(1.6f, 2.2f, 1f);
+            var shSr = shelter.AddComponent<SpriteRenderer>();
+            shSr.sprite = sprite;
+            shSr.color = new Color(0.25f, 0.78f, 0.52f, 0.55f);
+            shelter.AddComponent<BoxCollider2D>().isTrigger = true;
+            var restSpot = shelter.AddComponent<ShelterRestSpot>();
+            var restSo = new SerializedObject(restSpot);
+            restSo.FindProperty("input").objectReferenceValue = reader;
+            restSo.ApplyModifiedPropertiesWithoutUndo();
+
             Directory.CreateDirectory(Path.GetDirectoryName(ScenePath));
             EditorSceneManager.SaveScene(scene, ScenePath);
             AssetDatabase.SaveAssets();
@@ -198,6 +236,40 @@ namespace UnderTheRain.Editor
             AssetDatabase.CreateAsset(baton, WeaponDataPath);
             AssetDatabase.SaveAssets();
             AssetDatabase.ImportAsset(WeaponDataPath);
+        }
+
+        private static BatteryProjectile EnsureBatteryProjectilePrefab(int playerHitboxLayer)
+        {
+            var existing = AssetDatabase.LoadAssetAtPath<BatteryProjectile>(ProjectilePrefabPath);
+            if (existing != null) return existing;
+
+            Directory.CreateDirectory(Path.GetDirectoryName(ProjectilePrefabPath));
+            var sprite = AssetDatabase.LoadAssetAtPath<Sprite>(SquareSpritePath);
+            var go = new GameObject("BatteryProjectile") { layer = playerHitboxLayer };
+            go.transform.localScale = new Vector3(0.45f, 0.18f, 1f);
+            var sr = go.AddComponent<SpriteRenderer>();
+            sr.sprite = sprite;
+            sr.color = new Color(0.306f, 0.804f, 0.769f, 1f); // #4ECDC4
+            var col = go.AddComponent<BoxCollider2D>();
+            col.isTrigger = true;
+            go.AddComponent<BatteryProjectile>();
+
+            var prefab = PrefabUtility.SaveAsPrefabAsset(go, ProjectilePrefabPath);
+            Object.DestroyImmediate(go);
+            AssetDatabase.SaveAssets();
+            return prefab.GetComponent<BatteryProjectile>();
+        }
+
+        private static void CreateBatteryCell(string name, Sprite sprite, Vector2 pos)
+        {
+            var go = new GameObject(name);
+            go.transform.position = pos;
+            go.transform.localScale = new Vector3(0.4f, 0.4f, 1f);
+            var sr = go.AddComponent<SpriteRenderer>();
+            sr.sprite = sprite;
+            sr.color = new Color(0.306f, 0.804f, 0.769f, 1f);
+            go.AddComponent<BoxCollider2D>().isTrigger = true;
+            go.AddComponent<BatteryCellPickup>();
         }
 
         private static void ConfigureCombatCollisionMatrix()

@@ -122,8 +122,8 @@ sources:
 ## Épico 6 — UI/UX Diegética *(Pós-Vertical Slice)*
 
 ### 6.1 HUD Minimalista Sem Caixas (`uGUI` Pixel-Art)
-- **Objetivo:** Implementar a HUD conforme `DESIGN.md` (células de vida pixel-art, barra fina de bateria em `#4ECDC4`, contadores de kits e peças `atual/máx`, cooldown do gato e arma equipada), sem painéis/caixas.
-- **Aceite no Unity:** No Play Mode, sofrer dano, gastar bateria, usar kit, coletar peças e acionar o gato atualizam imediatamente os respectivos elementos da HUD em 1080p.
+- **Objetivo:** Implementar a HUD conforme `DESIGN.md` (células de vida pixel-art, barra fina de bateria em `#4ECDC4`, contadores de kits e peças `atual/máx`, cooldown de Kitty e arma equipada), sem painéis/caixas.
+- **Aceite no Unity:** No Play Mode, sofrer dano, gastar bateria, usar kit, coletar peças e acionar Kitty atualizam imediatamente os respectivos elementos da HUD em 1080p.
 
 ### 6.2 Inventário em 3 Abas e Tela do Mapa Criptografado
 - **Objetivo:** Implementar o menu de Inventário (botão dedicado) com abas **Mapa Criptografado**, **Arsenal & Acoplamentos** e **Registros & Documentos** (texto + legenda de áudio).

@@ -31,7 +31,7 @@ design_ref: 'DESIGN.md'
   6. **Arma Selecionada** (ícone compacto).
 - **Diegético no Mundo:**
   - Prompts contextuais pequenos acima de NPCs, terminais, portas e máquina de teletransporte.
-  - Feedback visual/sonoro no próprio robô quando o gato causa hesitação (faísca/glifo de erro acima do inimigo).
+  - Feedback visual/sonoro no próprio robô quando Kitty causa hesitação (faísca/glifo de erro acima do inimigo).
   - Mochila de peças caída no local da morte com brilho discreto na chuva.
 
 ## 4. Abrigos e Máquina de Teletransporte

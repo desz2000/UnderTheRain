@@ -15,8 +15,8 @@ development_status:
   1-3-room-transition-fade-and-camera-confiner: done
   epic-1-retrospective: done
 
-  epic-2: backlog
-  2-1-base-locomotion-and-responsive-jump: backlog
+  epic-2: in-progress
+  2-1-base-locomotion-and-responsive-jump: done
   2-2-wall-slide-and-wall-jump: backlog
   epic-2-retrospective: optional
 

@@ -36,7 +36,7 @@ sources:
 ## Épico 2 — Movimentação Metroidvania *(Vertical Slice)*
 
 ### 2.1 Locomoção Base e Pulo Responsivo (`PlayerMovementConfigSO`)
-- **Objetivo:** Implementar `PlayerStateMachine` com corrida (`~0.08s` aceleração / `~0.06s` parada), pulo variável, *coyote time* (`~100ms`), *input buffering* (`~120ms`), *corner correction* e *drop-through* em plataformas finas.
+- **Objetivo:** Implementar `PlayerStateMachine` com corrida (`~0.08s` aceleração / `~0.06s` parada), pulo variável, *coyote time* (`~40ms`, ajustado em playtest), *input buffering* (`~120ms`), *corner correction* e *drop-through* em plataformas finas.
 - **Aceite no Unity:** No Play Mode em uma sala de teste de plataformas, Dante para sem deslizar, varia a altura do salto pelo tempo de pressão, consegue pular logo após sair de uma borda (*coyote*) e enfileirar pulo antes de tocar o chão (*buffer*).
 
 ### 2.2 Wall Slide & Wall Jump *(1ª Habilidade Desbloqueável)*

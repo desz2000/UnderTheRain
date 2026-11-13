@@ -52,7 +52,7 @@ Explorar zonas verticais interconectadas → enfrentar inimigos (lâmina/bastão
 - **Fonte dos valores:** `Assets/_Project/Data/Abilities/PlayerMovementConfig.asset` (`PlayerMovementConfigSO`).
 
 ### 3.2 Habilidades de Mobilidade Desbloqueáveis (4 no jogo completo)
-1. **Wall Slide & Wall Jump *(1ª habilidade — Vertical Slice Ato I)*:** deslizar em paredes verticais com atrito controlado (velocidade máx. de deslize **3,5**) e saltar entre paredes (velocidade **(6,5; 14)**, trava de input **0,05 s**, *wall coyote* **0,08 s**; ajuste estilo *Hollow Knight*). Obtido na **Oficina (Z1-06)**, no fim da Zona 1 (luvas de tração *(origem: proposta)*). Sustenta a subida dos esgotos para a superfície e salas verticais.
+1. **Wall Slide & Wall Jump *(1ª habilidade — Vertical Slice Ato I)*:** deslizar em paredes verticais com atrito controlado (velocidade máx. de deslize **3,5**) e saltar entre paredes (velocidade **(6,5; 14)**, trava de input **0,05 s**, *wall coyote* **0,08 s**; ajuste estilo *Hollow Knight*). Obtido na **Oficina (Z1-06)**, no fim da Zona 1 (luvas de tração). Sustenta a subida dos esgotos para a superfície e salas verticais.
 2. **Dash Tático:** impulso horizontal rápido com curto cooldown e janela breve de esquiva; abre vãos largos e reposiciona no combate.
 3. **Propulsor Aéreo (Pulo Duplo):** salto adicional no ar para alcance vertical extra e extensão de combate aéreo.
 4. **Gancho Magnético:** projétil/ancoragem em pontos metálicos elevados para travessias longas e verticais nas zonas da Cidade Alta e torres da Domus Corp.
@@ -121,12 +121,12 @@ Cada zona é composta por diversas salas interconectadas para exploração livre
 |---|---|---|
 | **Kitty (Dutos / Terminais)** | Dutos estreitos e painéis offline | Prólogo (P4), Esgotos (Z1-04) e portas de serviço |
 | **Wall Slide & Wall Jump *(1ª)*** | Poços verticais, chaminés, nichos e paredes paralelas | Esgotos (Z1-07, Z1-08) → superfície e torres |
-| **Dash Tático** *(proposta)* | Vãos largos e corredores com lasers/armadilhas | Superfície (Lasers, rota alternativa ao DC 1) e Cidade Alta |
-| **Bastão Eletrificado** *(proposta)* | Fusíveis/bobinas descarregadas, escudos leves e portas sem energia | Data centers, rotas secretas e o Setor Selado (Z1-11) |
-| **Propulsor Aéreo (Pulo Duplo)** *(proposta)* | Plataformas isoladas sem parede de apoio | Cidade Alta (Telhados) e Laboratório (Antecâmara) |
-| **Gancho Magnético** *(proposta)* | Pontos de ancoragem metálicos em altura | Torres da Domus Corp e telhados altos |
+| **Dash Tático** | Vãos largos e corredores com lasers/armadilhas | Superfície (Lasers, rota alternativa ao DC 1) e Cidade Alta |
+| **Bastão Eletrificado** | Fusíveis/bobinas descarregadas, escudos leves e portas sem energia | Data centers, rotas secretas e o Setor Selado (Z1-11) |
+| **Propulsor Aéreo (Pulo Duplo)** | Plataformas isoladas sem parede de apoio | Cidade Alta (Telhados) e Laboratório (Antecâmara) |
+| **Gancho Magnético** | Pontos de ancoragem metálicos em altura | Torres da Domus Corp e telhados altos |
 
-> A tabela ampliada, com onde cada chave é obtida e o tipo de gate, está em [level-map.md](level-map.md) §5. As distribuições marcadas *(proposta)* aguardam aprovação.
+> A tabela ampliada, com onde cada chave é obtida e o tipo de gate, está em [level-map.md](level-map.md) §5. Distribuição aprovada em 2026-11-13.
 
 ### 6.3 Abrigos, Mapa e Teletransporte
 - **Abrigos (Postos da Resistência / Sobreviventes):** pontos de save, despertar pós-morte, recarga completa (vida/bateria/kits), fabricação/loja com peças e diálogos com NPCs.

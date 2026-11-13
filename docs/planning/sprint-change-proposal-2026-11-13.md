@@ -72,7 +72,7 @@ Durante a História 5.1 o design do mapa do Ato I mudou:
 - **Responsável:** Developer (este agente) aplica as edições. Depois, rodar `gds-create-story` para a **5.4**.
 - **Critério de sucesso:** `gds-sprint-planning` lista 5.4 e 5.5; `level-map.md` é carregado pelo `create-story`; nenhum documento contradiz os assets.
 
-## 6. Mudança proposta para a bíblia (aguarda aprovação)
+## 6. Mudança na bíblia (aprovada e aplicada em 2026-11-13)
 
 Adicionar à §7 (Decisões Adicionais):
 

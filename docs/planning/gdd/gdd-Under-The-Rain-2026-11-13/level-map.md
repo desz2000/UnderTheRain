@@ -13,7 +13,7 @@ sources:
 
 > Mapa macro das zonas, grafo de salas do **Prólogo (Zona 0)** e da **Zona 1 (Esgotos)** e a tabela chave × fechadura ampliada. Complementa o [GDD](gdd.md) §6.
 >
-> **Legenda:** itens marcados *(proposta)* ainda precisam de aprovação do usuário (`project-context.md`, regra 6). A estrutura interna de cada sala (layout, plataformas, inimigos) fica a cargo do level design, dentro do escopo descrito aqui.
+> **Status:** todo o conteúdo deste mapa foi aprovado pelo usuário em 2026-11-13. A estrutura interna de cada sala (layout, plataformas, inimigos) fica a cargo do level design, dentro do escopo descrito aqui.
 >
 > **IDs de sala** = `RoomBounds.RoomId` no código. Salas já construídas mantêm seus IDs.
 
@@ -38,14 +38,14 @@ sources:
 |---|---|---|---|---|
 | **0** | Prólogo — Estação de Metrô Abandonada | I | Em construção (Épico 5) | `Prologue_Ruins` |
 | **1** | Esgotos — Base da Resistência | I | Em construção (Épico 5) | `Act1_Sewers` |
-| 2 | Superfície | I → II | *(proposta)* | — |
-| 3 | Cidade Alta | II | *(proposta)* | — |
-| 4 | Laboratório do Pai | II (ponto médio) | *(proposta)* | — |
-| 5 | Torre Central da Domus Corp | III | *(proposta)* | — |
+| 2 | Superfície | I → II | Aprovado (Épicos 7–8) | — |
+| 3 | Cidade Alta | II | Aprovado (Épicos 7–8) | — |
+| 4 | Laboratório do Pai | II (ponto médio) | Aprovado (Épicos 7–8) | — |
+| 5 | Torre Central da Domus Corp | III | Aprovado (Épicos 7–8) | — |
 
 A Zona 0 fica **fora** das 5 macrozonas do GDD. Ela é um tutorial de ~20–35 min, sem chuva (subsolo da cidade). A garoa só aparece na Zona 2.
 
-### Zonas 2–5 em nível de zona *(proposta)*
+### Zonas 2–5 em nível de zona
 
 - **Z2 Superfície:** Transição (robô batedor + anomalia de Kitty) · Ruas (hub alagado) · Boss 1 — Humano Misantropo (rende o Mapa Criptografado) · Posto (abrigo; Dash) · Lasers (gate de Dash) · Data Center 1 (Boss 2; Bastão Eletrificado).
 - **Z3 Cidade Alta:** Entrada (abrigo) · Distrito (hub neon) · Telhados (gate de Pulo Duplo) · Data Center 2 (Boss 3, Kaelen) · Ala de Pesquisa (opcional; Pulo Duplo).
@@ -71,11 +71,11 @@ Estação de metrô desativada no subsolo. Atrás dela fica um **laboratório ab
 | # | Sala | ID | Ensina / contém | Status |
 |---|---|---|---|---|
 | P1 | Plataforma do Metrô | `prologue_metro_platform` | mover, pular, entulho de plataforma | **Existe** (5.1) — hoje também tem um duto provisório de Kitty, que vai para P4 na 5.4 |
-| P2 | Vão | `prologue_gap` | pulo variável, coyote e buffer, sem dano *(proposta)* | História 5.4 |
-| P3 | Entulho | `prologue_debris` | bastão contra 1 Operário; célula de bateria + disparo *(proposta)* | História 5.4 |
-| P4 | Duto de Kitty | `prologue_duct` | Kitty atravessa o duto e abre a passagem (intro de `CatExploration`) *(proposta)* | História 5.4 |
+| P2 | Vão | `prologue_gap` | pulo variável, coyote e buffer, sem dano | História 5.4 |
+| P3 | Entulho | `prologue_debris` | bastão contra 1 Operário; célula de bateria + disparo | História 5.4 |
+| P4 | Duto de Kitty | `prologue_duct` | Kitty atravessa o duto e abre a passagem (intro de `CatExploration`) | História 5.4 |
 | P5 | Laboratório Escondido | `prologue_hidden_lab` | robô batedor + interferência de Kitty (`R`) + Terminal da Domus | **Existe** (5.1) |
-| P6 | Descida | `prologue_descent` | descida rumo aos esgotos → Abrigo Z1-01 *(proposta)* | História 5.4 |
+| P6 | Descida | `prologue_descent` | descida rumo aos esgotos → Abrigo Z1-01 | História 5.4 |
 
 ```mermaid
 flowchart LR
@@ -102,24 +102,24 @@ A Zona 1 é a **base da resistência**. Pelo backtracking típico do metroidvani
 | Z1-03 | Galeria | `sewers_gallery` | opcional: combate com grupo de Operários; peças/bateria | 5.5 |
 | Z1-04 | Duto | `sewers_duct` | **salto de sala:** Kitty abre a porta; única rota até a Base | 5.5 |
 | Z1-05 | Base do Poço | `sewers_shaft_base` | gate legível: o poço e a luz no topo são visíveis | 5.2 |
-| Z1-06 | Oficina | `sewers_workshop` | Dante ganha o **Wall Jump** (luvas de tração *(origem: proposta)*); treino seguro | 5.2 |
+| Z1-06 | Oficina | `sewers_workshop` | Dante ganha o **Wall Jump** (luvas de tração); treino seguro | 5.2 |
 | Z1-07 | Poço | `sewers_shaft` | **gate de progressão:** Wall Jump | 5.2 |
-| Z1-08 | Nicho | `sewers_alcove` | **coletável:** célula de bateria, gate suave de precisão *(proposta)* | 5.2 |
+| Z1-08 | Nicho | `sewers_alcove` | **coletável:** célula de bateria, gate suave de precisão | 5.2 |
 | Z1-09 | Topo | `sewers_shaft_top` | **retorno recompensado:** atalho unilateral Topo → Abrigo | 5.2 |
 | Z1-10 | Saída | `sewers_exit` | transição para a Superfície (Zona 2) | 5.2 |
 | Z1-11 | Setor Selado | `sewers_sealed_sector` | só a porta no slice ("sem energia"); sala jogável no Épico 8 (Protótipo Mark-0) — **gate de retorno**: Bastão Eletrificado | Porta: 5.5 · Sala: Épico 8 |
-| Z1-12 | Mercado da Base *(proposta)* | `sewers_base_market` | anexo do Abrigo: mercadores e estação de recarga de bateria; os painéis de NPC chegam no Épico 6.3 | 5.5 *(proposta)* |
-| Z1-13 | Cisterna Alagada *(proposta)* | `sewers_flooded_cistern` | opcional, ramificação da Passagem; **gate de retorno**: Dash (obtido na Z2) guardando uma expansão de mochila | Porta/vista: 5.5 · Conteúdo: Épico 7 *(proposta)* |
+| Z1-12 | Mercado da Base | `sewers_base_market` | anexo do Abrigo: mercadores e estação de recarga de bateria; os painéis de NPC chegam no Épico 6.3 | 5.5 |
+| Z1-13 | Cisterna Alagada | `sewers_flooded_cistern` | opcional, ramificação da Passagem; **gate de retorno**: Dash (obtido na Z2) guardando uma expansão de mochila | Porta/vista: 5.5 · Conteúdo: Épico 7 |
 
-> Z1-12 e Z1-13 são sugestões para completar as 13 salas. O agente de level design tem liberdade para redefinir as duas, desde que mantenha o papel da Zona 1 como base da resistência e respeite a taxonomia de gates.
+> Z1-12 e Z1-13 completam as 13 salas (aprovadas). O agente de level design tem liberdade para detalhar o layout das duas, desde que mantenha o papel da Zona 1 como base da resistência e respeite a taxonomia de gates.
 
 ```mermaid
 flowchart BT
   P6["P6 Descida (Prólogo)"] --> shelter
   shelter["Z1-01 Abrigo (Icarus)"] -->|"gate de história"| passage["Z1-02 Passagem"]
-  shelter --- market["Z1-12 Mercado da Base (proposta)"]
+  shelter --- market["Z1-12 Mercado da Base"]
   passage --> gallery["Z1-03 Galeria (opcional)"]
-  passage -. "gate: Dash (retorno, proposta)" .-> cistern["Z1-13 Cisterna Alagada (proposta)"]
+  passage -. "gate: Dash (retorno)" .-> cistern["Z1-13 Cisterna Alagada"]
   passage -->|"gate: Kitty"| duct["Z1-04 Duto"]
   duct --> base["Z1-05 Base do Poço"]
   base --> workshop["Z1-06 Oficina (ganha Wall Jump)"]
@@ -141,7 +141,7 @@ flowchart BT
 | **Kitty — duto/terminal** | Desde o Prólogo (P4) | Dutos estreitos, painéis offline | Salto de sala, coletável | P4, Z1-04; portas de serviço nas zonas 2–5 |
 | **Kitty — interferência** | Desde o Prólogo (P5) | Robôs da colmeia (combate) | — (ferramenta de combate) | Todas as zonas; ignorada por Misantropos |
 | **Wall Slide & Wall Jump** | Z1-06 Oficina | Poços verticais, chaminés, paredes paralelas, nichos | Progressão, coletável, retorno | Z1-07, Z1-08; chaminés nas zonas 2–5 |
-| **Dash Tático** *(proposta)* | Z2 Posto | Vãos largos, corredores com lasers | Progressão, retorno | Z2 Lasers, rota alternativa ao DC 1, Z1-13 *(proposta)* |
-| **Bastão Eletrificado** *(proposta)* | Z2 Data Center 1 (Boss 2) | Fusíveis/bobinas descarregadas, escudos leves, portas sem energia | Retorno, salto de sala | Z1-11 Setor Selado, rotas secretas |
-| **Propulsor Aéreo (Pulo Duplo)** *(proposta)* | Z3 (Boss 3 / Ala de Pesquisa) | Plataformas isoladas sem parede de apoio | Progressão, coletável | Z3 Telhados, Z4 Antecâmara |
-| **Gancho Magnético** *(proposta)* | Z4/Z5 | Pontos de ancoragem metálicos em altura | Progressão | Z5 Eixo, telhados altos e torres |
+| **Dash Tático** | Z2 Posto | Vãos largos, corredores com lasers | Progressão, retorno | Z2 Lasers, rota alternativa ao DC 1, Z1-13 |
+| **Bastão Eletrificado** | Z2 Data Center 1 (Boss 2) | Fusíveis/bobinas descarregadas, escudos leves, portas sem energia | Retorno, salto de sala | Z1-11 Setor Selado, rotas secretas |
+| **Propulsor Aéreo (Pulo Duplo)** | Z3 (Boss 3 / Ala de Pesquisa) | Plataformas isoladas sem parede de apoio | Progressão, coletável | Z3 Telhados, Z4 Antecâmara |
+| **Gancho Magnético** | Z4/Z5 | Pontos de ancoragem metálicos em altura | Progressão | Z5 Eixo, telhados altos e torres |

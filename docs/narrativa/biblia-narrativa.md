@@ -32,7 +32,7 @@
 ## 4. O Roteiro do Ato I: A Fagulha na Garoa
 
 1. **Abertura:** Dante vive nos esgotos úmidos e escuros, acompanhado de seu gatinho de metal. A atmosfera é melancólica, com o som abafado da garoa constante.
-2. **O Incidente Incitante:** Dante confronta o líder da resistência nos esgotos com documentos provando que o colapso foi acobertado e que o pai pode estar vivo. O líder se recusa a investigar, o chama de louco e o ameaça.
+2. **O Incidente Incitante:** Dante encontra as provas no laboratório escondido atrás da estação de metrô (Prólogo) e confronta o líder da resistência nos esgotos com documentos provando que o colapso foi acobertado e que o pai pode estar vivo. O líder se recusa a investigar, o chama de louco e o ameaça.
 3. **A Ruptura:** Sentindo-se traído, Dante abandona os esgotos como um lobo solitário, subindo para as ruínas da superfície.
 4. **O Primeiro Desafio:** Na transição para a superfície, o gato causa um curto-circuito momentâneo em um robô batedor. Logo em seguida, Dante enfrenta seu primeiro **Humano Misantropo** (inimigo de facção humana).
 5. **A Saída:** Com um mapa criptografado obtido do inimigo, Dante olha para as torres da Domus Corp envoltas em neblina e dá o primeiro passo rumo às entranhas da cidade alta.
@@ -93,4 +93,5 @@
 - **O gato não entende seu papel:** Sua rede neural é mais simples. O protagonista é quem percebe, ao longo do jogo, que ele quebra o padrão da mente coletiva (os robôs estranham e travam diante dele).
 - **O Pai:** É encontrado do meio para o final do jogo, com vestígios dele espalhados no caminho até o esconderijo.
 - **Boss final:** Usa o que o jogador aprendeu ao longo do jogo.
+- **Prólogo na estação de metrô (aprovado em 2026-11-13):** O Prólogo/Tutorial acontece no subsolo da cidade, sem chuva, numa estação de metrô desativada. Atrás dela há um laboratório abandonado da Domus Corp onde se testava um novo modelo de robô de guerra que não foi adiante. Ali Dante encontra o terminal com as provas do acobertamento. Kitty já acompanha Dante desde o início. A garoa só aparece quando Dante chega à superfície.
 - **Escopo:** Este documento cobre a narrativa e as referências de jogabilidade. O game design detalhado (sistemas, progressão, balanceamento) ainda será definido no GDD.

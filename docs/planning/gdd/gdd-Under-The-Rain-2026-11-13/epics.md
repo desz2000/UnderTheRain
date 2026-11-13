@@ -1,5 +1,7 @@
 # Épicos de Desenvolvimento — Under The Rain
 
+> ⚠️ **Substituído (2026-11-13):** este resumo está desatualizado (valores e escopo do Épico 5 antigos). A fonte da verdade é [docs/planning/epics.md](../../epics.md), lida pelos workflows BMAD (`gds-create-story`, `gds-sprint-planning`). Este arquivo foi mantido apenas como histórico.
+
 > Derivado do [GDD](gdd.md) e alinhado ao [plano-implementacao-bmad.md](../../../../plano-implementacao-bmad.md). Os Épicos **1 a 5** entregam o **Vertical Slice do Ato I** antes da expansão para o jogo completo.
 
 ---

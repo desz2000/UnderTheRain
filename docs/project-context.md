@@ -228,5 +228,10 @@ Provar **um ciclo completo do loop central**, com polimento de jogo real:
 16b. Teleportes para outra sala (respawn, troca de cena) precisam **ativar a sala de destino** (`RoomTransitionController.RespawnRoutine` / `FindRoomContaining`). Salas inativas não têm colisão, e `Collider2D.bounds` vem vazio nelas (use `RoomBounds.ContainsPoint`).
 16c. Atalhos abertos por Kitty usam `CatExplorationPoint.persistentId` para continuar abertos quando a cena é recarregada na mesma sessão, até o save do Épico 8.
 
+**Salas grandes (5.6)**
+18. Construa as salas em **coordenadas locais** (origem = linha do chão principal) com os helpers do `PrologueRuinsSetup` (`Rect`, `OneWay`, `WallWithDoors`, `LinkDoor`, `KittyPoint`, `SecretWall`, `CreateArena`). Toda porta exige um vão real na parede, e o chão vai até a borda da sala embaixo de cada porta.
+19. Estado de sessão (até o save do Épico 8) usa `persistentId` + `HashSet` estático zerado em `SubsystemRegistration`: atalhos de Kitty, segredos, arenas limpas e upgrades (`PlayerUpgradeSession`, reaplicado por `PlayerUpgradeApplier` em cada cena).
+20. Robôs dormentes (`startDormant`) não patrulham nem causam dano de contato até acordarem (proximidade, dano ou `ArenaEncounter`). A arena aborta (reabre as travas) quando Dante morre, para nunca trancar o caminho.
+
 **Visual**
 17. Partículas no URP 2D precisam de um material válido (`Sprites/Default`) para não renderizarem rosa. A chuva (`SewerRainAmbience`) fica só nas áreas a céu aberto (superfície). Prólogo e Esgotos são secos.

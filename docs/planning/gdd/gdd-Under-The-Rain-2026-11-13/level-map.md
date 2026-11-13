@@ -87,6 +87,8 @@ flowchart LR
   P6 --> Z101["Z1-01 Abrigo"]
 ```
 
+> **Implementado (5.6, escala):** P1 48×16 · P2 56×16 · P3 60×18 · P4 44×20 · P5 64×22 · P6 28×44, mais `prologue_lab_archive` (P5a, acima de P6) e `prologue_service_tunnel` (atalho de mão única P4 → P1). Layout detalhado em [level-design-proposal-zone0-zone1.md](level-design-proposal-zone0-zone1.md) §3 e na história 5.6.
+>
 > **Implementado (5.4):** P1 → P2 → P3 → P4 → P5 → P6 → Z1-01, com saídas nos dois sentidos. A volta do Abrigo chega no fundo de P6.
 
 ---

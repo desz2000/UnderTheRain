@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fcbd3de46ccd40d488584e78b603740a, type: 3}
+  m_Name: FatherSketch01
+  m_EditorClassIdentifier: UnderTheRain.Runtime::UnderTheRain.Narrative.DocumentDataSO
+  documentId: doc_father_sketch_01
+  title: "Rabisco t\xE9cnico (\xE0 m\xE3o)"
+  author: "\u2014"
+  bodyText: "Esquema de um circuito de isolamento desenhado \xE0 m\xE3o, cheio de
+    setas e corre\xE7\xF5es apressadas."

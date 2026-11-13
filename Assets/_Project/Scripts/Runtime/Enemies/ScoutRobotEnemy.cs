@@ -47,12 +47,14 @@ namespace UnderTheRain.Enemies
         {
             if (contactHitbox == null) return;
 
-            bool shouldHurt = !_patrol.IsHesitating && !_health.IsDead;
+            // Dormant (powered-down) and hesitating robots do not hurt on contact.
+            bool shouldHurt = !_patrol.IsHesitating && !_patrol.IsDormant && !_health.IsDead;
             if (contactHitbox.activeSelf != shouldHurt) contactHitbox.SetActive(shouldHurt);
         }
 
         private void HandleDamaged(DamageContext ctx)
         {
+            _patrol.Wake();
             if (bodyRenderer == null) return;
 
             if (_flashRoutine != null) StopCoroutine(_flashRoutine);

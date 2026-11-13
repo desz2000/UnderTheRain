@@ -34,6 +34,17 @@ namespace UnderTheRain.Editor
             public Color color;
             public Vector2 scale;
             public int partsDrop;
+            public bool startDormant;
+            public float wakeRadius;
+
+            /// <summary>Same robot, but powered down until Dante comes within <paramref name="radius"/> (0 = only damage/arena wakes it).</summary>
+            public RobotSpec AsDormant(float radius)
+            {
+                var copy = this;
+                copy.startDormant = true;
+                copy.wakeRadius = radius;
+                return copy;
+            }
         }
 
         /// <summary>Agile scout (Act I): 4 HP, fast patrol.</summary>
@@ -54,7 +65,8 @@ namespace UnderTheRain.Editor
         public static readonly RobotSpec DormantScout = new RobotSpec
         {
             health = 2, patrolSpeed = 0.5f, patrolHalfWidth = 0.2f,
-            color = new Color(0.33f, 0.45f, 0.55f, 1f), scale = new Vector2(0.9f, 1.2f), partsDrop = 10
+            color = new Color(0.33f, 0.45f, 0.55f, 1f), scale = new Vector2(0.9f, 1.2f), partsDrop = 10,
+            startDormant = true, wakeRadius = 0f
         };
 
         public static GameObject CreateScoutRobot(string name, Transform parent, Sprite sprite, Vector2 worldPos)
@@ -100,6 +112,8 @@ namespace UnderTheRain.Editor
             patrolSo.FindProperty("bodyRenderer").objectReferenceValue = sr;
             patrolSo.FindProperty("patrolSpeed").floatValue = spec.patrolSpeed;
             patrolSo.FindProperty("patrolHalfWidth").floatValue = spec.patrolHalfWidth;
+            patrolSo.FindProperty("startDormant").boolValue = spec.startDormant;
+            patrolSo.FindProperty("wakeRadius").floatValue = spec.wakeRadius;
             patrolSo.ApplyModifiedPropertiesWithoutUndo();
 
             // Hurtbox (receives melee and battery shots)

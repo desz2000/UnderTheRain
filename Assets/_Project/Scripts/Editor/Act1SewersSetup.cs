@@ -398,6 +398,7 @@ namespace UnderTheRain.Editor
             rangedSo.FindProperty("solidMask").intValue = 1 << ground;
             rangedSo.ApplyModifiedPropertiesWithoutUndo();
 
+            player.AddComponent<PlayerUpgradeApplier>();
             player.AddComponent<DebugCombatHud>();
             return player;
         }

@@ -36,8 +36,9 @@ _Este arquivo contém o contexto persistente, a stack, as convenções técnicas
 ## 2. Technology Stack & Versions
 
 - **Engine:** Unity `6000.3.1f1` (2D, Universal Render Pipeline / URP 2D).
-- **Input:** Unity Input System (`Assets/InputSystem_Actions.inputactions` presente no projeto base).
-- **Testes:** Unity Test Framework (EditMode para lógica pura; PlayMode para comportamento e critérios de aceite).
+- **Input:** Unity Input System (`Assets/InputSystem_Actions.inputactions` presente no projeto base). `GameInputReader` clona o asset em runtime (`Instantiate(inputActions)`) e `InputDeviceTracker` detecta Teclado/Mouse vs. Gamepad.
+- **Câmera e Salas:** `RoomCamera2D` (confinamento ortográfico aos `RoomBounds`) + `ScreenFader` + `RoomTransitionController` em `Assets/_Project/Scenes/Core.unity`.
+- **Testes:** Unity Test Framework (EditMode com `Unity.InputSystem.TestFramework` para lógica pura; PlayMode para comportamento e critérios de aceite).
 - **Repositório:** Greenfield em `desz2000/UnderTheRain` (não copiar código do protótipo antigo `desz2000/new-game-devtest` sem pedido explícito).
 - **BMAD:** BMM + GDS instalados em `_bmad/` e `.agent/skills/`, com artefatos em `docs/planning/` e `docs/implementation/`.
 

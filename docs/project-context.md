@@ -204,6 +204,8 @@ Provar **um ciclo completo do loop central**, com polimento de jogo real:
 4. Todo `[MenuItem]` de setup checa `EditorApplication.isPlaying` antes de rodar.
 5. Ao configurar componentes via `SerializedObject.FindProperty`, o nome deve ser **exatamente** o do campo serializado (por exemplo, `PatrolInterferenceTarget.bodyRenderer`). Um nome errado retorna `null` e quebra o setup com `NullReferenceException`.
 6. Setups de cena que criam inimigos chamam `EnemySetupUtility.EnsureCombatLayers()` para garantir as layers e a matriz de colisão de combate.
+6a. **Spawn points nunca podem ficar sobre um `RoomExitTrigger`:** deixe pelo menos ~1 unidade entre o spawn e o trigger, levando em conta a largura de Dante (0,8). Senão Dante volta para a sala anterior assim que chega.
+6b. Para buscar objetos da cena (inclusive inativos), percorra `scene.GetRootGameObjects()` + `GetComponentsInChildren<T>(true)`; evite `FindObjectsByType` com `FindObjectsSortMode`, que está a caminho de ser descontinuado.
 
 **Movimento e combate (playtest)**
 7. Movimento estilo *Hollow Knight*: coyote time **40 ms**, Wall Jump **(6,5; 14)** com trava **0,05 s**. Responsividade acima de realismo.
@@ -220,6 +222,9 @@ Provar **um ciclo completo do loop central**, com polimento de jogo real:
 14. Interagíveis que abrem diálogos checam `DialogueRunner.IsBusy` (não `IsPlaying`) para que o mesmo `E` que fecha o diálogo não o reabra.
 15. `NarrativeState` usa um modelo estático de sessão, zerado em `SubsystemRegistration`, para manter as flags entre cenas.
 16. Transições entre cenas devem informar sala e spawn de destino (`RoomExitTrigger.ConfigureScene(scene, roomId, spawnId)`); senão Dante cai na sala inicial da cena.
+16a. Diálogos travam movimento (`PlayerController.SetControlLocked`) **e** ações (`GameInputReader.SetActionsSuppressed`); só o Interact continua ativo para avançar as falas.
+16b. Teleportes para outra sala (respawn, troca de cena) precisam **ativar a sala de destino** (`RoomTransitionController.RespawnRoutine` / `FindRoomContaining`). Salas inativas não têm colisão, e `Collider2D.bounds` vem vazio nelas (use `RoomBounds.ContainsPoint`).
+16c. Atalhos abertos por Kitty usam `CatExplorationPoint.persistentId` para continuar abertos quando a cena é recarregada na mesma sessão, até o save do Épico 8.
 
 **Visual**
 17. Partículas no URP 2D precisam de um material válido (`Sprites/Default`) para não renderizarem rosa. A chuva (`SewerRainAmbience`) fica só nas áreas a céu aberto (superfície). Prólogo e Esgotos são secos.

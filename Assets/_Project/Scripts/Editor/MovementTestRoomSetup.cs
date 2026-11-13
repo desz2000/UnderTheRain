@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnderTheRain.Core.Input;
 using UnderTheRain.Player;
+using UnderTheRain.World;
 
 namespace UnderTheRain.Editor
 {
@@ -51,8 +52,9 @@ namespace UnderTheRain.Editor
             camera.orthographicSize = 5.4f;
             camera.backgroundColor = new Color(0.055f, 0.063f, 0.078f, 1f);
             camera.clearFlags = CameraClearFlags.SolidColor;
-            cam.transform.position = new Vector3(8f, 3f, -10f);
+            cam.transform.position = new Vector3(0f, 1f, -10f);
             cam.AddComponent<AudioListener>();
+            var roomCam = cam.AddComponent<RoomCamera2D>();
 
             var inputGo = new GameObject("GameInputReader");
             var reader = inputGo.AddComponent<GameInputReader>();
@@ -66,6 +68,10 @@ namespace UnderTheRain.Editor
             CreateBlock("Floor Right", sprite, ground, new Vector2(20f, -1f), new Vector2(12f, 2f)); // gap = coyote test
             CreateBlock("Ceiling Block", sprite, ground, new Vector2(3f, 3.6f), new Vector2(3f, 1f));  // corner correction test
             CreateBlock("Step Wall", sprite, ground, new Vector2(-5.5f, 2f), new Vector2(1f, 6f));
+            // Vertical shaft for Story 2.2 (Wall Slide & Wall Jump)
+            CreateBlock("Shaft Wall Left", sprite, ground, new Vector2(21f, 4.5f), new Vector2(1f, 7f));
+            CreateBlock("Shaft Wall Right", sprite, ground, new Vector2(25.5f, 4f), new Vector2(1f, 8f));
+            CreateBlock("High Reward Platform", sprite, ground, new Vector2(18.5f, 7.5f), new Vector2(4f, 1f));
             var thin = CreateBlock("Thin Platform", sprite, oneWay, new Vector2(10f, 2.5f), new Vector2(5f, 0.3f));
             var col = thin.GetComponent<BoxCollider2D>();
             col.usedByEffector = true;
@@ -91,6 +97,10 @@ namespace UnderTheRain.Editor
             so.FindProperty("groundMask").intValue = (1 << ground) | (1 << oneWay);
             so.FindProperty("oneWayMask").intValue = 1 << oneWay;
             so.ApplyModifiedPropertiesWithoutUndo();
+
+            var camSo = new SerializedObject(roomCam);
+            camSo.FindProperty("target").objectReferenceValue = player.transform;
+            camSo.ApplyModifiedPropertiesWithoutUndo();
 
             Directory.CreateDirectory(Path.GetDirectoryName(ScenePath));
             EditorSceneManager.SaveScene(scene, ScenePath);

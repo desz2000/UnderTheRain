@@ -25,3 +25,7 @@ MonoBehaviour:
   jumpBufferTime: 0.12
   cornerCorrectionDistance: 0.25
   dropThroughDuration: 0.25
+  wallSlideMaxSpeed: 3.5
+  wallJumpVelocity: {x: 6.5, y: 14}
+  wallJumpLockTime: 0.05
+  wallCoyoteTime: 0.08

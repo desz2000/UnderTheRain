@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using UnityEngine;
 using UnderTheRain.Core.Input;
 
@@ -13,6 +13,7 @@ namespace UnderTheRain.Player
     {
         private const float GroundProbeDistance = 0.05f;
         private const float CeilingProbeDistance = 0.05f;
+        private const float WallProbeDistance = 0.06f;
         private const float CornerStep = 0.05f;
 
         [SerializeField] private GameInputReader input;
@@ -20,6 +21,7 @@ namespace UnderTheRain.Player
         [SerializeField] private LayerMask groundMask;
         [Tooltip("Subset of ground layers that can be dropped through (thin platforms).")]
         [SerializeField] private LayerMask oneWayMask;
+        [SerializeField] private PlayerAbilitySet abilities;
 
         private Rigidbody2D _body;
         private Collider2D _collider;
@@ -29,6 +31,7 @@ namespace UnderTheRain.Player
         private Collider2D _groundCollider;
 
         public PlayerLocomotionState State => _motor != null ? _motor.State : PlayerLocomotionState.Idle;
+        public ref PlayerAbilitySet Abilities => ref abilities;
 
         private void Awake()
         {
@@ -68,12 +71,15 @@ namespace UnderTheRain.Player
             if (_motor == null || input == null) return;
 
             bool grounded = CheckGround();
+            int wallDir = grounded ? 0 : CheckWall();
             var frame = new PlayerMotorInput
             {
                 moveX = input.MoveInput.x,
                 jumpPressed = _jumpPressed,
                 jumpHeld = input.IsJumpHeld,
-                jumpReleased = _jumpReleased
+                jumpReleased = _jumpReleased,
+                wallContactDir = wallDir,
+                wallJumpUnlocked = abilities.wallJump
             };
             _jumpPressed = false;
             _jumpReleased = false;
@@ -93,6 +99,22 @@ namespace UnderTheRain.Player
                 Vector2.down, GroundProbeDistance, groundMask);
             _groundCollider = hit.collider;
             return hit.collider != null && hit.normal.y > 0.5f;
+        }
+
+        // Only solid walls (exclude one-way platforms) allow wall slide and wall jump.
+        private int CheckWall()
+        {
+            LayerMask solidMask = groundMask & ~oneWayMask;
+            Bounds b = _collider.bounds;
+            Vector2 probeSize = new Vector2(b.size.x, b.size.y * 0.8f);
+
+            RaycastHit2D rightHit = Physics2D.BoxCast(b.center, probeSize, 0f, Vector2.right, WallProbeDistance, solidMask);
+            if (rightHit.collider != null && rightHit.normal.x < -0.5f) return 1;
+
+            RaycastHit2D leftHit = Physics2D.BoxCast(b.center, probeSize, 0f, Vector2.left, WallProbeDistance, solidMask);
+            if (leftHit.collider != null && leftHit.normal.x > 0.5f) return -1;
+
+            return 0;
         }
 
         private bool HeadBlocked()

@@ -31,6 +31,14 @@ namespace UnderTheRain.Player
         [Header("Thin Platforms")]
         [Min(0f)] public float dropThroughDuration = 0.25f;
 
+        [Header("Wall Slide & Wall Jump")]
+        [Min(0.1f)] public float wallSlideMaxSpeed = 3.5f;
+        public Vector2 wallJumpVelocity = new Vector2(6.5f, 14f);
+        [Tooltip("Short window after a wall jump before air steering kicks back in, allowing single-wall climbing like Hollow Knight.")]
+        [Min(0f)] public float wallJumpLockTime = 0.05f;
+        [Tooltip("Grace window after leaving a wall where pressing jump still triggers a wall jump.")]
+        [Min(0f)] public float wallCoyoteTime = 0.08f;
+
         /// <summary>Initial upward speed that reaches exactly <see cref="jumpHeight"/>.</summary>
         public float JumpVelocity => Mathf.Sqrt(2f * riseGravity * jumpHeight);
     }

@@ -15,6 +15,7 @@ namespace UnderTheRain.Core.Input
 
         [SerializeField] private InputActionAsset inputActions;
 
+        private InputActionAsset _runtimeActions;
         private InputActionMap _playerMap;
         private InputActionMap _uiMap;
 
@@ -43,8 +44,9 @@ namespace UnderTheRain.Core.Input
                 return;
             }
 
-            _playerMap = inputActions.FindActionMap(PlayerMapName, throwIfNotFound: true);
-            _uiMap = inputActions.FindActionMap(UiMapName, throwIfNotFound: true);
+            _runtimeActions = Instantiate(inputActions);
+            _playerMap = _runtimeActions.FindActionMap(PlayerMapName, throwIfNotFound: true);
+            _uiMap = _runtimeActions.FindActionMap(UiMapName, throwIfNotFound: true);
 
             _moveAction = _playerMap.FindAction("Move", throwIfNotFound: true);
             _jumpAction = _playerMap.FindAction("Jump", throwIfNotFound: true);
@@ -79,6 +81,15 @@ namespace UnderTheRain.Core.Input
 
             _playerMap.Disable();
             _uiMap?.Disable();
+        }
+
+        private void OnDestroy()
+        {
+            if (_runtimeActions != null)
+            {
+                Destroy(_runtimeActions);
+                _runtimeActions = null;
+            }
         }
 
         public void EnableGameplay()

@@ -9,11 +9,11 @@ story_location: "docs/implementation"
 
 # Foco inicial: Épicos 1 a 5 (Vertical Slice do Ato I)
 development_status:
-  epic-1: in-progress
+  epic-1: done
   1-1-folder-structure-asmdefs-core-scene: done
   1-2-input-system-and-device-tracker: done
-  1-3-room-transition-fade-and-camera-confiner: in-progress
-  epic-1-retrospective: optional
+  1-3-room-transition-fade-and-camera-confiner: done
+  epic-1-retrospective: done
 
   epic-2: backlog
   2-1-base-locomotion-and-responsive-jump: backlog

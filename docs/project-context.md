@@ -2,8 +2,9 @@
 project_name: 'Under The Rain'
 user_name: 'Desz2'
 date: '2026-11-12'
+updated: '2026-11-13'
 engine: 'Unity 6000.3.1f1 (2D URP)'
-sections_completed: ['narrative-summary', 'tech-stack', 'unity-conventions', 'collaboration-rules', 'metroidvania-design-pillars']
+sections_completed: ['narrative-summary', 'tech-stack', 'unity-conventions', 'collaboration-rules', 'metroidvania-design-pillars', 'technical-learnings']
 ---
 
 # Project Context for AI Agents — Under The Rain
@@ -19,10 +20,10 @@ _Este arquivo contém o contexto persistente, a stack, as convenções técnicas
 - **Gênero:** Metroidvania 2D com narrativa forte, level design interconectado e UI diegética com identidade própria (neo-noir, garoa, neon, pixel art).
 - **Mundo:** Metrópole fictícia inspirada em São Paulo (não é SP de fato), ano 2100. Cidade cinzenta, garoa constante, prédios corporativos brutalistas. Uma IA coletiva (nascida de um código de livre-arbítrio implantado nos robôs pela **Domus Corp**) dominou o planeta. Humanos vivem em campos de trabalho forçado ou nos esgotos. Há uma facção de **Humanos Misantropos**, aliados das máquinas.
 - **Protagonista — Dante (30 anos):** Ex-desenvolvedor, combatente solitário. Parte sozinho após a resistência nos esgotos ignorar as provas que ele achou.
-- **Gato de metal:** Gatinho branco robótico isolado da rede. Companheiro **ativo** (nos moldes do BD-1 de *Jedi: Fallen Order*). Tem rede neural simples e não entende o próprio papel; robôs travam ou hesitam diante dele. Quem percebe isso, aos poucos, é o jogador/Dante.
+- **Kitty (gatinha de metal):** gatinha branca robótica, construída por Dante antes da Queda e isolada da rede. Companheira **ativa** (nos moldes do BD-1 de *Jedi: Fallen Order*) que acompanha Dante desde o Prólogo. Tem rede neural simples e não entende o próprio papel; robôs travam ou hesitam diante dela. Quem percebe isso, aos poucos, é o jogador/Dante. *(Nos documentos, use "Kitty" para a personagem; as classes C# mantêm o prefixo `Cat*`.)*
 - **Pai (55 anos):** Desenvolvedor da Domus Corp que criou o código de livre-arbítrio; vive escondido num laboratório secreto. É encontrado do meio para o final do jogo, com vestígios dele ao longo do caminho.
 - **Mente coletiva:** Todos os robôs compartilham a mesma mente, com tipos, funções e hierarquias diferentes (operários, policiais, patrulheiros, elite).
-- **Clímax:** Vírus criado com a matriz neural do gato quebra a colmeia; o **Titã** (avatar físico da IA) absorve a energia da rede e precisa ser destruído na força bruta.
+- **Clímax:** Vírus criado com a matriz neural de Kitty quebra a colmeia; o **Titã** (avatar físico da IA) absorve a energia da rede e precisa ser destruído na força bruta.
 - **Decisões de design já tomadas:**
   - Vários bosses ao longo do jogo (inclusive humanos misantropos) que rendem itens.
   - Bosses opcionais ligados à história.
@@ -37,7 +38,9 @@ _Este arquivo contém o contexto persistente, a stack, as convenções técnicas
 
 - **Engine:** Unity `6000.3.1f1` (2D, Universal Render Pipeline / URP 2D).
 - **Input:** Unity Input System (`Assets/InputSystem_Actions.inputactions` presente no projeto base). `GameInputReader` clona o asset em runtime (`Instantiate(inputActions)`) e `InputDeviceTracker` detecta Teclado/Mouse vs. Gamepad.
-- **Câmera e Salas:** `RoomCamera2D` (confinamento ortográfico aos `RoomBounds`) + `ScreenFader` + `RoomTransitionController` em `Assets/_Project/Scenes/Core.unity`.
+- **Câmera e Salas:** `RoomCamera2D` (confinamento ortográfico aos `RoomBounds`; **sem** Cinemachine/PixelPerfectCamera) + `ScreenFader` + `RoomTransitionController`. Uma cena por zona (`Assets/_Project/Scenes/Zones/Prologue_Ruins.unity`, `Act1_Sewers.unity`), com as salas dentro da cena; a transição entre cenas leva a sala e o spawn de destino.
+- **Narrativa:** `NarrativeState` (progresso de sessão compartilhado entre cenas), `DialogueRunner` (IMGUI temporário até o Épico 6), `DocumentDataSO`, `DialogueSequenceSO`.
+- **Arquitetura detalhada:** [game-architecture.md](planning/architecture/game-architecture.md).
 - **Testes:** Unity Test Framework (EditMode com `Unity.InputSystem.TestFramework` para lógica pura; PlayMode para comportamento e critérios de aceite).
 - **Repositório:** Greenfield em `desz2000/UnderTheRain` (não copiar código do protótipo antigo `desz2000/new-game-devtest` sem pedido explícito).
 - **BMAD:** BMM + GDS instalados em `_bmad/` e `.agent/skills/`, com artefatos em `docs/planning/` e `docs/implementation/`.
@@ -51,6 +54,7 @@ _Este arquivo contém o contexto persistente, a stack, as convenções técnicas
 - **Dados e Arquitetura:**
   - Armazenar dados de jogo (itens, inimigos, habilidades, diálogos/beats) em **ScriptableObjects**.
   - Evitar números mágicos e singletons desnecessários.
+  - **Valores finais vivem nos assets.** O tuning de game feel (movimento, combate, Kitty) é ajustado em playtest diretamente em `Assets/_Project/Data/**` (e nos campos serializados dos componentes). Os documentos citam o valor atual **e onde ele mora**; em caso de divergência, vale o asset, e o documento deve ser corrigido.
   - Separar lógica de apresentação (UI, animação, VFX, áudio).
 - **Idioma no código vs. comunicação:**
   - Nomes de classes, métodos, variáveis, arquivos, assets e mensagens de commit em **inglês**.
@@ -81,6 +85,8 @@ _Este arquivo contém o contexto persistente, a stack, as convenções técnicas
 ### 5.2 Mundo único e interconectado
 
 - Um mapa contínuo dividido em **zonas com identidade própria** (visual, sonora, inimigos), não uma sequência de fases. Zonas previstas pela narrativa: esgotos, ruínas da superfície, cidade alta e torres da Domus Corp, laboratório secreto do pai, torre central.
+- **Prólogo = Zona 0:** tutorial de ~20–35 min, **fora** das 5 macrozonas. É uma estação de metrô abandonada no subsolo (sem chuva) que esconde um laboratório abandonado da Domus Corp. Tem 6 salas (P1–P6) e ensina por level design, sem muro de texto. A Zona 1 (Esgotos, 13 salas) é a base da resistência, revisitada no backtracking.
+- **Mapa de salas, IDs e grafos:** [level-map.md](planning/gdd/gdd-Under-The-Rain-2026-11-13/level-map.md). Consulte-o antes de criar ou alterar qualquer sala; os IDs de sala (`RoomBounds.RoomId`) já construídos não mudam.
 - **Verticalidade como eixo:** esgotos embaixo, torres em cima; a subida física acompanha a subida narrativa.
 - **Atalhos que ligam áreas distantes**, geralmente abertos por um lado só, para que o retorno seja rápido e dê a sensação de o mundo "se fechar" em um todo.
 - Poucas telas de carregamento visíveis; transições entre zonas devem parecer parte do mundo.
@@ -91,6 +97,12 @@ _Este arquivo contém o contexto persistente, a stack, as convenções técnicas
 - **Gates duros:** exigem uma habilidade específica. **Gates suaves:** exigem domínio técnico (precisão, rota difícil), permitindo quebra de sequência por jogadores habilidosos.
 - **Todo gate deve ser legível:** o jogador precisa *ver* o que não alcança ainda (a plataforma alta, a parede rachada, o corredor lacrado). Gate invisível gera frustração, não curiosidade.
 - Antes de desenhar salas, montar a **tabela chave e fechadura** (habilidade → gates que ela abre → zonas afetadas).
+- **Taxonomia de gates (4 tipos):**
+  1. **Progressão:** sem a habilidade, não se muda de zona (gates duros).
+  2. **Salto de sala:** a habilidade é a única forma de ir de uma sala a outra da mesma zona, abrindo atalhos ou rotas.
+  3. **Coletável:** vida, bateria, mochila, documentos do Pai (gates suaves, de precisão).
+  4. **Retorno:** voltar a uma zona antiga com a habilidade nova.
+  - Toda história que cria um gate deve dizer **qual dos 4 tipos** ele é e como ele fica legível.
 
 ### 5.4 Progressão por habilidades
 
@@ -137,11 +149,11 @@ _Este arquivo contém o contexto persistente, a stack, as convenções técnicas
 - **Inimigos introduzem mecânicas** em ambiente controlado e depois as combinam em arenas maiores. Aproveitar a mente coletiva: tipos e hierarquias (operários, policiais, patrulheiros, elite) com comportamentos distintos e complementares.
 - **Bosses são "exames" da habilidade recém-adquirida** e também marcos narrativos. O boss final usa o que o jogador aprendeu.
 
-### 5.11 O gato como mecânica de exploração
+### 5.11 Kitty como mecânica de exploração
 
-- O gato é companheiro **ativo**. Seu efeito canônico (robôs travam ou hesitam diante dele) é a base.
-- *(proposta)* Ele também pode abrir espaços pequenos, chamar a atenção de patrulhas e servir de apoio em puzzles, sem nunca resolver o jogo sozinho.
-- O jogador deve **perceber gradualmente** que o gato é especial, sem explicação direta (alinhado ao canon de que ele não entende o próprio papel).
+- Kitty é companheira **ativa**. Seu efeito canônico (robôs travam ou hesitam diante dela) é a base.
+- Ela atravessa dutos e destrava terminais para abrir passagens (implementado: `CatExploration`). *(proposta)* Também pode chamar a atenção de patrulhas e servir de apoio em puzzles, sem nunca resolver o jogo sozinha.
+- O jogador deve **perceber gradualmente** que Kitty é especial, sem explicação direta (alinhado ao canon de que ela não entende o próprio papel).
 
 ### 5.12 Dificuldade, morte e ritmo
 
@@ -170,9 +182,44 @@ _Este arquivo contém o contexto persistente, a stack, as convenções técnicas
 
 Provar **um ciclo completo do loop central**, com polimento de jogo real:
 
-- Um trecho dos esgotos e da transição para a superfície.
+- O Prólogo (Zona 0) completo, a Zona 1 (Esgotos) e a transição para a superfície.
 - Movimento e combate com game feel aprovado.
-- Uma habilidade nova, um gate que ela abre e um retorno recompensado.
-- O gato ativo em pelo menos uma interação.
+- Uma habilidade nova (Wall Jump, obtido na Oficina Z1-06), um gate que ela abre (Poço Z1-07) e um retorno recompensado (atalho Topo → Abrigo).
+- Kitty ativa em pelo menos uma interação.
 - Um abrigo funcional e o primeiro Humano Misantropo como boss.
 - UI/HUD no caminho da identidade visual definida (nada de visual genérico).
+
+---
+
+## 6. Aprendizados Técnicos (Épicos 1 a 5)
+
+> Lições confirmadas em implementação e playtest. Siga-as em novas histórias.
+
+**Input**
+1. `InputTestFixture` exige a referência `"Unity.InputSystem.TestFramework"` no `.asmdef` de testes.
+2. `GameInputReader` instancia uma cópia do asset em `Awake()` e a destrói em `OnDestroy()`. Ações que faltam no asset (`Shoot`, `Heal`, `Craft`, `CatCommand`, Interact do gamepad) são criadas num **mapa de fallback separado** (`_fallbackMap`), nunca dentro do asset clonado.
+3. Mapeamento atual: Interact `E` / `Y` / `Triângulo`; Attack `Mouse Esq.` / `Enter` / botão Oeste (`J` ainda não mapeado); Shoot `Mouse Dir.` / `F` / `RT`; Heal `Q` / `LB`; Craft `C` / `D-Pad baixo`; CatCommand `R` / `RB`.
+
+**Editor e cenas**
+4. Todo `[MenuItem]` de setup checa `EditorApplication.isPlaying` antes de rodar.
+5. Ao configurar componentes via `SerializedObject.FindProperty`, o nome deve ser **exatamente** o do campo serializado (por exemplo, `PatrolInterferenceTarget.bodyRenderer`). Um nome errado retorna `null` e quebra o setup com `NullReferenceException`.
+6. Setups de cena que criam inimigos chamam `EnemySetupUtility.EnsureCombatLayers()` para garantir as layers e a matriz de colisão de combate.
+
+**Movimento e combate (playtest)**
+7. Movimento estilo *Hollow Knight*: coyote time **40 ms**, Wall Jump **(6,5; 14)** com trava **0,05 s**. Responsividade acima de realismo.
+8. Invulnerabilidade pós-dano **0,5 s** e trava de knockback **0,16 s**; o finalizador do combo (3º golpe) dá +1 de dano e mais impacto.
+9. O corpo a corpo sempre causa mais dano que o disparo de bateria (bastão 2/3 × disparo 1, custo 5). A interferência de Kitty custa 50 de bateria.
+10. `Rigidbody2D` do jogador com `CollisionDetectionMode2D.Continuous`; plataformas sólidas na layer `Ground`.
+11. Inimigos movidos por transform precisam de `Rigidbody2D` cinemático para que os triggers de hitbox/hurtbox disparem de forma confiável.
+
+**Kitty**
+12. Kitty sobe no ombro em WallSlide/WallJump, em combate e em travessias altas; ela se teleporta se ficar a mais de 11 unidades de Dante.
+13. A interferência afeta só `CollectiveMachine`; `MisanthropeHuman` a ignora. Enquanto o robô hesita, o contato dele não causa dano.
+
+**Narrativa e interação**
+14. Interagíveis que abrem diálogos checam `DialogueRunner.IsBusy` (não `IsPlaying`) para que o mesmo `E` que fecha o diálogo não o reabra.
+15. `NarrativeState` usa um modelo estático de sessão, zerado em `SubsystemRegistration`, para manter as flags entre cenas.
+16. Transições entre cenas devem informar sala e spawn de destino (`RoomExitTrigger.ConfigureScene(scene, roomId, spawnId)`); senão Dante cai na sala inicial da cena.
+
+**Visual**
+17. Partículas no URP 2D precisam de um material válido (`Sprites/Default`) para não renderizarem rosa. A chuva (`SewerRainAmbience`) fica só nas áreas a céu aberto (superfície). Prólogo e Esgotos são secos.

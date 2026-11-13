@@ -28,6 +28,22 @@ namespace UnderTheRain.World
             }
         }
 
+        /// <summary>
+        /// Point-in-room test computed from the collider's size/offset and the transform, so it also works
+        /// while the room is inactive (Collider2D.bounds is empty on inactive objects).
+        /// </summary>
+        public bool ContainsPoint(Vector2 worldPoint)
+        {
+            if (boundsCollider == null) boundsCollider = GetComponent<BoxCollider2D>();
+            if (boundsCollider == null) return false;
+
+            Vector3 scale = transform.lossyScale;
+            Vector2 center = (Vector2)transform.position + Vector2.Scale(boundsCollider.offset, scale);
+            Vector2 half = 0.5f * new Vector2(Mathf.Abs(boundsCollider.size.x * scale.x), Mathf.Abs(boundsCollider.size.y * scale.y));
+            Vector2 d = worldPoint - center;
+            return Mathf.Abs(d.x) <= half.x && Mathf.Abs(d.y) <= half.y;
+        }
+
         private void Awake()
         {
             if (boundsCollider == null)

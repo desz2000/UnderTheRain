@@ -16,8 +16,9 @@ using UnderTheRain.World;
 namespace UnderTheRain.Editor
 {
     /// <summary>
-    /// Scaffolds the short Prologue / Tutorial zone in the rubble between the sewers and the surface:
-    /// teaches movement, jump, Kitty's interference, and leads to the Domus Corp terminal discovery.
+    /// Scaffolds the short underground Prologue / Tutorial zone: an abandoned metro station that turns out
+    /// to hide a Domus Corp lab. Teaches movement, jump, Kitty's vent exploration and interference, basic combat,
+    /// and leads to the Domus Corp terminal discovery. No rain: the city sky is still far above.
     /// </summary>
     public static class PrologueRuinsSetup
     {
@@ -54,6 +55,7 @@ namespace UnderTheRain.Editor
             var terminalDialogue = EnsureTerminalDialogueAsset();
             AssetDatabase.SaveAssets();
 
+            EnemySetupUtility.EnsureCombatLayers();
             int ground = LayerMask.NameToLayer(GroundLayer);
             int oneWay = LayerMask.NameToLayer(OneWayLayer);
             int pHit = LayerMask.NameToLayer(PlayerHitboxLayer);
@@ -137,23 +139,23 @@ namespace UnderTheRain.Editor
                 }
             }
 
-            // Room 1: Rubble Entry (Movement & Jump tutorial under the drizzle)
-            var room1 = CreateRoom("Prologue_01_RubbleEntry", "prologue_rubble_entry", Vector2.zero, new Vector2(28f, 12f));
-            BuildRubbleEntryRoom(room1.transform, sprite, ground);
+            // Room 1: Abandoned Metro Platform (movement/jump tutorial + Kitty vent; underground, no rain)
+            var room1 = CreateRoom("Prologue_01_MetroPlatform", "prologue_metro_platform", Vector2.zero, new Vector2(28f, 12f));
+            BuildMetroPlatformRoom(room1.transform, sprite, ground);
 
-            // Room 2: Collapsed Archive (Kitty interference + Domus Terminal + descent to Sewers)
-            var room2 = CreateRoom("Prologue_02_CollapsedArchive", "prologue_collapsed_archive", new Vector2(38f, 0f), new Vector2(32f, 12f));
-            BuildCollapsedArchiveRoom(room2.transform, sprite, ground, reader, narrativeState, dialogueRunner, doc, terminalDialogue);
+            // Room 2: Hidden Domus Lab behind the metro (Kitty interference + combat + Domus Terminal)
+            var room2 = CreateRoom("Prologue_02_HiddenLab", "prologue_hidden_lab", new Vector2(38f, 0f), new Vector2(32f, 12f));
+            BuildHiddenLabRoom(room2.transform, sprite, ground, reader, narrativeState, dialogueRunner, doc, terminalDialogue);
 
             // Wire Room Exits
-            var exitToArchive = CreateRoomExit("Exit_ToCollapsedArchive", room1.transform, new Vector2(13.2f, 1.5f), new Vector2(1.4f, 3f));
-            exitToArchive.Configure(room2, "from_entry");
+            var exitToLab = CreateRoomExit("Exit_ToHiddenLab", room1.transform, new Vector2(13.2f, 1.5f), new Vector2(1.4f, 3f));
+            exitToLab.Configure(room2, "from_platform");
 
-            var exitToEntry = CreateRoomExit("Exit_ToRubbleEntry", room2.transform, new Vector2(22.8f, 1.5f), new Vector2(1.4f, 3f));
-            exitToEntry.Configure(room1, "from_archive");
+            var exitToPlatform = CreateRoomExit("Exit_ToMetroPlatform", room2.transform, new Vector2(22.8f, 1.5f), new Vector2(1.4f, 3f));
+            exitToPlatform.Configure(room1, "from_lab");
 
             var exitToSewers = CreateRoomExit("Exit_ToSewersShelter", room2.transform, new Vector2(53.0f, 1.5f), new Vector2(1.4f, 3f));
-            exitToSewers.ConfigureScene("Act1_Sewers");
+            exitToSewers.ConfigureScene("Act1_Sewers", "sewers_initial_shelter", "from_prologue");
 
             // Wire Camera & TransitionController
             var camSo = new SerializedObject(roomCam);
@@ -176,33 +178,46 @@ namespace UnderTheRain.Editor
             Debug.Log($"[UnderTheRain] Created Prologue Ruins scene at {ScenePath}");
         }
 
-        private static void BuildRubbleEntryRoom(Transform parent, Sprite sprite, int groundLayer)
+        private static void BuildMetroPlatformRoom(Transform parent, Sprite sprite, int groundLayer)
         {
-            CreateBlock("Floor", parent, sprite, groundLayer, new Vector2(0f, -1f), new Vector2(28f, 2f), new Color(0.18f, 0.21f, 0.25f));
-            CreateBlock("Wall_Left", parent, sprite, groundLayer, new Vector2(-13.5f, 2.5f), new Vector2(1f, 9f), new Color(0.15f, 0.17f, 0.21f));
-            CreateBlock("Wall_RightTop", parent, sprite, groundLayer, new Vector2(13.5f, 4.7f), new Vector2(1f, 4.4f), new Color(0.15f, 0.17f, 0.21f));
+            // Abandoned metro platform under the city: dry, dark, no sky above.
+            CreateBlock("Floor_Platform", parent, sprite, groundLayer, new Vector2(0f, -1f), new Vector2(28f, 2f), new Color(0.17f, 0.18f, 0.21f));
+            CreateBlock("Ceiling", parent, sprite, groundLayer, new Vector2(0f, 6.2f), new Vector2(28f, 1.4f), new Color(0.10f, 0.11f, 0.13f));
+            CreateBlock("Wall_Left", parent, sprite, groundLayer, new Vector2(-13.5f, 2.5f), new Vector2(1f, 9f), new Color(0.13f, 0.14f, 0.17f));
+            CreateBlock("Wall_RightTop", parent, sprite, groundLayer, new Vector2(13.5f, 4.7f), new Vector2(1f, 4.4f), new Color(0.13f, 0.14f, 0.17f));
 
-            // Rubble steps teaching variable jump
-            CreateBlock("Rubble_Step1", parent, sprite, groundLayer, new Vector2(-3.5f, 0.8f), new Vector2(3.5f, 1.6f), new Color(0.24f, 0.27f, 0.32f));
-            CreateBlock("Rubble_Step2", parent, sprite, groundLayer, new Vector2(2.5f, 2.0f), new Vector2(4.0f, 0.6f), new Color(0.28f, 0.32f, 0.38f));
-            CreateBlock("Rubble_HighLedge", parent, sprite, groundLayer, new Vector2(7.5f, 3.4f), new Vector2(3.5f, 0.5f), new Color(0.28f, 0.32f, 0.38f));
+            // Background dressing (no colliders): rails, tiled pillars, dead signage strip.
+            CreateDecor("Rails", parent, sprite, new Vector2(0f, -0.12f), new Vector2(28f, 0.12f), new Color(0.32f, 0.30f, 0.27f));
+            for (int i = 0; i < 5; i++)
+            {
+                CreateDecor($"Pillar_{i}", parent, sprite, new Vector2(-10f + i * 5f, 2.75f), new Vector2(0.9f, 5.5f), new Color(0.20f, 0.22f, 0.24f));
+            }
+            CreateDecor("StationSignStrip", parent, sprite, new Vector2(-4f, 4.6f), new Vector2(6f, 0.7f), new Color(0.55f, 0.20f, 0.18f, 0.85f));
+
+            // Collapsed platform debris teaching variable jump
+            CreateBlock("Debris_Step1", parent, sprite, groundLayer, new Vector2(-3.5f, 0.8f), new Vector2(3.5f, 1.6f), new Color(0.24f, 0.26f, 0.30f));
+            CreateBlock("Debris_Step2", parent, sprite, groundLayer, new Vector2(2.5f, 2.0f), new Vector2(4.0f, 0.6f), new Color(0.28f, 0.30f, 0.35f));
+            CreateBlock("Debris_HighLedge", parent, sprite, groundLayer, new Vector2(7.0f, 3.4f), new Vector2(3.0f, 0.5f), new Color(0.28f, 0.30f, 0.35f));
 
             CreateSpawnPoint("Spawn_Default", parent, "default", new Vector2(-10f, 1f));
-            CreateSpawnPoint("Spawn_FromArchive", parent, "from_archive", new Vector2(11.4f, 1f));
+            CreateSpawnPoint("Spawn_FromLab", parent, "from_lab", new Vector2(11.95f, 1f));
 
             CreateSignpost("Hint_MoveJump", parent, new Vector2(-8f, 0.5f), "[A/D] Mover   |   [Espaço] Pular (segure para pular mais alto)");
+            CreateSignpost("Sign_Station", parent, new Vector2(-3.8f, 3.2f), "ESTAÇÃO VALE-CINZA — LINHA 7 (DESATIVADA)");
 
             var partsPrefab = AssetDatabase.LoadAssetAtPath<PartsPickup>(PartsPickupPrefabPath);
             if (partsPrefab != null)
             {
                 var pickup = (PartsPickup)PrefabUtility.InstantiatePrefab(partsPrefab, parent);
-                pickup.transform.position = new Vector3(7.5f, 4.1f, 0f);
+                pickup.transform.position = new Vector3(7.0f, 4.1f, 0f);
             }
 
-            CreateRainAmbience("PrologueDrizzle_Entry", parent, new Vector2(0f, 6.5f));
+            // Jammed maintenance door: Kitty crawls through the vent and releases it from the other side.
+            CreateCatDuctShortcut(parent, sprite, groundLayer, new Vector2(11.0f, 2.75f), 5.5f);
+            CreateSignpost("Hint_KittyDuct", parent, new Vector2(9.2f, 0.5f), "Porta emperrada. [E] Kitty: entrar pelo duto");
         }
 
-        private static void BuildCollapsedArchiveRoom(
+        private static void BuildHiddenLabRoom(
             Transform parent,
             Sprite sprite,
             int groundLayer,
@@ -212,31 +227,26 @@ namespace UnderTheRain.Editor
             DocumentDataSO doc,
             DialogueSequenceSO terminalDialogue)
         {
-            CreateBlock("Floor", parent, sprite, groundLayer, new Vector2(38f, -1f), new Vector2(32f, 2f), new Color(0.18f, 0.21f, 0.25f));
-            CreateBlock("Wall_LeftTop", parent, sprite, groundLayer, new Vector2(22.5f, 4.7f), new Vector2(1f, 4.4f), new Color(0.15f, 0.17f, 0.21f));
-            CreateBlock("Wall_RightTop", parent, sprite, groundLayer, new Vector2(53.5f, 4.7f), new Vector2(1f, 4.4f), new Color(0.15f, 0.17f, 0.21f));
+            // Starts as a metro maintenance tunnel, then turns into sterile Domus Corp lab panels.
+            CreateBlock("Floor", parent, sprite, groundLayer, new Vector2(38f, -1f), new Vector2(32f, 2f), new Color(0.17f, 0.18f, 0.21f));
+            CreateBlock("Ceiling", parent, sprite, groundLayer, new Vector2(38f, 6.2f), new Vector2(32f, 1.4f), new Color(0.10f, 0.11f, 0.13f));
+            CreateBlock("Wall_LeftTop", parent, sprite, groundLayer, new Vector2(22.5f, 4.7f), new Vector2(1f, 4.4f), new Color(0.13f, 0.14f, 0.17f));
+            CreateBlock("Wall_RightTop", parent, sprite, groundLayer, new Vector2(53.5f, 4.7f), new Vector2(1f, 4.4f), new Color(0.13f, 0.14f, 0.17f));
 
-            // Collapsed archive ledges
-            CreateBlock("Archive_Ledge", parent, sprite, groundLayer, new Vector2(43f, 2.0f), new Vector2(6.0f, 0.55f), new Color(0.26f, 0.30f, 0.36f));
+            CreateDecor("MaintenanceTunnelBack", parent, sprite, new Vector2(30f, 2.75f), new Vector2(14f, 5.5f), new Color(0.14f, 0.15f, 0.17f));
+            CreateDecor("LabPanelsBack", parent, sprite, new Vector2(45.5f, 2.75f), new Vector2(15f, 5.5f), new Color(0.20f, 0.27f, 0.29f));
+            CreateDecor("LabLightStrip", parent, sprite, new Vector2(45.5f, 5.3f), new Vector2(15f, 0.15f), new Color(0.306f, 0.804f, 0.769f, 0.8f));
 
-            CreateSpawnPoint("Spawn_FromEntry", parent, "from_entry", new Vector2(24.5f, 1f));
+            CreateBlock("Lab_Ledge", parent, sprite, groundLayer, new Vector2(43f, 2.0f), new Vector2(6.0f, 0.55f), new Color(0.30f, 0.36f, 0.40f));
+
+            CreateSpawnPoint("Spawn_FromPlatform", parent, "from_platform", new Vector2(24.5f, 1f));
+            CreateSpawnPoint("Spawn_FromSewers", parent, "from_sewers", new Vector2(51.0f, 1f));
 
             CreateSignpost("Hint_KittyAndCombat", parent, new Vector2(29f, 0.5f), "[R] Kitty: Interferir no robô   |   [Clique Esq.] Bastão   |   [Q] Kit");
+            CreateSignpost("Clue_LabReveal", parent, new Vector2(39f, 0.5f), "Isto não é manutenção do metrô... é equipamento da Domus Corp.");
 
-            // Scout robot guarding the ruins (affected by Kitty)
-            var robotGo = new GameObject("RuinsScoutRobot");
-            robotGo.transform.SetParent(parent, false);
-            robotGo.transform.position = new Vector3(34.5f, 0.7f, 0f);
-            robotGo.transform.localScale = new Vector3(0.9f, 1.4f, 1f);
-            var robotSr = robotGo.AddComponent<SpriteRenderer>();
-            robotSr.sprite = sprite;
-            robotSr.color = new Color(0.45f, 0.75f, 0.95f, 1f);
-            robotGo.AddComponent<BoxCollider2D>().size = Vector2.one;
-            var target = robotGo.AddComponent<PatrolInterferenceTarget>();
-            var tSo = new SerializedObject(target);
-            tSo.FindProperty("faction").enumValueIndex = (int)EnemyFaction.CollectiveMachine;
-            tSo.FindProperty("spriteRenderer").objectReferenceValue = robotSr;
-            tSo.ApplyModifiedPropertiesWithoutUndo();
+            // Scout robot guarding the hidden lab (affected by Kitty, deals contact damage, can be destroyed)
+            EnemySetupUtility.CreateScoutRobot("LabScoutRobot", parent, sprite, new Vector2(34.5f, 0.7f));
 
             // Domus Corp Terminal (Story trigger)
             var termGo = new GameObject("DomusTerminal");
@@ -264,9 +274,68 @@ namespace UnderTheRain.Editor
             termSo.ApplyModifiedPropertiesWithoutUndo();
             terminal.Configure(reader, narrativeState, dialogueRunner, doc, terminalDialogue);
 
-            CreateSignpost("Hint_ReturnToSewers", parent, new Vector2(50.5f, 0.5f), "Descer para o Abrigo nos Esgotos →");
+            CreateSignpost("Hint_ReturnToSewers", parent, new Vector2(50.5f, 0.5f), "Voltar ao Abrigo nos Esgotos →");
+        }
 
-            CreateRainAmbience("PrologueDrizzle_Archive", parent, new Vector2(38f, 6.5f));
+        private static void CreateDecor(string name, Transform parent, Sprite sprite, Vector2 worldPos, Vector2 size, Color color)
+        {
+            var go = new GameObject(name);
+            go.transform.SetParent(parent, false);
+            go.transform.position = worldPos;
+            go.transform.localScale = new Vector3(size.x, size.y, 1f);
+            var sr = go.AddComponent<SpriteRenderer>();
+            sr.sprite = sprite;
+            sr.color = color;
+            sr.sortingOrder = -10;
+        }
+
+        private static void CreateCatDuctShortcut(Transform parent, Sprite sprite, int groundLayer, Vector2 doorPos, float doorHeight)
+        {
+            var door = CreateBlock("JammedMaintenanceDoor", parent, sprite, groundLayer, doorPos, new Vector2(0.8f, doorHeight),
+                new Color(0.55f, 0.32f, 0.20f, 1f));
+
+            float floorY = doorPos.y - doorHeight * 0.5f;
+
+            var duct = new GameObject("MaintenanceVent");
+            duct.transform.SetParent(parent, false);
+            duct.transform.position = new Vector3(doorPos.x - 1.3f, floorY + 0.5f, 0f);
+            duct.transform.localScale = new Vector3(0.9f, 0.8f, 1f);
+            var ductSr = duct.AddComponent<SpriteRenderer>();
+            ductSr.sprite = sprite;
+            ductSr.color = new Color(0.32f, 0.58f, 0.62f, 0.85f);
+            var ductCol = duct.AddComponent<BoxCollider2D>();
+            ductCol.isTrigger = true;
+            ductCol.size = new Vector2(2.2f, 2.0f);
+
+            var prompt = new GameObject("PromptGlyph");
+            prompt.transform.SetParent(duct.transform, false);
+            prompt.transform.localPosition = new Vector3(0f, 0.9f, 0f);
+            prompt.transform.localScale = new Vector3(0.35f, 0.35f, 1f);
+            var promptSr = prompt.AddComponent<SpriteRenderer>();
+            promptSr.sprite = sprite;
+            promptSr.color = new Color(0.96f, 0.86f, 0.32f, 1f);
+            promptSr.sortingOrder = 6;
+            prompt.SetActive(false);
+
+            var entry = new GameObject("CatEntry");
+            entry.transform.SetParent(duct.transform, false);
+            entry.transform.position = new Vector3(doorPos.x - 1.0f, floorY + 0.35f, 0f);
+
+            var target = new GameObject("CatExit");
+            target.transform.SetParent(duct.transform, false);
+            target.transform.position = new Vector3(doorPos.x + 1.1f, floorY + 0.35f, 0f);
+
+            var point = duct.AddComponent<CatExplorationPoint>();
+            var so = new SerializedObject(point);
+            so.FindProperty("explorationType").enumValueIndex = (int)CatExplorationType.Duct;
+            so.FindProperty("catEntryPoint").objectReferenceValue = entry.transform;
+            so.FindProperty("catTargetPoint").objectReferenceValue = target.transform;
+            so.FindProperty("promptIndicator").objectReferenceValue = prompt;
+            so.FindProperty("persistentId").stringValue = "prologue_maintenance_door";
+            var disableProp = so.FindProperty("objectsToDisableOnComplete");
+            disableProp.arraySize = 1;
+            disableProp.GetArrayElementAtIndex(0).objectReferenceValue = door;
+            so.ApplyModifiedPropertiesWithoutUndo();
         }
 
         private static GameObject CreatePlayer(
@@ -465,15 +534,6 @@ namespace UnderTheRain.Editor
             return go;
         }
 
-        private static void CreateRainAmbience(string name, Transform parent, Vector2 worldPos)
-        {
-            var go = new GameObject(name);
-            go.transform.SetParent(parent, false);
-            go.transform.position = worldPos;
-            go.transform.rotation = Quaternion.Euler(90f, 0f, 0f);
-            go.AddComponent<SewerRainAmbience>();
-        }
-
         private static DocumentDataSO EnsureDocumentAsset()
         {
             string path = Path.Combine(NarrativeDataDir, "DomusSabotageLog.asset");
@@ -495,8 +555,17 @@ namespace UnderTheRain.Editor
             {
                 asset = ScriptableObject.CreateInstance<DialogueSequenceSO>();
                 AssetDatabase.CreateAsset(asset, path);
-                asset.lines = new List<DialogueLine>
+            }
+
+            // This setup owns the terminal text, so it always rewrites it to stay in sync with the scene.
+            asset.lines = new List<DialogueLine>
                 {
+                    new DialogueLine
+                    {
+                        speakerName = "DANTE",
+                        speakerColor = new Color(0.75f, 0.90f, 0.96f, 1f),
+                        text = "Painéis estéreis atrás de uma estação de metrô... Isso nunca foi manutenção. Era um laboratório da Domus Corp."
+                    },
                     new DialogueLine
                     {
                         speakerName = "TERMINAL DOMUS CORP // SETOR 04",
@@ -519,7 +588,6 @@ namespace UnderTheRain.Editor
                                "Vamos voltar para o abrigo, Kitty — Icarus precisa ver isso."
                     }
                 };
-            }
             EditorUtility.SetDirty(asset);
             return asset;
         }

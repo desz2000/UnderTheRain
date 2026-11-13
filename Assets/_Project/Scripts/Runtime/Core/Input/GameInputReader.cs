@@ -143,6 +143,17 @@ namespace UnderTheRain.Core.Input
             _fallbackMap?.Enable();
         }
 
+        /// <summary>
+        /// While true, combat/ability actions (attack, shoot, heal, craft, dash, Kitty command) are swallowed.
+        /// Interact keeps firing so dialogues can advance; movement/jump are gated by PlayerController.SetControlLocked.
+        /// </summary>
+        public bool ActionsSuppressed { get; private set; }
+
+        public void SetActionsSuppressed(bool suppressed)
+        {
+            ActionsSuppressed = suppressed;
+        }
+
         public void EnableUI()
         {
             _playerMap?.Disable();
@@ -152,12 +163,12 @@ namespace UnderTheRain.Core.Input
 
         private void HandleJumpPerformed(InputAction.CallbackContext ctx) => OnJumpPressed?.Invoke();
         private void HandleJumpCanceled(InputAction.CallbackContext ctx) => OnJumpReleased?.Invoke();
-        private void HandleAttackPerformed(InputAction.CallbackContext ctx) => OnAttackPressed?.Invoke();
-        private void HandleShootPerformed(InputAction.CallbackContext ctx) => OnShootPressed?.Invoke();
-        private void HandleHealPerformed(InputAction.CallbackContext ctx) => OnHealPressed?.Invoke();
-        private void HandleCraftPerformed(InputAction.CallbackContext ctx) => OnCraftPressed?.Invoke();
+        private void HandleAttackPerformed(InputAction.CallbackContext ctx) { if (!ActionsSuppressed) OnAttackPressed?.Invoke(); }
+        private void HandleShootPerformed(InputAction.CallbackContext ctx) { if (!ActionsSuppressed) OnShootPressed?.Invoke(); }
+        private void HandleHealPerformed(InputAction.CallbackContext ctx) { if (!ActionsSuppressed) OnHealPressed?.Invoke(); }
+        private void HandleCraftPerformed(InputAction.CallbackContext ctx) { if (!ActionsSuppressed) OnCraftPressed?.Invoke(); }
         private void HandleInteractPerformed(InputAction.CallbackContext ctx) => OnInteractPressed?.Invoke();
-        private void HandleDashPerformed(InputAction.CallbackContext ctx) => OnDashPressed?.Invoke();
-        private void HandleCatCommandPerformed(InputAction.CallbackContext ctx) => OnCatCommandPressed?.Invoke();
+        private void HandleDashPerformed(InputAction.CallbackContext ctx) { if (!ActionsSuppressed) OnDashPressed?.Invoke(); }
+        private void HandleCatCommandPerformed(InputAction.CallbackContext ctx) { if (!ActionsSuppressed) OnCatCommandPressed?.Invoke(); }
     }
 }

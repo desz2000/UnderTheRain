@@ -348,7 +348,7 @@ namespace UnderTheRain.Editor
             go.AddComponent<BatteryCellPickup>();
         }
 
-        private static void ConfigureCombatCollisionMatrix()
+        internal static void ConfigureCombatCollisionMatrix()
         {
             int[] combatLayers =
             {
@@ -384,7 +384,7 @@ namespace UnderTheRain.Editor
             return go;
         }
 
-        private static void EnsureLayer(string layerName)
+        internal static void EnsureLayer(string layerName)
         {
             if (LayerMask.NameToLayer(layerName) >= 0) return;
 

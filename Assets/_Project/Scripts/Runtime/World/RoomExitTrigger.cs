@@ -11,6 +11,8 @@ namespace UnderTheRain.World
         [SerializeField] private RoomBounds targetRoom;
         [SerializeField] private string targetSpawnId = "default";
         [SerializeField] private string targetSceneName;
+        [Tooltip("Room (RoomBounds.RoomId) to enter in the target scene. Empty = that scene's initial room.")]
+        [SerializeField] private string targetSceneRoomId;
         [SerializeField] private string playerTag = "Player";
 
         private RoomTransitionController _controller;
@@ -38,7 +40,7 @@ namespace UnderTheRain.World
 
             if (!string.IsNullOrEmpty(targetSceneName))
             {
-                _controller?.TransitionToScene(targetSceneName);
+                _controller?.TransitionToScene(targetSceneName, targetSceneRoomId, targetSpawnId);
                 return;
             }
 
@@ -52,9 +54,11 @@ namespace UnderTheRain.World
             targetSceneName = null;
         }
 
-        public void ConfigureScene(string sceneName)
+        public void ConfigureScene(string sceneName, string roomId = null, string spawnId = "default")
         {
             targetSceneName = sceneName;
+            targetSceneRoomId = roomId;
+            targetSpawnId = spawnId;
             targetRoom = null;
         }
     }

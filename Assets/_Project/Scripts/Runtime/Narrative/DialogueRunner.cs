@@ -18,6 +18,7 @@ namespace UnderTheRain.Narrative
         private DialogueSequenceSO _activeSequence;
         private int _lineIndex;
         private int _openedFrame = -1;
+        private int _closedFrame = -1;
         private Action _onComplete;
 
         private GUIStyle _boxStyle;
@@ -27,6 +28,12 @@ namespace UnderTheRain.Narrative
         private Texture2D _bgTex;
 
         public bool IsPlaying => _activeSequence != null;
+
+        /// <summary>
+        /// True while a dialogue is open and also on the frame it closed. Interactables must check this
+        /// (not IsPlaying) so the Interact press that closes a dialogue cannot immediately re-open it.
+        /// </summary>
+        public bool IsBusy => IsPlaying || Time.frameCount == _closedFrame;
 
         private void OnEnable()
         {
@@ -77,6 +84,7 @@ namespace UnderTheRain.Narrative
             _openedFrame = Time.frameCount;
             _onComplete = onComplete;
             playerController?.SetControlLocked(true);
+            input?.SetActionsSuppressed(true);
             return true;
         }
 
@@ -97,7 +105,9 @@ namespace UnderTheRain.Narrative
             _activeSequence = null;
             _lineIndex = 0;
             _onComplete = null;
+            _closedFrame = Time.frameCount;
             playerController?.SetControlLocked(false);
+            input?.SetActionsSuppressed(false);
             callback?.Invoke();
         }
 

@@ -15,7 +15,8 @@ MonoBehaviour:
   lines:
   - speakerName: DANTE
     speakerColor: {r: 0.75, g: 0.9, b: 0.96, a: 1}
-    text: "Icarus, olha estes registros da Domus Corp. O colapso foi sabotado e acobertado.
+    text: "Icarus, olha estes registros da Domus Corp que achei num laborat\xF3rio
+      escondido atr\xE1s da esta\xE7\xE3o de metr\xF4. O colapso foi sabotado e acobertado.
       As credenciais do meu pai ainda est\xE3o ativas!"
   - speakerName: ICARUS
     speakerColor: {r: 0.88, g: 0.72, b: 0.42, a: 1}
@@ -27,4 +28,4 @@ MonoBehaviour:
       est\xE1 fora da resist\xEAncia. Suma daqui antes que atraia os batedores!"
   - speakerName: DANTE
     speakerColor: {r: 0.75, g: 0.9, b: 0.96, a: 1}
-    text: "Ent\xE3o eu vou sozinho. Vamos, garoto \u2014 a superf\xEDcie nos espera."
+    text: "Ent\xE3o eu vou sozinho. Vamos, Kitty \u2014 a superf\xEDcie nos espera."

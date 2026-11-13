@@ -25,6 +25,11 @@ namespace UnderTheRain.Enemies
         public bool IsAffectedByCat => faction == EnemyFaction.CollectiveMachine;
         public bool IsHesitating => _hesitationTimer > 0f;
 
+        private static readonly Color HesitationColor = new Color(1f, 0.85f, 0.3f, 1f);
+
+        /// <summary>Color the body should show right now (lets hit flashes restore the correct state).</summary>
+        public Color CurrentBodyColor => IsHesitating ? HesitationColor : _baseColor;
+
         private void Awake()
         {
             _origin = transform.position;
@@ -39,7 +44,7 @@ namespace UnderTheRain.Enemies
 
             _hesitationTimer = Mathf.Max(0.1f, duration);
             if (hesitationGlyph != null) hesitationGlyph.enabled = true;
-            if (bodyRenderer != null) bodyRenderer.color = new Color(1f, 0.85f, 0.3f, 1f);
+            if (bodyRenderer != null) bodyRenderer.color = HesitationColor;
             return true;
         }
 

@@ -80,7 +80,7 @@ namespace UnderTheRain.World
         private void HandleInteractPressed()
         {
             if (!_playerInRange) return;
-            if (dialogueRunner == null || dialogueRunner.IsPlaying) return;
+            if (dialogueRunner == null || dialogueRunner.IsBusy) return;
 
             bool hasEvidence = narrativeState != null && narrativeState.HasFlag(NarrativeState.FlagDomusEvidenceFound);
             bool confronted = narrativeState != null && narrativeState.HasFlag(NarrativeState.FlagIcarusConfronted);
@@ -110,7 +110,7 @@ namespace UnderTheRain.World
         private void OnGUI()
         {
             if (!_playerInRange) return;
-            if (dialogueRunner != null && dialogueRunner.IsPlaying) return;
+            if (dialogueRunner != null && dialogueRunner.IsBusy) return;
             if (_mainCamera == null) _mainCamera = Camera.main;
             if (_mainCamera == null) return;
 

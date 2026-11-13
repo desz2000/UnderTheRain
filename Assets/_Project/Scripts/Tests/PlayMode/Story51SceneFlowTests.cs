@@ -40,6 +40,13 @@ namespace UnderTheRain.Tests.PlayMode
         private static GameObject Player => GameObject.FindGameObjectWithTag("Player");
         private static RoomTransitionController Transitions => Object.FindFirstObjectByType<RoomTransitionController>();
 
+        private static void ActivateRoomAt(Vector3 point)
+        {
+            var room = Transitions.FindRoomContaining(point);
+            Assert.IsNotNull(room, $"No room contains {point}.");
+            Transitions.SetActiveRoomImmediate(room);
+        }
+
         [UnityTest]
         public IEnumerator Prologue_LoadsInMetroPlatform()
         {
@@ -57,9 +64,9 @@ namespace UnderTheRain.Tests.PlayMode
             var transitions = Transitions;
             var player = Player;
 
-            RoomBounds lab = transitions.FindRoomContaining(new Vector3(40f, 1f, 0f));
+            RoomBounds lab = transitions.FindRoomContaining(new Vector3(142f, 1f, 0f));
             Assert.IsNotNull(lab, "Lab room not found.");
-            player.transform.position = new Vector3(40f, 1f, 0f);
+            player.transform.position = new Vector3(142f, 1f, 0f);
             transitions.SetActiveRoomImmediate(lab);
             yield return null;
 
@@ -87,24 +94,28 @@ namespace UnderTheRain.Tests.PlayMode
             Assert.AreEqual("sewers_initial_shelter", Transitions.CurrentRoom.RoomId);
             Assert.AreEqual(-12.6f, Player.transform.position.x, 0.5f, "Dante should arrive at the shelter's west side.");
 
-            Transitions.TransitionToScene(PrologueScene, "prologue_hidden_lab", "from_sewers");
+            Transitions.TransitionToScene(PrologueScene, "prologue_descent", "from_sewers");
             yield return WaitForScene(PrologueScene);
             yield return new WaitForSeconds(0.1f);
 
-            Assert.AreEqual("prologue_hidden_lab", Transitions.CurrentRoom.RoomId);
-            Assert.AreEqual(51f, Player.transform.position.x, 0.5f, "Dante should arrive at the lab's east side.");
+            Assert.AreEqual("prologue_descent", Transitions.CurrentRoom.RoomId);
+            Assert.AreEqual(185f, Player.transform.position.x, 0.5f, "Dante should arrive at the bottom of the descent shaft (P6).");
         }
 
         [UnityTest]
         public IEnumerator KittyDoor_StaysOpenAfterSceneReload()
         {
             yield return LoadScene(PrologueScene);
+            ActivateRoomAt(new Vector3(104f, 1f, 0f));
+            yield return null;
 
             var point = Object.FindFirstObjectByType<CatExplorationPoint>();
-            Assert.IsNotNull(point, "Maintenance vent not found in the platform room.");
+            Assert.IsNotNull(point, "Maintenance vent not found in P4.");
             point.Complete();
 
             yield return LoadScene(PrologueScene);
+            ActivateRoomAt(new Vector3(104f, 1f, 0f));
+            yield return null;
 
             var reloaded = Object.FindFirstObjectByType<CatExplorationPoint>();
             Assert.IsNotNull(reloaded);

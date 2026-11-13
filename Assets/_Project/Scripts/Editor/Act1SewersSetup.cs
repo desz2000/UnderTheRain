@@ -180,7 +180,7 @@ namespace UnderTheRain.Editor
 
             // Wire Room Exits between Room 1 and Room 2 (+ west exit back to Prologue Ruins)
             var exitToPrologue = CreateRoomExit("Exit_ToPrologueRuins", room1.transform, new Vector2(-14.6f, 1.5f), new Vector2(1.2f, 3f));
-            exitToPrologue.ConfigureScene("Prologue_Ruins", "prologue_hidden_lab", "from_sewers");
+            exitToPrologue.ConfigureScene("Prologue_Ruins", "prologue_descent", "from_sewers");
 
             var exitToPassage = CreateRoomExit("Exit_ToSewerPassage", room1.transform, new Vector2(15.0f, 1.5f), new Vector2(1.4f, 3f));
             exitToPassage.Configure(room2, "from_shelter");

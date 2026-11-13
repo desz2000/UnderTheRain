@@ -70,12 +70,12 @@ Estação de metrô desativada no subsolo. Atrás dela fica um **laboratório ab
 
 | # | Sala | ID | Ensina / contém | Status |
 |---|---|---|---|---|
-| P1 | Plataforma do Metrô | `prologue_metro_platform` | mover, pular, entulho de plataforma | **Existe** (5.1) — hoje também tem um duto provisório de Kitty, que vai para P4 na 5.4 |
-| P2 | Vão | `prologue_gap` | pulo variável, coyote e buffer, sem dano | História 5.4 |
-| P3 | Entulho | `prologue_debris` | bastão contra 1 Operário; célula de bateria + disparo | História 5.4 |
-| P4 | Duto de Kitty | `prologue_duct` | Kitty atravessa o duto e abre a passagem (intro de `CatExploration`) | História 5.4 |
+| P1 | Plataforma do Metrô | `prologue_metro_platform` | mover, pular, entulho de plataforma | **Existe** (5.1) |
+| P2 | Vão | `prologue_gap` | pulo variável, coyote e buffer, sem dano | **Existe** (5.4) |
+| P3 | Entulho | `prologue_debris` | bastão contra 1 Operário; célula de bateria + disparo | **Existe** (5.4) |
+| P4 | Duto de Kitty | `prologue_duct` | Kitty atravessa o duto e abre a passagem (intro de `CatExploration`) | **Existe** (5.4) |
 | P5 | Laboratório Escondido | `prologue_hidden_lab` | robô batedor + interferência de Kitty (`R`) + Terminal da Domus | **Existe** (5.1) |
-| P6 | Descida | `prologue_descent` | descida rumo aos esgotos → Abrigo Z1-01 | História 5.4 |
+| P6 | Descida | `prologue_descent` | descida rumo aos esgotos → Abrigo Z1-01 | **Existe** (5.4) |
 
 ```mermaid
 flowchart LR
@@ -87,7 +87,7 @@ flowchart LR
   P6 --> Z101["Z1-01 Abrigo"]
 ```
 
-> **Hoje (código da 5.1):** P1 → P5 → Z1-01 (P1 e P5 são vizinhas). A 5.4 insere P2, P3, P4 e P6 entre elas.
+> **Implementado (5.4):** P1 → P2 → P3 → P4 → P5 → P6 → Z1-01, com saídas nos dois sentidos. A volta do Abrigo chega no fundo de P6.
 
 ---
 

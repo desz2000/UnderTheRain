@@ -40,6 +40,14 @@ namespace UnderTheRain.Editor
         private const string PlayerHitboxLayer = "PlayerHitbox";
         private const string PlayerHurtboxLayer = "PlayerHurtbox";
 
+        // Room origins (local floor line at y = 0). Rooms do not overlap; P6 extends downward.
+        private static readonly Vector2 P1Origin = new Vector2(0f, 0f);
+        private static readonly Vector2 P2Origin = new Vector2(34f, 0f);
+        private static readonly Vector2 P3Origin = new Vector2(70f, 0f);
+        private static readonly Vector2 P4Origin = new Vector2(104f, 0f);
+        private static readonly Vector2 P5Origin = new Vector2(140f, 0f);
+        private static readonly Vector2 P6Origin = new Vector2(176f, 0f);
+
         [MenuItem("UnderTheRain/Setup/Create Prologue Ruins Scene")]
         public static void CreatePrologueRuinsScene()
         {
@@ -139,37 +147,59 @@ namespace UnderTheRain.Editor
                 }
             }
 
-            // Room 1: Abandoned Metro Platform (movement/jump tutorial + Kitty vent; underground, no rain)
-            var room1 = CreateRoom("Prologue_01_MetroPlatform", "prologue_metro_platform", Vector2.zero, new Vector2(28f, 12f));
-            BuildMetroPlatformRoom(room1.transform, sprite, ground);
+            // Six tutorial rooms laid out left to right; each builder works in room-local coordinates.
+            // Floors sit at local y = 0 (top surface); ceilings start at local y = 5.5.
+            var p1 = CreateRoom("Prologue_P1_MetroPlatform", "prologue_metro_platform", P1Origin, new Vector2(28f, 12f));
+            BuildMetroPlatformRoom(p1.transform, sprite, ground, P1Origin);
 
-            // Room 2: Hidden Domus Lab behind the metro (Kitty interference + combat + Domus Terminal)
-            var room2 = CreateRoom("Prologue_02_HiddenLab", "prologue_hidden_lab", new Vector2(38f, 0f), new Vector2(32f, 12f));
-            BuildHiddenLabRoom(room2.transform, sprite, ground, reader, narrativeState, dialogueRunner, doc, terminalDialogue);
+            var p2 = CreateRoom("Prologue_P2_Gap", "prologue_gap", P2Origin, new Vector2(32f, 12f));
+            BuildGapRoom(p2.transform, sprite, ground, P2Origin);
 
-            // Wire Room Exits
-            var exitToLab = CreateRoomExit("Exit_ToHiddenLab", room1.transform, new Vector2(13.2f, 1.5f), new Vector2(1.4f, 3f));
-            exitToLab.Configure(room2, "from_platform");
+            var p3 = CreateRoom("Prologue_P3_Debris", "prologue_debris", P3Origin, new Vector2(32f, 12f));
+            BuildDebrisRoom(p3.transform, sprite, ground, P3Origin);
 
-            var exitToPlatform = CreateRoomExit("Exit_ToMetroPlatform", room2.transform, new Vector2(22.8f, 1.5f), new Vector2(1.4f, 3f));
-            exitToPlatform.Configure(room1, "from_lab");
+            var p4 = CreateRoom("Prologue_P4_Duct", "prologue_duct", P4Origin, new Vector2(28f, 12f));
+            BuildDuctRoom(p4.transform, sprite, ground, P4Origin);
 
-            var exitToSewers = CreateRoomExit("Exit_ToSewersShelter", room2.transform, new Vector2(53.0f, 1.5f), new Vector2(1.4f, 3f));
+            var p5 = CreateRoom("Prologue_P5_HiddenLab", "prologue_hidden_lab", P5Origin, new Vector2(32f, 12f));
+            BuildHiddenLabRoom(p5.transform, sprite, ground, P5Origin, reader, narrativeState, dialogueRunner, doc, terminalDialogue);
+
+            // P6 is a vertical shaft: its bounds are centered below the floor line of the other rooms.
+            var p6 = CreateRoom("Prologue_P6_Descent", "prologue_descent", P6Origin + new Vector2(0f, -6.5f), new Vector2(24f, 25f));
+            BuildDescentRoom(p6.transform, sprite, ground, oneWay, P6Origin);
+
+            // Exits: right exit of each room leads to the next room's "from_<prev>" spawn, and back.
+            LinkRooms(p1, P1Origin, 14f, "p1", p2, P2Origin, 16f, "p2");
+            LinkRooms(p2, P2Origin, 16f, "p2", p3, P3Origin, 16f, "p3");
+            LinkRooms(p3, P3Origin, 16f, "p3", p4, P4Origin, 14f, "p4");
+            LinkRooms(p4, P4Origin, 14f, "p4", p5, P5Origin, 16f, "p5");
+
+            // P5 → P6 (top-left ledge of the shaft) and back.
+            var exitP5ToP6 = CreateRoomExit("Exit_ToP6", p5.transform, P5Origin + new Vector2(16f - 0.8f, 1.5f), new Vector2(1.4f, 3f));
+            exitP5ToP6.Configure(p6, "from_p5");
+            var exitP6ToP5 = CreateRoomExit("Exit_ToP5", p6.transform, P6Origin + new Vector2(-11.2f, 1.5f), new Vector2(1.4f, 3f));
+            exitP6ToP5.Configure(p5, "from_p6");
+
+            // P6 bottom → Sewers shelter (Act 1).
+            var exitToSewers = CreateRoomExit("Exit_ToSewersShelter", p6.transform, P6Origin + new Vector2(11.2f, -15.3f), new Vector2(1.4f, 3f));
             exitToSewers.ConfigureScene("Act1_Sewers", "sewers_initial_shelter", "from_prologue");
 
             // Wire Camera & TransitionController
             var camSo = new SerializedObject(roomCam);
             camSo.FindProperty("target").objectReferenceValue = player.transform;
-            camSo.FindProperty("initialRoom").objectReferenceValue = room1;
+            camSo.FindProperty("initialRoom").objectReferenceValue = p1;
             camSo.ApplyModifiedPropertiesWithoutUndo();
 
             var trSo = new SerializedObject(transitionCtrl);
             trSo.FindProperty("screenFader").objectReferenceValue = fader;
             trSo.FindProperty("roomCamera").objectReferenceValue = roomCam;
-            trSo.FindProperty("initialRoom").objectReferenceValue = room1;
+            trSo.FindProperty("initialRoom").objectReferenceValue = p1;
             trSo.ApplyModifiedPropertiesWithoutUndo();
 
-            room2.gameObject.SetActive(false);
+            foreach (var room in new[] { p2, p3, p4, p5, p6 })
+            {
+                room.gameObject.SetActive(false);
+            }
 
             Directory.CreateDirectory(Path.GetDirectoryName(ScenePath));
             EditorSceneManager.SaveScene(scene, ScenePath);
@@ -178,80 +208,142 @@ namespace UnderTheRain.Editor
             Debug.Log($"[UnderTheRain] Created Prologue Ruins scene at {ScenePath}");
         }
 
-        private static void BuildMetroPlatformRoom(Transform parent, Sprite sprite, int groundLayer)
+        /// <summary>
+        /// Two-way link between horizontally adjacent rooms. Exit triggers sit 0.8 inside each room edge and
+        /// spawns 2.6 inside, so an arriving Dante (0.8 wide) never overlaps the trigger that would send him back.
+        /// </summary>
+        private static void LinkRooms(
+            RoomBounds left, Vector2 leftOrigin, float leftHalfWidth, string leftTag,
+            RoomBounds right, Vector2 rightOrigin, float rightHalfWidth, string rightTag)
         {
-            // Abandoned metro platform under the city: dry, dark, no sky above.
-            CreateBlock("Floor_Platform", parent, sprite, groundLayer, new Vector2(0f, -1f), new Vector2(28f, 2f), new Color(0.17f, 0.18f, 0.21f));
-            CreateBlock("Ceiling", parent, sprite, groundLayer, new Vector2(0f, 6.2f), new Vector2(28f, 1.4f), new Color(0.10f, 0.11f, 0.13f));
-            CreateBlock("Wall_Left", parent, sprite, groundLayer, new Vector2(-13.5f, 2.5f), new Vector2(1f, 9f), new Color(0.13f, 0.14f, 0.17f));
-            CreateBlock("Wall_RightTop", parent, sprite, groundLayer, new Vector2(13.5f, 4.7f), new Vector2(1f, 4.4f), new Color(0.13f, 0.14f, 0.17f));
+            var toRight = CreateRoomExit($"Exit_To{rightTag.ToUpperInvariant()}", left.transform,
+                leftOrigin + new Vector2(leftHalfWidth - 0.8f, 1.5f), new Vector2(1.4f, 3f));
+            toRight.Configure(right, $"from_{leftTag}");
+            CreateSpawnPoint($"Spawn_From{leftTag.ToUpperInvariant()}", right.transform, $"from_{leftTag}",
+                rightOrigin + new Vector2(-rightHalfWidth + 2.6f, 1f));
 
-            // Background dressing (no colliders): rails, tiled pillars, dead signage strip.
-            CreateDecor("Rails", parent, sprite, new Vector2(0f, -0.12f), new Vector2(28f, 0.12f), new Color(0.32f, 0.30f, 0.27f));
-            for (int i = 0; i < 5; i++)
-            {
-                CreateDecor($"Pillar_{i}", parent, sprite, new Vector2(-10f + i * 5f, 2.75f), new Vector2(0.9f, 5.5f), new Color(0.20f, 0.22f, 0.24f));
-            }
-            CreateDecor("StationSignStrip", parent, sprite, new Vector2(-4f, 4.6f), new Vector2(6f, 0.7f), new Color(0.55f, 0.20f, 0.18f, 0.85f));
-
-            // Collapsed platform debris teaching variable jump
-            CreateBlock("Debris_Step1", parent, sprite, groundLayer, new Vector2(-3.5f, 0.8f), new Vector2(3.5f, 1.6f), new Color(0.24f, 0.26f, 0.30f));
-            CreateBlock("Debris_Step2", parent, sprite, groundLayer, new Vector2(2.5f, 2.0f), new Vector2(4.0f, 0.6f), new Color(0.28f, 0.30f, 0.35f));
-            CreateBlock("Debris_HighLedge", parent, sprite, groundLayer, new Vector2(7.0f, 3.4f), new Vector2(3.0f, 0.5f), new Color(0.28f, 0.30f, 0.35f));
-
-            CreateSpawnPoint("Spawn_Default", parent, "default", new Vector2(-10f, 1f));
-            CreateSpawnPoint("Spawn_FromLab", parent, "from_lab", new Vector2(11.95f, 1f));
-
-            CreateSignpost("Hint_MoveJump", parent, new Vector2(-8f, 0.5f), "[A/D] Mover   |   [Espaço] Pular (segure para pular mais alto)");
-            CreateSignpost("Sign_Station", parent, new Vector2(-3.8f, 3.2f), "ESTAÇÃO VALE-CINZA — LINHA 7 (DESATIVADA)");
-
-            var partsPrefab = AssetDatabase.LoadAssetAtPath<PartsPickup>(PartsPickupPrefabPath);
-            if (partsPrefab != null)
-            {
-                var pickup = (PartsPickup)PrefabUtility.InstantiatePrefab(partsPrefab, parent);
-                pickup.transform.position = new Vector3(7.0f, 4.1f, 0f);
-            }
-
-            // Jammed maintenance door: Kitty crawls through the vent and releases it from the other side.
-            CreateCatDuctShortcut(parent, sprite, groundLayer, new Vector2(11.0f, 2.75f), 5.5f);
-            CreateSignpost("Hint_KittyDuct", parent, new Vector2(9.2f, 0.5f), "Porta emperrada. [E] Kitty: entrar pelo duto");
+            var toLeft = CreateRoomExit($"Exit_To{leftTag.ToUpperInvariant()}", right.transform,
+                rightOrigin + new Vector2(-rightHalfWidth + 0.8f, 1.5f), new Vector2(1.4f, 3f));
+            toLeft.Configure(left, $"from_{rightTag}");
+            CreateSpawnPoint($"Spawn_From{rightTag.ToUpperInvariant()}", left.transform, $"from_{rightTag}",
+                leftOrigin + new Vector2(leftHalfWidth - 2.6f, 1f));
         }
 
+        private static void BuildRoomShell(Transform parent, Sprite sprite, int groundLayer, Vector2 o, float width, Color floor)
+        {
+            float half = width * 0.5f;
+            CreateBlock("Floor", parent, sprite, groundLayer, o + new Vector2(0f, -1f), new Vector2(width, 2f), floor);
+            CreateBlock("Ceiling", parent, sprite, groundLayer, o + new Vector2(0f, 6.2f), new Vector2(width, 1.4f), new Color(0.10f, 0.11f, 0.13f));
+            CreateBlock("Wall_LeftTop", parent, sprite, groundLayer, o + new Vector2(-half + 0.5f, 4.7f), new Vector2(1f, 4.4f), new Color(0.13f, 0.14f, 0.17f));
+            CreateBlock("Wall_RightTop", parent, sprite, groundLayer, o + new Vector2(half - 0.5f, 4.7f), new Vector2(1f, 4.4f), new Color(0.13f, 0.14f, 0.17f));
+        }
+
+        // P1 — abandoned metro platform: move and jump.
+        private static void BuildMetroPlatformRoom(Transform parent, Sprite sprite, int groundLayer, Vector2 o)
+        {
+            BuildRoomShell(parent, sprite, groundLayer, o, 28f, new Color(0.17f, 0.18f, 0.21f));
+            // Closed wall on the far left: the prologue starts here.
+            CreateBlock("Wall_Left", parent, sprite, groundLayer, o + new Vector2(-13.5f, 2.5f), new Vector2(1f, 9f), new Color(0.13f, 0.14f, 0.17f));
+
+            CreateDecor("Rails", parent, sprite, o + new Vector2(0f, -0.12f), new Vector2(28f, 0.12f), new Color(0.32f, 0.30f, 0.27f));
+            for (int i = 0; i < 5; i++)
+            {
+                CreateDecor($"Pillar_{i}", parent, sprite, o + new Vector2(-10f + i * 5f, 2.75f), new Vector2(0.9f, 5.5f), new Color(0.20f, 0.22f, 0.24f));
+            }
+            CreateDecor("StationSignStrip", parent, sprite, o + new Vector2(-4f, 4.6f), new Vector2(6f, 0.7f), new Color(0.55f, 0.20f, 0.18f, 0.85f));
+
+            CreateBlock("Debris_Step1", parent, sprite, groundLayer, o + new Vector2(-3.5f, 0.8f), new Vector2(3.5f, 1.6f), new Color(0.24f, 0.26f, 0.30f));
+            CreateBlock("Debris_Step2", parent, sprite, groundLayer, o + new Vector2(2.5f, 2.0f), new Vector2(4.0f, 0.6f), new Color(0.28f, 0.30f, 0.35f));
+            CreateBlock("Debris_HighLedge", parent, sprite, groundLayer, o + new Vector2(7.0f, 3.4f), new Vector2(3.0f, 0.5f), new Color(0.28f, 0.30f, 0.35f));
+
+            CreateSpawnPoint("Spawn_Default", parent, "default", o + new Vector2(-10f, 1f));
+
+            CreateSignpost("Hint_MoveJump", parent, o + new Vector2(-8f, 0.5f), "[A/D] Mover   |   [Espaço] Pular");
+            CreateSignpost("Sign_Station", parent, o + new Vector2(-3.8f, 3.2f), "ESTAÇÃO VALE-CINZA — LINHA 7 (DESATIVADA)");
+
+            CreatePartsPickup(parent, o + new Vector2(7.0f, 4.1f));
+        }
+
+        // P2 — collapsed track gap: short gap (tap/coyote), long gap (hold jump), safe pit you can jump out of.
+        private static void BuildGapRoom(Transform parent, Sprite sprite, int groundLayer, Vector2 o)
+        {
+            var floor = new Color(0.17f, 0.18f, 0.21f);
+            CreateBlock("Ceiling", parent, sprite, groundLayer, o + new Vector2(0f, 6.2f), new Vector2(32f, 1.4f), new Color(0.10f, 0.11f, 0.13f));
+            CreateBlock("Wall_LeftTop", parent, sprite, groundLayer, o + new Vector2(-15.5f, 4.7f), new Vector2(1f, 4.4f), new Color(0.13f, 0.14f, 0.17f));
+            CreateBlock("Wall_RightTop", parent, sprite, groundLayer, o + new Vector2(15.5f, 4.7f), new Vector2(1f, 4.4f), new Color(0.13f, 0.14f, 0.17f));
+
+            // Track bed: left floor (x -16..-6), pillar (x -2.5..0.5), right floor (x 5.5..16). Gaps: 3.5 and 5.0.
+            CreateBlock("Floor_Left", parent, sprite, groundLayer, o + new Vector2(-11f, -1.25f), new Vector2(10f, 2.5f), floor);
+            CreateBlock("Track_Pillar", parent, sprite, groundLayer, o + new Vector2(-1f, -1.25f), new Vector2(3f, 2.5f), floor);
+            CreateBlock("Floor_Right", parent, sprite, groundLayer, o + new Vector2(10.75f, -1.25f), new Vector2(10.5f, 2.5f), floor);
+
+            // Pit bottom 2.5 below the walkway: no damage, and a full jump (3.2) climbs back out.
+            CreateBlock("Pit_Floor", parent, sprite, groundLayer, o + new Vector2(0f, -3.5f), new Vector2(32f, 2f), new Color(0.12f, 0.13f, 0.15f));
+            CreateDecor("Pit_Rails", parent, sprite, o + new Vector2(0f, -2.4f), new Vector2(32f, 0.12f), new Color(0.32f, 0.30f, 0.27f));
+
+            // Reward ledge reached by chaining jumps from the right floor.
+            CreateBlock("Gap_HighLedge", parent, sprite, groundLayer, o + new Vector2(12f, 2.6f), new Vector2(3f, 0.5f), new Color(0.28f, 0.30f, 0.35f));
+            CreatePartsPickup(parent, o + new Vector2(12f, 3.3f));
+
+            CreateSignpost("Hint_HoldJump", parent, o + new Vector2(-9.5f, 0.5f), "Segure [Espaço] para pular mais longe");
+        }
+
+        // P3 — debris tunnel: one slow Worker (baton), a battery cell, and a powered-down scout on a high ledge (shot).
+        private static void BuildDebrisRoom(Transform parent, Sprite sprite, int groundLayer, Vector2 o)
+        {
+            BuildRoomShell(parent, sprite, groundLayer, o, 32f, new Color(0.18f, 0.18f, 0.19f));
+            CreateDecor("Debris_Back", parent, sprite, o + new Vector2(-6f, 1.2f), new Vector2(8f, 2.4f), new Color(0.15f, 0.15f, 0.16f));
+
+            EnemySetupUtility.CreateWorkerRobot("DebrisWorkerRobot", parent, sprite, o + new Vector2(-3f, 0.65f));
+            CreateSignpost("Hint_Baton", parent, o + new Vector2(-11f, 0.5f), "[Clique Esq.] Bastão — o 3º golpe é mais forte");
+
+            CreateBatteryCell(parent, sprite, o + new Vector2(3.5f, 0.5f));
+
+            // Ledge top at y 4.0: a full jump (3.2) cannot land there, so the shot is the intended tool.
+            CreateBlock("Target_Ledge", parent, sprite, groundLayer, o + new Vector2(9f, 3.75f), new Vector2(3f, 0.5f), new Color(0.28f, 0.30f, 0.35f));
+            EnemySetupUtility.CreateDormantScout("DormantScoutTarget", parent, sprite, o + new Vector2(9f, 4.6f));
+            CreateSignpost("Hint_Shoot", parent, o + new Vector2(5.5f, 0.5f), "[Clique Dir.] Disparo — gasta bateria");
+        }
+
+        // P4 — jammed maintenance door: Kitty crawls through the vent and opens it from the other side (room jump gate).
+        private static void BuildDuctRoom(Transform parent, Sprite sprite, int groundLayer, Vector2 o)
+        {
+            BuildRoomShell(parent, sprite, groundLayer, o, 28f, new Color(0.17f, 0.18f, 0.21f));
+            CreateDecor("ServiceCorridorBack", parent, sprite, o + new Vector2(0f, 2.75f), new Vector2(26f, 5.5f), new Color(0.14f, 0.15f, 0.17f));
+
+            CreateCatDuctShortcut(parent, sprite, groundLayer, o + new Vector2(9.0f, 2.75f), 5.5f);
+            CreateSignpost("Hint_KittyDuct", parent, o + new Vector2(6.8f, 0.5f), "Porta emperrada. [E] Kitty: entrar pelo duto");
+        }
+
+        // P5 — hidden Domus Corp lab behind the metro: scout + Kitty interference + the Domus terminal.
         private static void BuildHiddenLabRoom(
             Transform parent,
             Sprite sprite,
             int groundLayer,
+            Vector2 o,
             GameInputReader reader,
             NarrativeState narrativeState,
             DialogueRunner dialogueRunner,
             DocumentDataSO doc,
             DialogueSequenceSO terminalDialogue)
         {
-            // Starts as a metro maintenance tunnel, then turns into sterile Domus Corp lab panels.
-            CreateBlock("Floor", parent, sprite, groundLayer, new Vector2(38f, -1f), new Vector2(32f, 2f), new Color(0.17f, 0.18f, 0.21f));
-            CreateBlock("Ceiling", parent, sprite, groundLayer, new Vector2(38f, 6.2f), new Vector2(32f, 1.4f), new Color(0.10f, 0.11f, 0.13f));
-            CreateBlock("Wall_LeftTop", parent, sprite, groundLayer, new Vector2(22.5f, 4.7f), new Vector2(1f, 4.4f), new Color(0.13f, 0.14f, 0.17f));
-            CreateBlock("Wall_RightTop", parent, sprite, groundLayer, new Vector2(53.5f, 4.7f), new Vector2(1f, 4.4f), new Color(0.13f, 0.14f, 0.17f));
+            BuildRoomShell(parent, sprite, groundLayer, o, 32f, new Color(0.17f, 0.18f, 0.21f));
 
-            CreateDecor("MaintenanceTunnelBack", parent, sprite, new Vector2(30f, 2.75f), new Vector2(14f, 5.5f), new Color(0.14f, 0.15f, 0.17f));
-            CreateDecor("LabPanelsBack", parent, sprite, new Vector2(45.5f, 2.75f), new Vector2(15f, 5.5f), new Color(0.20f, 0.27f, 0.29f));
-            CreateDecor("LabLightStrip", parent, sprite, new Vector2(45.5f, 5.3f), new Vector2(15f, 0.15f), new Color(0.306f, 0.804f, 0.769f, 0.8f));
+            CreateDecor("MaintenanceTunnelBack", parent, sprite, o + new Vector2(-8f, 2.75f), new Vector2(14f, 5.5f), new Color(0.14f, 0.15f, 0.17f));
+            CreateDecor("LabPanelsBack", parent, sprite, o + new Vector2(7.5f, 2.75f), new Vector2(15f, 5.5f), new Color(0.20f, 0.27f, 0.29f));
+            CreateDecor("LabLightStrip", parent, sprite, o + new Vector2(7.5f, 5.3f), new Vector2(15f, 0.15f), new Color(0.306f, 0.804f, 0.769f, 0.8f));
 
-            CreateBlock("Lab_Ledge", parent, sprite, groundLayer, new Vector2(43f, 2.0f), new Vector2(6.0f, 0.55f), new Color(0.30f, 0.36f, 0.40f));
+            CreateBlock("Lab_Ledge", parent, sprite, groundLayer, o + new Vector2(5f, 2.0f), new Vector2(6.0f, 0.55f), new Color(0.30f, 0.36f, 0.40f));
 
-            CreateSpawnPoint("Spawn_FromPlatform", parent, "from_platform", new Vector2(24.5f, 1f));
-            CreateSpawnPoint("Spawn_FromSewers", parent, "from_sewers", new Vector2(51.0f, 1f));
+            CreateSignpost("Hint_KittyInterference", parent, o + new Vector2(-9f, 0.5f), "[R] Kitty: interferir no robô (gasta bateria)   |   [Q] Kit médico");
+            CreateSignpost("Clue_LabReveal", parent, o + new Vector2(1f, 0.5f), "Isto não é manutenção do metrô... é equipamento da Domus Corp.");
 
-            CreateSignpost("Hint_KittyAndCombat", parent, new Vector2(29f, 0.5f), "[R] Kitty: Interferir no robô   |   [Clique Esq.] Bastão   |   [Q] Kit");
-            CreateSignpost("Clue_LabReveal", parent, new Vector2(39f, 0.5f), "Isto não é manutenção do metrô... é equipamento da Domus Corp.");
+            EnemySetupUtility.CreateScoutRobot("LabScoutRobot", parent, sprite, o + new Vector2(-3.5f, 0.7f));
 
-            // Scout robot guarding the hidden lab (affected by Kitty, deals contact damage, can be destroyed)
-            EnemySetupUtility.CreateScoutRobot("LabScoutRobot", parent, sprite, new Vector2(34.5f, 0.7f));
-
-            // Domus Corp Terminal (Story trigger)
+            // Domus Corp Terminal (story trigger)
             var termGo = new GameObject("DomusTerminal");
             termGo.transform.SetParent(parent, false);
-            termGo.transform.position = new Vector3(43f, 2.95f, 0f);
+            termGo.transform.position = o + new Vector2(5f, 2.95f);
             termGo.transform.localScale = new Vector3(0.9f, 1.4f, 1f);
             var termSr = termGo.AddComponent<SpriteRenderer>();
             termSr.sprite = sprite;
@@ -274,7 +366,69 @@ namespace UnderTheRain.Editor
             termSo.ApplyModifiedPropertiesWithoutUndo();
             terminal.Configure(reader, narrativeState, dialogueRunner, doc, terminalDialogue);
 
-            CreateSignpost("Hint_ReturnToSewers", parent, new Vector2(50.5f, 0.5f), "Voltar ao Abrigo nos Esgotos →");
+            CreateSpawnPoint("Spawn_FromP6", parent, "from_p6", o + new Vector2(16f - 2.6f, 1f));
+        }
+
+        // P6 — descent shaft toward the sewers: stacked one-way platforms (drop with S + Space, climb back with jumps).
+        private static void BuildDescentRoom(Transform parent, Sprite sprite, int groundLayer, int oneWayLayer, Vector2 o)
+        {
+            var wall = new Color(0.12f, 0.13f, 0.15f);
+            CreateBlock("Ceiling", parent, sprite, groundLayer, o + new Vector2(0f, 6.7f), new Vector2(24f, 1.4f), new Color(0.10f, 0.11f, 0.13f));
+            CreateBlock("Wall_Left", parent, sprite, groundLayer, o + new Vector2(-12.5f, -6.5f), new Vector2(1f, 25f), wall);
+            CreateBlock("Wall_Right", parent, sprite, groundLayer, o + new Vector2(12.5f, -6.5f), new Vector2(1f, 25f), wall);
+            CreateDecor("ShaftBack", parent, sprite, o + new Vector2(0f, -6.5f), new Vector2(24f, 25f), new Color(0.11f, 0.12f, 0.13f));
+            CreateDecor("DrainPipe", parent, sprite, o + new Vector2(8f, -6.5f), new Vector2(0.6f, 22f), new Color(0.22f, 0.24f, 0.22f));
+
+            // Entry ledge (top-left), same floor line as the other prologue rooms.
+            CreateBlock("Entry_Ledge", parent, sprite, groundLayer, o + new Vector2(-8f, -1f), new Vector2(8f, 2f), new Color(0.17f, 0.18f, 0.21f));
+
+            // One-way platforms every 2.8 (≤ jump height 3.2), so the shaft can be climbed back without Wall Jump.
+            for (int i = 0; i < 5; i++)
+            {
+                float y = -2.8f * (i + 1);
+                // x -4..3: starts under the entry ledge edge, so walking off the ledge lands on the first platform.
+                CreateOneWayPlatform($"Thin_Platform_{i + 1}", parent, sprite, oneWayLayer, o + new Vector2(-0.5f, y), new Vector2(7f, 0.3f));
+            }
+
+            // Shaft bottom (top surface at -16.8, 2.8 below the last platform).
+            CreateBlock("Shaft_Floor", parent, sprite, groundLayer, o + new Vector2(0f, -17.8f), new Vector2(24f, 2f), new Color(0.16f, 0.19f, 0.22f));
+
+            CreateSpawnPoint("Spawn_FromP5", parent, "from_p5", o + new Vector2(-9.0f, 1f));
+            CreateSpawnPoint("Spawn_FromSewers", parent, "from_sewers", o + new Vector2(9.0f, -15.8f));
+
+            CreateSignpost("Hint_DropThrough", parent, o + new Vector2(0f, -2.3f), "[S] + [Espaço] Descer pela plataforma fina");
+            CreateSignpost("Hint_ToShelter", parent, o + new Vector2(6.5f, -16.3f), "Abrigo da Resistência →");
+        }
+
+        private static void CreateOneWayPlatform(string name, Transform parent, Sprite sprite, int oneWayLayer, Vector2 worldPos, Vector2 size)
+        {
+            var go = CreateBlock(name, parent, sprite, oneWayLayer, worldPos, size, new Color(0.30f, 0.33f, 0.36f));
+            var col = go.GetComponent<BoxCollider2D>();
+            col.usedByEffector = true;
+            var effector = go.AddComponent<PlatformEffector2D>();
+            effector.useOneWay = true;
+            effector.surfaceArc = 160f;
+        }
+
+        private static void CreatePartsPickup(Transform parent, Vector2 worldPos)
+        {
+            var partsPrefab = AssetDatabase.LoadAssetAtPath<PartsPickup>(PartsPickupPrefabPath);
+            if (partsPrefab == null) return;
+            var pickup = (PartsPickup)PrefabUtility.InstantiatePrefab(partsPrefab, parent);
+            pickup.transform.position = worldPos;
+        }
+
+        private static void CreateBatteryCell(Transform parent, Sprite sprite, Vector2 worldPos)
+        {
+            var go = new GameObject("BatteryCell");
+            go.transform.SetParent(parent, false);
+            go.transform.position = worldPos;
+            go.transform.localScale = new Vector3(0.4f, 0.4f, 1f);
+            var sr = go.AddComponent<SpriteRenderer>();
+            sr.sprite = sprite;
+            sr.color = new Color(0.306f, 0.804f, 0.769f, 1f);
+            go.AddComponent<BoxCollider2D>().isTrigger = true;
+            go.AddComponent<BatteryCellPickup>();
         }
 
         private static void CreateDecor(string name, Transform parent, Sprite sprite, Vector2 worldPos, Vector2 size, Color color)

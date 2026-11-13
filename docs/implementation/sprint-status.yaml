@@ -11,8 +11,8 @@ story_location: "docs/implementation"
 development_status:
   epic-1: in-progress
   1-1-folder-structure-asmdefs-core-scene: done
-  1-2-input-system-and-device-tracker: in-progress
-  1-3-room-transition-fade-and-camera-confiner: backlog
+  1-2-input-system-and-device-tracker: done
+  1-3-room-transition-fade-and-camera-confiner: in-progress
   epic-1-retrospective: optional
 
   epic-2: backlog

@@ -2,6 +2,7 @@
     "name": "UnderTheRain.Editor",
     "rootNamespace": "UnderTheRain.Editor",
     "references": [
+        "Unity.InputSystem",
         "UnderTheRain.Runtime"
     ],
     "includePlatforms": [

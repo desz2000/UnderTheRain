@@ -221,6 +221,8 @@ GameObject:
   m_Component:
   - component: {fileID: 1149405754}
   - component: {fileID: 1149405753}
+  - component: {fileID: 1149405756}
+  - component: {fileID: 1149405755}
   m_Layer: 0
   m_Name: GameBootstrap
   m_TagString: Untagged
@@ -256,6 +258,31 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1149405755
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1149405752}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 51501df5133d2554ba9f331a662dbd29, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnderTheRain.Runtime::UnderTheRain.Core.Input.InputDeviceTracker
+--- !u!114 &1149405756
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1149405752}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 059509062c3cb5d44a34351417f8c21c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnderTheRain.Runtime::UnderTheRain.Core.Input.GameInputReader
+  inputActions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

@@ -2,7 +2,9 @@ using System.IO;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnderTheRain.Core;
+using UnderTheRain.Core.Input;
 
 namespace UnderTheRain.Editor
 {
@@ -12,6 +14,7 @@ namespace UnderTheRain.Editor
     public static class ProjectSetupMenu
     {
         private const string CoreScenePath = "Assets/_Project/Scenes/Core.unity";
+        private const string InputActionsPath = "Assets/InputSystem_Actions.inputactions";
 
         private static readonly string[] RequiredFolders =
         {
@@ -79,6 +82,50 @@ namespace UnderTheRain.Editor
 
             EditorSceneManager.SaveScene(scene, CoreScenePath);
             Debug.Log($"[UnderTheRain] Created Core scene at {CoreScenePath}");
+        }
+
+        [MenuItem("UnderTheRain/Setup/Wire Input in Core Scene")]
+        public static void WireInputInCoreScene()
+        {
+            if (!File.Exists(CoreScenePath))
+            {
+                Debug.LogError($"[UnderTheRain] Core scene not found at {CoreScenePath}. Run 'Create Folder Structure and Core Scene' first.");
+                return;
+            }
+
+            var scene = EditorSceneManager.OpenScene(CoreScenePath, OpenSceneMode.Single);
+            var bootstrap = Object.FindFirstObjectByType<GameBootstrap>();
+            if (bootstrap == null)
+            {
+                var go = new GameObject("GameBootstrap");
+                bootstrap = go.AddComponent<GameBootstrap>();
+            }
+
+            var reader = bootstrap.GetComponent<GameInputReader>();
+            if (reader == null)
+            {
+                reader = bootstrap.gameObject.AddComponent<GameInputReader>();
+            }
+
+            var asset = AssetDatabase.LoadAssetAtPath<InputActionAsset>(InputActionsPath);
+            if (asset == null)
+            {
+                Debug.LogError($"[UnderTheRain] InputActionAsset not found at {InputActionsPath}");
+                return;
+            }
+
+            var so = new SerializedObject(reader);
+            so.FindProperty("inputActions").objectReferenceValue = asset;
+            so.ApplyModifiedPropertiesWithoutUndo();
+
+            if (bootstrap.GetComponent<InputDeviceTracker>() == null)
+            {
+                bootstrap.gameObject.AddComponent<InputDeviceTracker>();
+            }
+
+            EditorSceneManager.MarkSceneDirty(scene);
+            EditorSceneManager.SaveScene(scene);
+            Debug.Log("[UnderTheRain] Wired GameInputReader and InputDeviceTracker in Core scene.");
         }
     }
 }

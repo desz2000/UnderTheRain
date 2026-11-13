@@ -23,7 +23,8 @@ created: 2026-11-13
 > - a busca de salas não usa mais `FindObjectsByType`;
 > - foi removido `useFullKinematicContacts` (desnecessário);
 > - a Kitty se chama "Kitty" também em `Act1_Sewers`.
-> - Novos testes: `RoomBoundsTests` (2). **Total esperado: 48/48** no EditMode.
+> - Novos testes: `RoomBoundsTests` (2, EditMode) e `Story51SceneFlowTests` (4, PlayMode, sobre as cenas geradas: Prólogo começa na plataforma; morrer no laboratório respawna na plataforma com a sala ativa; ida e volta entre cenas chega na sala e no spawn corretos; a porta da Kitty continua aberta após recarregar).
+> - **Validação via CLI (batchmode, 2026-11-13):** compilação sem erros nem warnings; menus de setup geraram `Prologue_Ruins` e `Act1_Sewers`; **EditMode 48/48** e **PlayMode 5/5**. Falta só a validação manual no Play Mode (sensação e fluxo).
 >
 > **Limitações conhecidas (fora do escopo, Épico 8 — save):** ao recarregar uma cena, inimigos e pickups voltam (dá para "farmar" as peças do P1 indo e voltando), e o respawn do Prólogo é o ponto inicial (o Prólogo não tem abrigo).
 

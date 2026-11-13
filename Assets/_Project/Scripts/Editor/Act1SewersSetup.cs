@@ -179,13 +179,13 @@ namespace UnderTheRain.Editor
             BuildSewerPassageRoom(room2.transform, sprite, ground);
 
             // Wire Room Exits between Room 1 and Room 2 (+ west exit back to Prologue Ruins)
-            var exitToPrologue = CreateRoomExit("Exit_ToPrologueRuins", room1.transform, new Vector2(-14.6f, 1.5f), new Vector2(1.2f, 3f));
+            var exitToPrologue = CreateRoomExit("Exit_ToPrologueRuins", room1.transform, new Vector2(-15.7f, 1.25f), new Vector2(0.6f, 2.5f));
             exitToPrologue.ConfigureScene("Prologue_Ruins", "prologue_descent", "from_sewers");
 
-            var exitToPassage = CreateRoomExit("Exit_ToSewerPassage", room1.transform, new Vector2(15.0f, 1.5f), new Vector2(1.4f, 3f));
+            var exitToPassage = CreateRoomExit("Exit_ToSewerPassage", room1.transform, new Vector2(15.7f, 1.25f), new Vector2(0.6f, 2.5f));
             exitToPassage.Configure(room2, "from_shelter");
 
-            var exitToShelter = CreateRoomExit("Exit_ToInitialShelter", room2.transform, new Vector2(26.8f, 1.5f), new Vector2(1.4f, 3f));
+            var exitToShelter = CreateRoomExit("Exit_ToInitialShelter", room2.transform, new Vector2(26.3f, 1.25f), new Vector2(0.6f, 2.5f));
             exitToShelter.Configure(room1, "from_passage");
 
             // Wire Camera & TransitionController

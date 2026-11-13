@@ -204,6 +204,7 @@ Provar **um ciclo completo do loop central**, com polimento de jogo real:
 4. Todo `[MenuItem]` de setup checa `EditorApplication.isPlaying` antes de rodar.
 5. Ao configurar componentes via `SerializedObject.FindProperty`, o nome deve ser **exatamente** o do campo serializado (por exemplo, `PatrolInterferenceTarget.bodyRenderer`). Um nome errado retorna `null` e quebra o setup com `NullReferenceException`.
 6. Setups de cena que criam inimigos chamam `EnemySetupUtility.EnsureCombatLayers()` para garantir as layers e a matriz de colisão de combate.
+6a. **Triggers de saída cobrem exatamente o vão da porta:** 0,6 de largura, rentes à borda da sala (depois da face da parede), e 2,5 de altura, do chão até a base da parede. Assim a transição só acontece quando Dante entra de fato na porta, nunca de longe nem por cima. Toda saída precisa de um vão real na parede (teste `ExitTriggers_CoverOnlyTheDoorwayAtTheRoomEdge`).
 6a. **Spawn points nunca podem ficar sobre um `RoomExitTrigger`:** deixe pelo menos ~1 unidade entre o spawn e o trigger, levando em conta a largura de Dante (0,8). Senão Dante volta para a sala anterior assim que chega.
 6b. Para buscar objetos da cena (inclusive inativos), percorra `scene.GetRootGameObjects()` + `GetComponentsInChildren<T>(true)`; evite `FindObjectsByType` com `FindObjectsSortMode`, que está a caminho de ser descontinuado.
 
@@ -222,7 +223,8 @@ Provar **um ciclo completo do loop central**, com polimento de jogo real:
 14. Interagíveis que abrem diálogos checam `DialogueRunner.IsBusy` (não `IsPlaying`) para que o mesmo `E` que fecha o diálogo não o reabra.
 15. `NarrativeState` usa um modelo estático de sessão, zerado em `SubsystemRegistration`, para manter as flags entre cenas.
 16. Transições entre cenas devem informar sala e spawn de destino (`RoomExitTrigger.ConfigureScene(scene, roomId, spawnId)`); senão Dante cai na sala inicial da cena.
-16a. Diálogos travam movimento (`PlayerController.SetControlLocked`) **e** ações (`GameInputReader.SetActionsSuppressed`); só o Interact continua ativo para avançar as falas.
+16a. Diálogos travam movimento (`PlayerController.SetControlLocked`) **e** ações (`GameInputReader.SetActionsSuppressed`); só o Interact continua ativo para avançar as falas. A trava de controle manda `moveX = 0` (Dante freia normalmente); **nunca** use `lockHorizontal` para isso, porque ele *preserva* a velocidade (é o do knockback) e Dante seguiria andando.
+16d. Teleportes de Dante (troca de sala, respawn, troca de cena) passam por `RoomTransitionController.Teleport`, que move o `Rigidbody2D` (com interpolação) e zera a velocidade. Mover só o `transform` é desfeito pela física, por exemplo pela correção de quina no meio de um pulo.
 16b. Teleportes para outra sala (respawn, troca de cena) precisam **ativar a sala de destino** (`RoomTransitionController.RespawnRoutine` / `FindRoomContaining`). Salas inativas não têm colisão, e `Collider2D.bounds` vem vazio nelas (use `RoomBounds.ContainsPoint`).
 16c. Atalhos abertos por Kitty usam `CatExplorationPoint.persistentId` para continuar abertos quando a cena é recarregada na mesma sessão, até o save do Épico 8.
 

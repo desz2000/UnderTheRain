@@ -41,6 +41,15 @@ namespace UnderTheRain.Editor
         private const string PlayerHurtboxLayer = "PlayerHurtbox";
 
         // Room origins (local floor line at y = 0). Rooms do not overlap; P6 extends downward.
+        // Exit triggers: narrow and flush with the room edge (past the wall face), so a transition only
+        // fires once Dante actually walks into the doorway. Spawns stay 2.6 inside (>= 1.6 clear of the trigger).
+        private const float ExitInset = 0.3f;
+        private const float ExitWidth = 0.6f;
+        // Doorways are 2.5 tall (wall tops start at y 2.5), so the trigger covers exactly the doorway.
+        private const float DoorHeight = 2.5f;
+        private const float ExitCenterY = DoorHeight * 0.5f;
+        private static readonly Vector2 ExitSize = new Vector2(ExitWidth, DoorHeight);
+
         private static readonly Vector2 P1Origin = new Vector2(0f, 0f);
         private static readonly Vector2 P2Origin = new Vector2(34f, 0f);
         private static readonly Vector2 P3Origin = new Vector2(70f, 0f);
@@ -175,13 +184,13 @@ namespace UnderTheRain.Editor
             LinkRooms(p4, P4Origin, 14f, "p4", p5, P5Origin, 16f, "p5");
 
             // P5 → P6 (top-left ledge of the shaft) and back.
-            var exitP5ToP6 = CreateRoomExit("Exit_ToP6", p5.transform, P5Origin + new Vector2(16f - 0.8f, 1.5f), new Vector2(1.4f, 3f));
+            var exitP5ToP6 = CreateRoomExit("Exit_ToP6", p5.transform, P5Origin + new Vector2(16f - ExitInset, ExitCenterY), ExitSize);
             exitP5ToP6.Configure(p6, "from_p5");
-            var exitP6ToP5 = CreateRoomExit("Exit_ToP5", p6.transform, P6Origin + new Vector2(-11.2f, 1.5f), new Vector2(1.4f, 3f));
+            var exitP6ToP5 = CreateRoomExit("Exit_ToP5", p6.transform, P6Origin + new Vector2(-12f + ExitInset, ExitCenterY), ExitSize);
             exitP6ToP5.Configure(p5, "from_p6");
 
             // P6 bottom → Sewers shelter (Act 1).
-            var exitToSewers = CreateRoomExit("Exit_ToSewersShelter", p6.transform, P6Origin + new Vector2(11.2f, -15.3f), new Vector2(1.4f, 3f));
+            var exitToSewers = CreateRoomExit("Exit_ToSewersShelter", p6.transform, P6Origin + new Vector2(12f - ExitInset, -16.8f + ExitCenterY), ExitSize);
             exitToSewers.ConfigureScene("Act1_Sewers", "sewers_initial_shelter", "from_prologue");
 
             // Wire Camera & TransitionController
@@ -209,7 +218,7 @@ namespace UnderTheRain.Editor
         }
 
         /// <summary>
-        /// Two-way link between horizontally adjacent rooms. Exit triggers sit 0.8 inside each room edge and
+        /// Two-way link between horizontally adjacent rooms. Exit triggers sit flush with each room edge and
         /// spawns 2.6 inside, so an arriving Dante (0.8 wide) never overlaps the trigger that would send him back.
         /// </summary>
         private static void LinkRooms(
@@ -217,13 +226,13 @@ namespace UnderTheRain.Editor
             RoomBounds right, Vector2 rightOrigin, float rightHalfWidth, string rightTag)
         {
             var toRight = CreateRoomExit($"Exit_To{rightTag.ToUpperInvariant()}", left.transform,
-                leftOrigin + new Vector2(leftHalfWidth - 0.8f, 1.5f), new Vector2(1.4f, 3f));
+                leftOrigin + new Vector2(leftHalfWidth - ExitInset, ExitCenterY), ExitSize);
             toRight.Configure(right, $"from_{leftTag}");
             CreateSpawnPoint($"Spawn_From{leftTag.ToUpperInvariant()}", right.transform, $"from_{leftTag}",
                 rightOrigin + new Vector2(-rightHalfWidth + 2.6f, 1f));
 
             var toLeft = CreateRoomExit($"Exit_To{leftTag.ToUpperInvariant()}", right.transform,
-                rightOrigin + new Vector2(-rightHalfWidth + 0.8f, 1.5f), new Vector2(1.4f, 3f));
+                rightOrigin + new Vector2(-rightHalfWidth + ExitInset, ExitCenterY), ExitSize);
             toLeft.Configure(left, $"from_{rightTag}");
             CreateSpawnPoint($"Spawn_From{rightTag.ToUpperInvariant()}", left.transform, $"from_{rightTag}",
                 leftOrigin + new Vector2(leftHalfWidth - 2.6f, 1f));
@@ -374,8 +383,11 @@ namespace UnderTheRain.Editor
         {
             var wall = new Color(0.12f, 0.13f, 0.15f);
             CreateBlock("Ceiling", parent, sprite, groundLayer, o + new Vector2(0f, 6.7f), new Vector2(24f, 1.4f), new Color(0.10f, 0.11f, 0.13f));
-            CreateBlock("Wall_Left", parent, sprite, groundLayer, o + new Vector2(-12.5f, -6.5f), new Vector2(1f, 25f), wall);
-            CreateBlock("Wall_Right", parent, sprite, groundLayer, o + new Vector2(12.5f, -6.5f), new Vector2(1f, 25f), wall);
+            // Walls leave real doorways (2.5 tall): top-left at the entry ledge (to P5), bottom-right at the shaft floor (to the sewers).
+            CreateBlock("Wall_Left_Upper", parent, sprite, groundLayer, o + new Vector2(-12.5f, 4.95f), new Vector2(1f, 4.9f), wall);
+            CreateBlock("Wall_Left_Lower", parent, sprite, groundLayer, o + new Vector2(-12.5f, -9.5f), new Vector2(1f, 19f), wall);
+            CreateBlock("Wall_Right_Upper", parent, sprite, groundLayer, o + new Vector2(12.5f, -3.45f), new Vector2(1f, 21.7f), wall);
+            CreateBlock("Wall_Right_Lower", parent, sprite, groundLayer, o + new Vector2(12.5f, -18.3f), new Vector2(1f, 3f), wall);
             CreateDecor("ShaftBack", parent, sprite, o + new Vector2(0f, -6.5f), new Vector2(24f, 25f), new Color(0.11f, 0.12f, 0.13f));
             CreateDecor("DrainPipe", parent, sprite, o + new Vector2(8f, -6.5f), new Vector2(0.6f, 22f), new Color(0.22f, 0.24f, 0.22f));
 

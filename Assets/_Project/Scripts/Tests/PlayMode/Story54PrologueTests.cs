@@ -138,6 +138,35 @@ namespace UnderTheRain.Tests.PlayMode
         }
 
         [UnityTest]
+        public IEnumerator ExitTriggers_CoverOnlyTheDoorwayAtTheRoomEdge()
+        {
+            // Regression: wide/tall triggers fired before Dante reached the doorway and from above it.
+            yield return LoadScene(PrologueScene);
+
+            foreach (var (id, x) in Rooms)
+            {
+                var room = RoomAt(x);
+                var roomCol = room.GetComponent<BoxCollider2D>();
+                float roomLeft = room.transform.position.x + roomCol.offset.x - roomCol.size.x * 0.5f;
+                float roomRight = roomLeft + roomCol.size.x;
+
+                foreach (var exit in room.GetComponentsInChildren<RoomExitTrigger>(true))
+                {
+                    var col = exit.GetComponent<BoxCollider2D>();
+                    Assert.LessOrEqual(col.size.x, 0.6f + 0.001f, $"{id}/{exit.name} trigger too wide.");
+                    Assert.LessOrEqual(col.size.y, 2.5f + 0.001f, $"{id}/{exit.name} trigger taller than the doorway.");
+
+                    float cx = exit.transform.position.x;
+                    float outerEdge = Mathf.Abs(cx - roomLeft) < Mathf.Abs(cx - roomRight)
+                        ? cx - col.size.x * 0.5f - roomLeft
+                        : roomRight - (cx + col.size.x * 0.5f);
+                    // P6's walls sit inside its bounds by design (face at ±12 = room edge), so allow a tiny tolerance.
+                    Assert.LessOrEqual(Mathf.Abs(outerEdge), 0.05f, $"{id}/{exit.name} trigger is not flush with the room edge.");
+                }
+            }
+        }
+
+        [UnityTest]
         public IEnumerator GapRoom_HasNoDamageSources()
         {
             yield return LoadScene(PrologueScene);

@@ -211,7 +211,10 @@ namespace UnderTheRain.World
 
             if (_currentRoom.TryGetSpawnPosition(spawnId, out Vector3 spawnPos))
             {
-                traveler.position = spawnPos;
+                // Must move the Rigidbody2D too: with interpolation (and corner correction writing
+                // body.position mid-jump), a transform-only move gets overwritten and Dante is left
+                // behind in the room that was just deactivated.
+                Teleport(traveler, spawnPos);
             }
 
             roomCamera?.SetRoom(_currentRoom, snapImmediately: true);

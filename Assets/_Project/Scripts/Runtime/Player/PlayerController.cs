@@ -159,7 +159,9 @@ namespace UnderTheRain.Player
                 jumpReleased = !_controlLocked && _jumpReleased,
                 wallContactDir = wallDir,
                 wallJumpUnlocked = abilities.wallJump,
-                lockHorizontal = _controlLocked || _knockbackLockTimer > 0f
+                // lockHorizontal *preserves* velocity (knockback). A control lock must not use it, or Dante keeps
+                // his run speed through dialogues; moveX = 0 above already brakes him with normal deceleration.
+                lockHorizontal = _knockbackLockTimer > 0f
             };
             _jumpPressed = false;
             _jumpReleased = false;

@@ -46,17 +46,39 @@ para sentir desde o início um metroidvania de verdade, em que explorar compensa
 - [x] **T4 — `Act1SewersSetup`:** `PlayerUpgradeApplier` no Dante.
 - [x] **T5 — Testes:**
   - [x] `Story51SceneFlowTests` e `Story54PrologueTests` atualizados para o novo layout;
-  - [x] novo `Story56PrologueScaleTests` (7);
+  - [x] novo `Story56PrologueScaleTests` (7 na entrega; 9 após a correção da arena, commit 43d555b; 11 após a revisão);
   - [x] novo `UpgradeTests` (3, EditMode).
-- [x] **T6 — Validação via CLI:** cenas geradas; **EditMode 52/52** e **PlayMode 22/22**; sem warnings.
+- [x] **T6 — Validação via CLI:** cenas geradas; **EditMode 52/52** e **PlayMode 22/22** na entrega; sem warnings. Após a correção da arena e a revisão: esperado **EditMode 52** e **PlayMode 26** (pendente de rodar no Unity).
 - [ ] **T7 — Validação manual no Play Mode** (sensação, tempo de 20–32 min, legibilidade dos segredos).
+
+### Review Findings
+
+> gds-code-review (modo full, 2026-11-13). Escopo: `git diff 7c700de -- Assets/_Project/Scripts`. Camadas: Blind Hunter, Edge Case Hunter, Acceptance Auditor. Resultado: 1 decisão, 12 patches, 3 adiados, 11 descartados.
+
+- [x] [Review][Decision] Escotilha aberta de P4 no caminho principal — **Decisão: manter no lugar, com piso de segurança (vira patch).** depois do painel, o buraco de 2 unidades (x local −16..−14) fica a 3,4 do spawn vindo de P3; quem volta de P3 (por exemplo, após morrer na arena e renascer no gerador) e segura para a direita cai no Túnel e volta a P1.
+- [x] [Review][Patch] `PlayerUpgradeApplier` sem arquivo próprio: as cenas gravam um MonoScript embutido (sem GUID), frágil em build/reimport. Mover para `PlayerUpgradeApplier.cs` e regerar as cenas [Runtime/Player/PlayerUpgradeSession.cs:49]
+- [x] [Review][Patch] Arena desativada com luta ativa mantém `IsActive` e perde a inscrição em `OnDied`; abortar no `OnDisable` [Runtime/World/ArenaEncounter.cs:55]
+- [x] [Review][Patch] Nicho secreto da grua fica fora da zona da arena; entrar nele aborta a luta (travas abrem). Estender a zona até x −13 [Editor/PrologueRuinsSetup.cs:499]
+- [x] [Review][Patch] Segredo de P5 visível: a parede falsa cobre só x −11..−10 e a célula está em −12; cobrir −13..−10 como em P6 [Editor/PrologueRuinsSetup.cs:505]
+- [x] [Review][Patch] Escotilha sem fundo: se a transição for recusada (`_isTransitioning`), Dante cai para fora do mundo; pôr um piso de segurança sob o trigger [Editor/PrologueRuinsSetup.cs:209]
+- [x] [Review][Patch] Arena pega o colisor do Dante via `HealthComponent`; se faltar, as duas redes de segurança somem. Pegar do `PlayerController` e não iniciar sem colisor [Runtime/World/ArenaEncounter.cs:73]
+- [x] [Review][Patch] `UpgradePickup` com `persistentId` vazio nunca é coletado e não avisa; logar erro no `Awake` e esconder se o id já foi coletado [Runtime/World/UpgradePickup.cs:33]
+- [x] [Review][Patch] Fade do `SecretWallReveal` congela no meio se a sala desativar durante os 0,35 s; aplicar o alpha final no `OnEnable` [Runtime/World/SecretWallReveal.cs:47]
+- [x] [Review][Patch] Robô dormente aceita interferência de Kitty (gasta 50 de bateria à toa), a hesitação bloqueia o acordar por proximidade e o timer de imunidade não corre enquanto dorme [Runtime/Enemies/PatrolInterferenceTarget.cs:79]
+- [x] [Review][Patch] Estado de sessão vaza entre testes PlayMode (upgrades, segredos, pontos de Kitty); zerar tudo no `[SetUp]` [Tests/PlayMode/Story56PrologueScaleTests.cs:17]
+- [x] [Review][Patch] Testes que passariam com a feature quebrada: travas não verificadas antes de sair da arena; morte reabrindo as travas (AC3) sem teste; Túnel checado por nome; descanso sem passar pelo `ShelterRestSpot`; rabisco do Pai checado só por aritmética; `Find(...).GetComponent` sem null-check [Tests/PlayMode/Story56PrologueScaleTests.cs]
+- [x] [Review][Patch] Registro da história desatualizado (9 testes na Story56, PlayMode 24, commit da correção da arena, chimney com 5,3 de altura em vez de 8 da proposta) e `CreateDecor` sem uso [Editor/PrologueRuinsSetup.cs:858]
+- [x] [Review][Defer] Acordar por dano só existe em `ScoutRobotEnemy` (hoje todos os robôs usam essa classe) [Runtime/Enemies/ScoutRobotEnemy.cs:57] — deferred, pre-existing
+- [x] [Review][Defer] Sem validação de `persistentId` duplicado entre arenas/segredos/pickups [Runtime/World/ArenaEncounter.cs:43] — deferred, pre-existing
+- [x] [Review][Defer] Salas de teste (Cat/Combat/Movement) criam Dante sem `PlayerUpgradeApplier` [Editor/CatTestRoomSetup.cs:120] — deferred, pre-existing
 
 ## Dev Notes
 
 - **Layout:** segue a [proposta de level design](../../planning/gdd/gdd-Under-The-Rain-2026-11-13/level-design-proposal-zone0-zone1.md) §3, com estas adaptações:
   - o Arquivo (P5a) fica **acima de P6** (origem 280, 12), para não sobrepor salas;
   - o **Túnel** corre por baixo de P1–P4 (origem 88, −13); entra-se pelo alçapão no chão de P4 (trigger horizontal `Hatch_ToTunnel`) e sai-se na escotilha de P1;
-  - a chaminé de P4 fica **sobre o corredor de serviço** (paredes começam 2,5 acima do piso, então dá para passar por baixo);
+  - a chaminé de P4 fica **sobre o corredor de serviço** (paredes começam 2,5 acima do piso, então dá para passar por baixo). O beiral fica 5,3 acima do corredor, não 8 como na proposta §3.7: já basta para exigir Wall Jump, e o gatilho do rabisco fica fora do alcance de um pulo normal (teste mede pelos colisores);
+  - a escotilha de P4 continua no caminho principal (decisão da revisão de 2026-11-13), com um piso de segurança embaixo e `RoomExitTrigger.retryWhileInside` ligado;
   - a arena de P5 tranca com um **obturador** no buraco do deck e um **portão** para a sala do servidor;
   - o alvo de disparo de P3 está em **y 5,5** (fora do alcance do pulo + bastão).
 - **Origens:** P1 0 · P2 56 · P3 118 · P4 174 · P5 232 · P6 282 (chão em y 0; P6 desce até −33,6).
@@ -96,5 +118,6 @@ Claude Opus 5.5 (`claude-opus-5-5`)
 - `Assets/_Project/Scripts/Editor/PrologueRuinsSetup.cs` (reescrito), `EnemySetupUtility.cs`, `Act1SewersSetup.cs` (modificados)
 - `Assets/_Project/Scripts/Tests/PlayMode/Story56PrologueScaleTests.cs` (novo), `Story54PrologueTests.cs`, `Story51SceneFlowTests.cs` (modificados)
 - `Assets/_Project/Scripts/Tests/EditMode/UpgradeTests.cs` (novo)
+- Revisão (2026-11-13): `Runtime/Player/PlayerUpgradeApplier.cs` (novo, separado de `PlayerUpgradeSession.cs`), `Runtime/World/RoomExitTrigger.cs`, `ShelterRestSpot.cs` (`TryRest`), `CatExplorationPoint.cs` (`ResetSession` público)
 - `Assets/_Project/Data/Narrative/FatherSketch01.asset`, `FatherSketchDialogue.asset` (novos)
 - `Assets/_Project/Scenes/Zones/Prologue_Ruins.unity`, `Act1_Sewers.unity` (regeradas)

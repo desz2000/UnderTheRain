@@ -11,6 +11,7 @@ namespace UnderTheRain.Narrative
         public const string FlagDomusEvidenceFound = "domus_evidence_found";
         public const string FlagIcarusConfronted = "icarus_confronted";
         public const string FlagSewerExitUnlocked = "sewer_exit_unlocked";
+        public const string FlagFatherSketchFound = "father_sketch_found";
 
         private static NarrativeProgressModel _sharedModel;
 

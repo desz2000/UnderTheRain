@@ -36,10 +36,8 @@ namespace UnderTheRain.Editor
 
         private const string GroundLayer = "Ground";
         private const string OneWayLayer = "OneWayPlatform";
-        private const string CompanionLayer = "Companion";
         private const string PlayerHitboxLayer = "PlayerHitbox";
         private const string PlayerHurtboxLayer = "PlayerHurtbox";
-        private const string EnemyHurtboxLayer = "EnemyHurtbox";
 
         [MenuItem("UnderTheRain/Setup/Create Act 1 Sewers Scene")]
         public static void CreateAct1SewersScene()
@@ -52,22 +50,7 @@ namespace UnderTheRain.Editor
 
             Directory.CreateDirectory(NarrativeDataDir);
 
-            var doc = EnsureDocumentAsset();
-            var terminalDialogue = EnsureDialogueAsset(
-                "TerminalDomusEvidenceDialogue.asset",
-                new List<DialogueLine>
-                {
-                    Line("TERMINAL DOMUS CORP // SETOR 04", new Color(0.306f, 0.804f, 0.769f, 1f),
-                        "[ARQUIVO CONFIDENCIAL #2090-B] O kernel de livre-arbítrio foi sabotado antes da distribuição em massa. " +
-                        "A Diretoria Executiva ordenou o acobertamento total da falha."),
-                    Line("TERMINAL DOMUS CORP // SETOR 04", new Color(0.306f, 0.804f, 0.769f, 1f),
-                        "[ADENDO] Desenvolvedor-chefe dado como desaparecido. Credenciais de acesso ao laboratório subterrâneo " +
-                        "permaneceram ativas após a Queda."),
-                    Line("DANTE", new Color(0.75f, 0.90f, 0.96f, 1f),
-                        "Não foi um acidente... A Domus Corp sabia. E meu pai pode estar vivo lá em cima. " +
-                        "Icarus precisa ver isso.")
-                });
-
+            // The Domus terminal document and dialogue are owned by PrologueRuinsSetup (the terminal lives there).
             var icarusBefore = EnsureDialogueAsset(
                 "IcarusBeforeEvidenceDialogue.asset",
                 new List<DialogueLine>
@@ -75,7 +58,7 @@ namespace UnderTheRain.Editor
                     Line("ICARUS", new Color(0.88f, 0.72f, 0.42f, 1f),
                         "Fique abaixado, Dante. Ouça a garoa lá fora — enquanto ficarmos nos esgotos, as patrulhas não nos acham."),
                     Line("DANTE", new Color(0.75f, 0.90f, 0.96f, 1f),
-                        "Se nos escondermos para sempre, já perdemos. Vou investigar os escombros lá fora antes de decidir qualquer coisa.")
+                        "Se nos escondermos para sempre, já perdemos. Vou investigar a velha estação de metrô antes de decidir qualquer coisa.")
                 });
 
             var icarusConfrontation = EnsureDialogueAsset(
@@ -83,7 +66,7 @@ namespace UnderTheRain.Editor
                 new List<DialogueLine>
                 {
                     Line("DANTE", new Color(0.75f, 0.90f, 0.96f, 1f),
-                        "Icarus, olha estes registros da Domus Corp que achei nos escombros. O colapso foi sabotado e acobertado. As credenciais do meu pai ainda estão ativas!"),
+                        "Icarus, olha estes registros da Domus Corp que achei num laboratório escondido atrás da estação de metrô. O colapso foi sabotado e acobertado. As credenciais do meu pai ainda estão ativas!"),
                     Line("ICARUS", new Color(0.88f, 0.72f, 0.42f, 1f),
                         "Você enlouqueceu?! Trazer esses dados para cá é assinar a sentença de morte deste abrigo!"),
                     Line("ICARUS", new Color(0.88f, 0.72f, 0.42f, 1f),
@@ -102,11 +85,11 @@ namespace UnderTheRain.Editor
 
             AssetDatabase.SaveAssets();
 
+            EnemySetupUtility.EnsureCombatLayers();
             int ground = LayerMask.NameToLayer(GroundLayer);
             int oneWay = LayerMask.NameToLayer(OneWayLayer);
             int pHit = LayerMask.NameToLayer(PlayerHitboxLayer);
             int pHurt = LayerMask.NameToLayer(PlayerHurtboxLayer);
-            int eHurt = LayerMask.NameToLayer(EnemyHurtboxLayer);
 
             var scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
             var sprite = AssetDatabase.LoadAssetAtPath<Sprite>(SquareSpritePath);
@@ -155,6 +138,7 @@ namespace UnderTheRain.Editor
             if (catPrefab != null)
             {
                 var catGo = (GameObject)PrefabUtility.InstantiatePrefab(catPrefab);
+                catGo.name = "Kitty";
                 catGo.transform.position = new Vector3(-9.8f, 0.6f, 0f);
                 var catCtrl = catGo.GetComponent<CatController>();
                 var catSo = new SerializedObject(catCtrl);
@@ -195,13 +179,13 @@ namespace UnderTheRain.Editor
             BuildSewerPassageRoom(room2.transform, sprite, ground);
 
             // Wire Room Exits between Room 1 and Room 2 (+ west exit back to Prologue Ruins)
-            var exitToPrologue = CreateRoomExit("Exit_ToPrologueRuins", room1.transform, new Vector2(-14.6f, 1.5f), new Vector2(1.2f, 3f));
-            exitToPrologue.ConfigureScene("Prologue_Ruins");
+            var exitToPrologue = CreateRoomExit("Exit_ToPrologueRuins", room1.transform, new Vector2(-15.7f, 1.25f), new Vector2(0.6f, 2.5f));
+            exitToPrologue.ConfigureScene("Prologue_Ruins", "prologue_descent", "from_sewers");
 
-            var exitToPassage = CreateRoomExit("Exit_ToSewerPassage", room1.transform, new Vector2(15.0f, 1.5f), new Vector2(1.4f, 3f));
+            var exitToPassage = CreateRoomExit("Exit_ToSewerPassage", room1.transform, new Vector2(15.7f, 1.25f), new Vector2(0.6f, 2.5f));
             exitToPassage.Configure(room2, "from_shelter");
 
-            var exitToShelter = CreateRoomExit("Exit_ToInitialShelter", room2.transform, new Vector2(26.8f, 1.5f), new Vector2(1.4f, 3f));
+            var exitToShelter = CreateRoomExit("Exit_ToInitialShelter", room2.transform, new Vector2(26.3f, 1.25f), new Vector2(0.6f, 2.5f));
             exitToShelter.Configure(room1, "from_passage");
 
             // Wire Camera & TransitionController
@@ -247,6 +231,7 @@ namespace UnderTheRain.Editor
             // Spawn Points
             CreateSpawnPoint("Spawn_Default", parent, "default", new Vector2(-9f, 1f));
             CreateSpawnPoint("Spawn_FromPassage", parent, "from_passage", new Vector2(13.2f, 1f));
+            CreateSpawnPoint("Spawn_FromPrologue", parent, "from_prologue", new Vector2(-12.6f, 1f));
 
             // Shelter Rest Spot
             var restGo = new GameObject("ShelterRestSpot");
@@ -306,20 +291,8 @@ namespace UnderTheRain.Editor
                 pickup.transform.position = new Vector3(43f, 3.8f, 0f);
             }
 
-            // Scout robot patrolling the passage (affected by CatInterference)
-            var robotGo = new GameObject("SewerScoutRobot");
-            robotGo.transform.SetParent(parent, false);
-            robotGo.transform.position = new Vector3(47f, 0.7f, 0f);
-            robotGo.transform.localScale = new Vector3(0.9f, 1.4f, 1f);
-            var robotSr = robotGo.AddComponent<SpriteRenderer>();
-            robotSr.sprite = sprite;
-            robotSr.color = new Color(0.45f, 0.75f, 0.95f, 1f);
-            robotGo.AddComponent<BoxCollider2D>().size = Vector2.one;
-            var target = robotGo.AddComponent<PatrolInterferenceTarget>();
-            var tSo = new SerializedObject(target);
-            tSo.FindProperty("faction").enumValueIndex = (int)EnemyFaction.CollectiveMachine;
-            tSo.FindProperty("spriteRenderer").objectReferenceValue = robotSr;
-            tSo.ApplyModifiedPropertiesWithoutUndo();
+            // Scout robot patrolling the passage (affected by Kitty, deals contact damage, can be destroyed)
+            EnemySetupUtility.CreateScoutRobot("SewerScoutRobot", parent, sprite, new Vector2(47f, 0f));
         }
 
         private static GameObject CreatePlayer(
@@ -332,7 +305,7 @@ namespace UnderTheRain.Editor
         {
             var player = new GameObject("Dante") { tag = "Player" };
             player.transform.position = new Vector3(-9f, 1f, 0f);
-            player.transform.localScale = new Vector3(0.8f, 1.6f, 1f);
+            player.transform.localScale = new Vector3(0.7f, 1.3f, 1f);
             var sr = player.AddComponent<SpriteRenderer>();
             sr.sprite = sprite;
             sr.color = new Color(0.306f, 0.804f, 0.769f, 1f);
@@ -425,6 +398,7 @@ namespace UnderTheRain.Editor
             rangedSo.FindProperty("solidMask").intValue = 1 << ground;
             rangedSo.ApplyModifiedPropertiesWithoutUndo();
 
+            player.AddComponent<PlayerUpgradeApplier>();
             player.AddComponent<DebugCombatHud>();
             return player;
         }
@@ -507,19 +481,6 @@ namespace UnderTheRain.Editor
             sr.color = color;
             go.AddComponent<BoxCollider2D>().size = Vector2.one;
             return go;
-        }
-
-        private static DocumentDataSO EnsureDocumentAsset()
-        {
-            string path = Path.Combine(NarrativeDataDir, "DomusSabotageLog.asset");
-            var asset = AssetDatabase.LoadAssetAtPath<DocumentDataSO>(path);
-            if (asset == null)
-            {
-                asset = ScriptableObject.CreateInstance<DocumentDataSO>();
-                AssetDatabase.CreateAsset(asset, path);
-            }
-            EditorUtility.SetDirty(asset);
-            return asset;
         }
 
         private static DialogueSequenceSO EnsureDialogueAsset(string fileName, List<DialogueLine> lines)

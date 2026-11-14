@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 using UnderTheRain.Companion;
@@ -25,6 +26,17 @@ namespace UnderTheRain.World
         [SerializeField] private GameObject[] objectsToDisableOnComplete;
         [SerializeField] private GameObject promptIndicator;
         [SerializeField] private UnityEvent onCompleted;
+        [Tooltip("Unique id that keeps this shortcut open when the scene is reloaded in the same session. Empty = not remembered.")]
+        [SerializeField] private string persistentId;
+
+        // Session memory until the save system (Epic 8) persists opened shortcuts.
+        private static readonly HashSet<string> CompletedIds = new HashSet<string>();
+
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        public static void ResetSession()
+        {
+            CompletedIds.Clear();
+        }
 
         public CatExplorationType ExplorationType => explorationType;
         public Vector3 EntryPosition => catEntryPoint != null ? catEntryPoint.position : transform.position;
@@ -42,6 +54,11 @@ namespace UnderTheRain.World
             {
                 promptIndicator.SetActive(false);
             }
+
+            if (!string.IsNullOrEmpty(persistentId) && CompletedIds.Contains(persistentId))
+            {
+                ApplyCompletedState();
+            }
         }
 
         public bool CanInteract() => !IsCompleted;
@@ -49,6 +66,14 @@ namespace UnderTheRain.World
         public void Complete()
         {
             if (IsCompleted) return;
+            if (!string.IsNullOrEmpty(persistentId)) CompletedIds.Add(persistentId);
+            ApplyCompletedState();
+            onCompleted?.Invoke();
+            Debug.Log($"[CatExplorationPoint] Completed {explorationType} interaction on {name}.");
+        }
+
+        private void ApplyCompletedState()
+        {
             IsCompleted = true;
 
             if (promptIndicator != null)
@@ -66,9 +91,6 @@ namespace UnderTheRain.World
                     }
                 }
             }
-
-            onCompleted?.Invoke();
-            Debug.Log($"[CatExplorationPoint] Completed {explorationType} interaction on {name}.");
         }
 
         private void OnTriggerEnter2D(Collider2D other)

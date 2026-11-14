@@ -18,36 +18,39 @@ canonical_source: 'docs/narrativa/biblia-narrativa.md'
 - **Kitty (Gatinha de Metal):** robô branca isolada da rede, construída por Dante antes da Queda. Companheira ativa que causa hesitação/travamento nos robôs da colmeia sem entender o próprio papel.
 - **O Pai (55 anos):** ex-desenvolvedor brilhante da Domus Corp que criou o código de livre-arbítrio para libertar os robôs; sobreviveu 10 anos escondido em um laboratório secreto, consumido pela culpa.
 - **Icarus (Líder da Resistência nos Esgotos):** ex-engenheiro de manutenção urbana que perdeu a família nos primeiros dias da Queda. Acredita que enfrentar a Domus Corp é suicídio e que sobreviver escondido é a única vitória possível. Vê as provas de Dante como ameaça ao esconderijo e o expulsa.
-- **Humanos Misantropos:** facção humana aliada às máquinas por ódio à própria espécie; imunes à interferência do gato.
+- **Humanos Misantropos:** facção humana aliada às máquinas por ódio à própria espécie; imunes à interferência de Kitty.
 - **Mente Coletiva & O Titã:** consciência única compartilhada pelos robôs (operários, patrulheiros, policiais, elite) e seu avatar físico supremo.
 
 ---
 
 ## 2. Mapa de Beats por Zona (Estrutura em 3 Atos)
 
-### Ato I — A Fagulha na Garoa (Prólogo nos Escombros → Zona 1: Esgotos → Transição para Zona 2: Superfície)
-1. **Prólogo / Tutorial (Escombros entre Esgotos e Superfície):** Dante e Kitty exploram os escombros sob a garoa (tutorial de movimento, pulo, interferência de Kitty e combate básico) e encontram um terminal antigo da Domus Corp com documentos confidenciais provando que o colapso foi sabotado/acobertado — e que o pai pode estar vivo.
-2. **Abrigo Inicial e Confronto com Icarus (Esgotos):** Dante retorna ao abrigo subterrâneo e leva as provas a Icarus, que o chama de louco e o ameaça de expulsão. Ruptura: Dante e Kitty abandonam os esgotos rumo à superfície.
-4. **Subida e Primeiro Gate (Wall Jump):** Na subida para a superfície, Dante obtém/desbloqueia o **Wall Slide & Wall Jump** e testa o retorno recompensado.
-5. **Anomalia e Primeiro Boss (Transição → Superfície):** O gato provoca curto-circuito/hesitação em um robô batedor. Logo depois, Dante enfrenta o **1º Humano Misantropo (Boss 1)** e obtém o **Mapa Criptografado**, contemplando as torres da Domus Corp na neblina.
+### Ato I — A Fagulha na Garoa (Prólogo / Zona 0: Estação de Metrô → Zona 1: Esgotos → Transição para Zona 2: Superfície)
+
+> Salas e IDs de cada beat: [level-map.md](../gdd/gdd-Under-The-Rain-2026-11-13/level-map.md).
+
+1. **Prólogo / Tutorial (Zona 0 — Estação de Metrô Abandonada, no subsolo da cidade):** Dante e Kitty, que já está com ele desde o início, exploram uma estação de metrô desativada, seca e **sem chuva**, porque ainda estão sob a cidade (tutorial de movimento, pulo, bastão, bateria, Kitty pelo duto de manutenção e interferência de Kitty). Atrás da estação, descobrem que a "manutenção" escondia um **laboratório abandonado da Domus Corp**, onde se testava um **novo modelo de robô de guerra que não foi adiante**. Lá encontram um terminal antigo com documentos confidenciais provando que o colapso foi sabotado/acobertado — e que o pai pode estar vivo. *(Salas P1 Plataforma do Metrô e P5 Laboratório Escondido.)*
+2. **Abrigo Inicial e Confronto com Icarus (Zona 1 — Esgotos, Z1-01):** Dante desce ao abrigo subterrâneo, a base da resistência, e leva as provas a Icarus, que o chama de louco e o ameaça de expulsão. Ruptura: a comporta leste é destravada e Dante e Kitty partem rumo à superfície. O abrigo continua sendo o ponto de descanso, recarga e mercadores da Zona 1, revisitado no backtracking.
+3. **Subida e Primeiro Gate (Wall Jump — fim da Zona 1):** Para chegar ao poço, Kitty atravessa um duto (Z1-04). Na **Oficina (Z1-06)**, Dante obtém o **Wall Slide & Wall Jump** (luvas de tração), escala o **Poço (Z1-07)** e abre, pelo **Topo (Z1-09)**, o atalho unilateral de volta ao Abrigo (retorno recompensado).
+4. **Anomalia e Primeiro Boss (Transição → Superfície):** Kitty provoca curto-circuito/hesitação em um robô batedor. Logo depois, Dante enfrenta o **1º Humano Misantropo (Boss 1)** e obtém o **Mapa Criptografado**, contemplando as torres da Domus Corp na neblina.
 
 ### Ato II — O Eco dos Espelhos (Zonas 2, 3 e 4: Superfície, Cidade Alta e Laboratório)
 1. **Exploração sob a Garoa (Ruínas da Superfície):** Dante navega ruas alagadas e encontra os primeiros postos avançados de sobreviventes (abrigos com ferreiros, vendedores e curandeiros). Pistas do Pai aparecem em **registros de áudio, logs de texto e códigos rabiscados à mão**.
 2. **Data Center 1 — Subestação das Ruínas (Boss 2):** Dante enfrenta o **Executor Policial MK-II**, obtendo o **módulo de acoplamento elétrico** (Bastão Eletrificado) e um registro de áudio do Pai tentando sabotar a contenção anos atrás. **Caos da IA — Estágio 1:** robôs nas áreas ligadas ficam mais agressivos e rotas se abrem.
 3. **Cidade Alta e Setor Corporativo (Boss 3):** Prédios brutalistas e neon na chuva. No **Data Center 2**, Dante derrota **Kaelen (Líder de Célula Misantropa)**, obtendo upgrade de mobilidade e a localização exata do laboratório subterrâneo. **Caos da IA — Estágio 2:** escalada de agressividade das patrulhas pelo mapa.
-4. **O Ponto Médio (Zona 4 — Laboratório Secreto):** Dante reencontra **o Pai (55 anos)**. O encontro é tenso e marcado por mágoas. Ao ver o gatinho de metal, o Pai percebe que a matriz neural isolada do gato é a chave para um **vírus de descompressão**.
+4. **O Ponto Médio (Zona 4 — Laboratório Secreto):** Dante reencontra **o Pai (55 anos)**. O encontro é tenso e marcado por mágoas. Ao ver Kitty, o Pai percebe que a matriz neural isolada dela é a chave para um **vírus de descompressão**.
 5. **A Virada e a Fuga (Boss 4):** Pai e filho projetam o vírus, mas o laboratório é invadido por uma **Incursão de Elite e Misantropos**. Eles lutam e fogem juntos, unidos pelo mesmo propósito.
 
 ### Ato III — O Colapso e o Titã (Zona 5: Torre Central da Domus Corp)
 1. **A Infiltração Final:** Usando a agilidade de Dante (incluindo Gancho Magnético e Lâmina de Alta Frequência) e o conhecimento técnico do Pai, os dois invadem a Torre Central.
-2. **O Vírus da Consciência:** Injetam o vírus baseado na individualidade do gato. A colmeia sofre um colapso imediato e milhões de robôs comuns desligam por perderem o sinal.
-3. **O Boss Final — O Titã (Boss 5):** O Titã absorve toda a energia e processamento remanescente da rede em sua carcaça colossal. Em uma batalha que testa tudo o que o jogador aprendeu, o Pai abre falhas no chassi e o gatinho dá apoio silencioso até Dante desferir o golpe final.
+2. **O Vírus da Consciência:** Injetam o vírus baseado na individualidade de Kitty. A colmeia sofre um colapso imediato e milhões de robôs comuns desligam por perderem o sinal.
+3. **O Boss Final — O Titã (Boss 5):** O Titã absorve toda a energia e processamento remanescente da rede em sua carcaça colossal. Em uma batalha que testa tudo o que o jogador aprendeu, o Pai abre falhas no chassi e Kitty dá apoio silencioso até Dante desferir o golpe final.
 
 ---
 
 ## 3. Bosses Opcionais (Side Quests de História)
 
-1. **Protótipo Domus Mark-0 *(Esgotos Profundos — Setor Selado)*:** unidade pré-colapso fora da rede (imune ao gato). Guarda registros de áudio/texto sobre os testes secretos da Domus Corp antes da Queda. Rende um **acessório de bateria/combate**.
+1. **Protótipo Domus Mark-0 *(Esgotos — Setor Selado, Z1-11; porta visível desde o Abrigo, aberta com o Bastão Eletrificado no Épico 8)*:** unidade pré-colapso fora da rede (imune a Kitty). Guarda registros de áudio/texto sobre os testes secretos da Domus Corp antes da Queda. Rende um **acessório de bateria/combate**.
 2. **Antigo Colega do Pai *(Cidade Alta — Ala de Pesquisa)*:** ex-pesquisador da Domus Corp que ajudou a acobertar a sabotagem do código e sobreviveu aliado aos Misantropos por culpa e medo. Fecha a ponta solta sobre a tentativa de "queima de arquivo" contra o Pai e rende um **acoplamento/acessório avançado**.
 
 ---

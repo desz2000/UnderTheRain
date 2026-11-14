@@ -44,6 +44,15 @@ namespace UnderTheRain.Player
             CurrentCharge = MaxCharge;
             OnChargeChanged?.Invoke(CurrentCharge, MaxCharge);
         }
+
+        /// <summary>Permanent capacity upgrade: raises the max and grants the new charge immediately.</summary>
+        public void IncreaseMax(float amount)
+        {
+            if (amount <= 0f) return;
+            MaxCharge += amount;
+            CurrentCharge = Mathf.Min(MaxCharge, CurrentCharge + amount);
+            OnChargeChanged?.Invoke(CurrentCharge, MaxCharge);
+        }
     }
 
     /// <summary>
@@ -75,6 +84,7 @@ namespace UnderTheRain.Player
         public bool TryConsume(float amount) => Model.TryConsume(amount);
         public void Recharge(float amount) => Model.Recharge(amount);
         public void RestoreFull() => Model.RestoreFull();
+        public void IncreaseMax(float amount) => Model.IncreaseMax(amount);
 
         private void EnsureModel()
         {

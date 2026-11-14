@@ -90,7 +90,7 @@ namespace UnderTheRain.Editor
             // Dante
             var player = new GameObject("Dante");
             player.transform.position = new Vector3(0f, 1f, 0f);
-            player.transform.localScale = new Vector3(0.8f, 1.6f, 1f);
+            player.transform.localScale = new Vector3(0.7f, 1.3f, 1f);
             var sr = player.AddComponent<SpriteRenderer>();
             sr.sprite = sprite;
             sr.color = new Color(0.31f, 0.8f, 0.77f);
@@ -348,7 +348,7 @@ namespace UnderTheRain.Editor
             go.AddComponent<BatteryCellPickup>();
         }
 
-        private static void ConfigureCombatCollisionMatrix()
+        internal static void ConfigureCombatCollisionMatrix()
         {
             int[] combatLayers =
             {
@@ -384,7 +384,7 @@ namespace UnderTheRain.Editor
             return go;
         }
 
-        private static void EnsureLayer(string layerName)
+        internal static void EnsureLayer(string layerName)
         {
             if (LayerMask.NameToLayer(layerName) >= 0) return;
 

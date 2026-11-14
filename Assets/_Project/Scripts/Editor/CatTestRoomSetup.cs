@@ -108,7 +108,7 @@ namespace UnderTheRain.Editor
             // Dante
             var player = new GameObject("Dante");
             player.transform.position = new Vector3(-2f, 1f, 0f);
-            player.transform.localScale = new Vector3(0.8f, 1.6f, 1f);
+            player.transform.localScale = new Vector3(0.7f, 1.3f, 1f);
             var sr = player.AddComponent<SpriteRenderer>();
             sr.sprite = sprite;
             sr.color = new Color(0.31f, 0.8f, 0.77f);

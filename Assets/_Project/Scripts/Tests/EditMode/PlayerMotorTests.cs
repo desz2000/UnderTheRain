@@ -47,6 +47,19 @@ namespace UnderTheRain.Tests.EditMode
         }
 
         [Test]
+        public void LockHorizontal_PreservesVelocity_SoItMustNotBeUsedToFreezeControl()
+        {
+            // lockHorizontal is for knockback (keep the push). Dialogue locks send moveX = 0 instead,
+            // otherwise Dante keeps running through the conversation (regression found in story 5.1).
+            Run(10, new PlayerMotorInput { moveX = 1f }, true);
+            Run(30, new PlayerMotorInput { moveX = 0f, lockHorizontal = true }, true);
+            Assert.AreEqual(_config.maxRunSpeed, _motor.Velocity.x, 0.01f);
+
+            Run(7, new PlayerMotorInput { moveX = 0f }, true);
+            Assert.AreEqual(0f, _motor.Velocity.x, 0.01f);
+        }
+
+        [Test]
         public void Jump_AppliesJumpVelocity_WhenGrounded()
         {
             _motor.Step(Dt, new PlayerMotorInput { jumpPressed = true, jumpHeld = true }, true);

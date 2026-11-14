@@ -29,7 +29,7 @@ tokens:
     hud_health: 'Ícones/células em pixel art soltos no canto superior esquerdo'
     hud_battery: 'Barra segmentada fina em ciano abaixo da vida'
     hud_kits_parts: 'Ícone pixel art + contador monospace (kits médicos e peças atual/máx)'
-    hud_cat_weapon: 'Ícone compacto de estado/cooldown do gato + ícone da arma equipada'
+    hud_cat_weapon: 'Ícone compacto de estado/cooldown de Kitty + ícone da arma equipada'
     menu_panel: 'Moldura pixel-art escura com borda de 1px e canto chanfrado (zero caixas na HUD de jogo)'
 ---
 
@@ -57,7 +57,7 @@ tokens:
 - **Contadores e Custos:** fonte pixel monospace para peças (`120/250`), cargas de kit e bateria.
 
 ## 4. Layout & Spacing
-- **HUD de Gameplay (Zero Caixas):** elementos soltos diretamente sobre a cena no canto superior esquerdo (vida, bateria, kits, peças) e canto inferior/discreto para arma equipada + cooldown do gato, com margem fixa de `16px` (`{spacing.hud_margin_px}`) e espaçamento de `8px` (`{spacing.hud_gap_px}`).
+- **HUD de Gameplay (Zero Caixas):** elementos soltos diretamente sobre a cena no canto superior esquerdo (vida, bateria, kits, peças) e canto inferior/discreto para arma equipada + cooldown de Kitty, com margem fixa de `16px` (`{spacing.hud_margin_px}`) e espaçamento de `8px` (`{spacing.hud_gap_px}`).
 - **Menus e Inventário:** ocupam a tela com respiro generoso, leitura limpa e hierarquia clara (abas no topo, conteúdo à esquerda, detalhes/ilustração à direita).
 
 ## 5. Elevation & Depth
@@ -70,7 +70,7 @@ tokens:
 - **HUD de Vida:** células/cápsulas pixel-art que racham/esvaziam ao sofrer dano (sem barra genérica de progresso).
 - **HUD de Bateria:** barra fina segmentada em `#4ECDC4` logo abaixo da vida.
 - **HUD de Kits Médicos & Peças:** ícone pixel-art + número monospace (`3` kits; `85/150` peças).
-- **HUD de Gato & Arma:** ícone da arma equipada + ícone discreto do gato indicando pronto vs. recarregando (cooldown).
+- **HUD de Kitty & Arma:** ícone da arma equipada + ícone discreto de Kitty indicando pronto vs. recarregando (cooldown).
 - **Prompts Diegéticos no Mundo:** pequeno glifo de botão/tecla acima de terminais, NPCs ou máquina de teletransporte.
 
 ## 8. Do's and Don'ts

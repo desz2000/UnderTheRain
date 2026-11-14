@@ -65,6 +65,15 @@ namespace UnderTheRain.Combat
             OnHealthChanged?.Invoke(CurrentHealth, MaxHealth);
         }
 
+        /// <summary>Permanent health upgrade: adds cells to the max and heals them immediately.</summary>
+        public void IncreaseMax(int cells)
+        {
+            if (cells <= 0) return;
+            MaxHealth += cells;
+            if (!IsDead) CurrentHealth = Mathf.Min(MaxHealth, CurrentHealth + cells);
+            OnHealthChanged?.Invoke(CurrentHealth, MaxHealth);
+        }
+
         public void RestoreFull()
         {
             _invulnerabilityTimer = 0f;
@@ -114,6 +123,7 @@ namespace UnderTheRain.Combat
         public bool TryTakeDamage(DamageContext context) => Model.TryTakeDamage(context);
         public void Heal(int amount) => Model.Heal(amount);
         public void RestoreFull() => Model.RestoreFull();
+        public void IncreaseMax(int cells) => Model.IncreaseMax(cells);
 
         private void EnsureModel()
         {

@@ -74,8 +74,17 @@ namespace UnderTheRain.Player
 
             yield return new WaitForSeconds(respawnDelay);
 
-            transform.position = _respawnPosition;
-            if (_body != null) _body.linearVelocity = Vector2.zero;
+            var transitions = FindFirstObjectByType<RoomTransitionController>();
+            if (transitions != null)
+            {
+                // Fades and activates the room that holds the respawn point (it may differ from the death room).
+                yield return transitions.RespawnRoutine(transform, _respawnPosition);
+            }
+            else
+            {
+                transform.position = _respawnPosition;
+                if (_body != null) _body.linearVelocity = Vector2.zero;
+            }
 
             health?.RestoreFull();
             battery?.RestoreFull();

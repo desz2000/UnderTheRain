@@ -13,6 +13,10 @@ MonoBehaviour:
   m_Name: TerminalDomusEvidenceDialogue
   m_EditorClassIdentifier: UnderTheRain.Runtime::UnderTheRain.Narrative.DialogueSequenceSO
   lines:
+  - speakerName: DANTE
+    speakerColor: {r: 0.75, g: 0.9, b: 0.96, a: 1}
+    text: "Pain\xE9is est\xE9reis atr\xE1s de uma esta\xE7\xE3o de metr\xF4... Isso
+      nunca foi manuten\xE7\xE3o. Era um laborat\xF3rio da Domus Corp."
   - speakerName: TERMINAL DOMUS CORP // SETOR 04
     speakerColor: {r: 0.306, g: 0.804, b: 0.769, a: 1}
     text: "[ARQUIVO CONFIDENCIAL #2090-B] O kernel de livre-arb\xEDtrio foi sabotado
@@ -25,4 +29,5 @@ MonoBehaviour:
   - speakerName: DANTE
     speakerColor: {r: 0.75, g: 0.9, b: 0.96, a: 1}
     text: "N\xE3o foi um acidente... A Domus Corp sabia. E meu pai pode estar vivo
-      l\xE1 em cima. Icarus precisa ver isso."
+      l\xE1 em cima. Vamos voltar para o abrigo, Kitty \u2014 Icarus precisa ver
+      isso."

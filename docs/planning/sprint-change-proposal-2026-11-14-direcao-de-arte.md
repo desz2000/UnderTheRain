@@ -106,3 +106,79 @@ Riscos:
 - **Escopo:** major. Muda renderização, arquitetura de câmera, regras de projeto e a ordem do Épico 5.
 - **Próximo passo:** executar `docs/planning/art/prompt-migracao-2-5d.md` no agente de desenvolvimento.
 - **Critério de sucesso:** beauty corner da P1 aprovado pelo checklist da bíblia §12.
+
+---
+
+## 10. Revisão da Fase 1 (gds-correct-course, 2026-11-14) *(aguarda aprovação)*
+
+Esta revisão parte da proposta acima, sem mudar as decisões do usuário (§3). Acrescenta o que a análise do código e do URP 17.3 mostrou, o plano da história 5.10 e as decisões que faltam. O desenho técnico está em `game-architecture.md` §10.
+
+### 10.1 Resultado do checklist
+
+| Seção | Resultado |
+|---|---|
+| 1. Gatilho e contexto | Feito (§1 e §2 acima) |
+| 2. Impacto nos épicos | Só o Épico 5 muda. Épicos 6 a 8 ficam como estão; a 6.1 empresta a HUD mínima para a 5.15 |
+| 3. Conflitos entre artefatos | `project-context.md` (regras 29–31, linha de câmera, §5.13), `game-architecture.md` (nova §10, escrita nesta fase), GDD e brief (uma linha cada), `epics.md`, `sprint-status.yaml`. Sem conflito com a narrativa nem com o `DESIGN.md` |
+| 4. Caminho | Ajuste direto (opção 1). Não há rollback: nenhuma história feita é desfeita, o graybox continua valendo |
+| 5. Proposta | Este documento |
+| 6. Handoff | Escopo major; ver §10.6 |
+
+### 10.2 O que a análise mostrou
+
+1. **A migração da câmera é pequena e não exige adaptar testes.** `RoomCamera2D` só precisa calcular a área visível em Z = 0 nos dois modos. Os testes atuais criam câmera ortográfica, que continua suportada.
+2. **Os dois renderers convivem no mesmo URP Asset**; cada câmera escolhe o seu. As cenas 2D não são tocadas.
+3. **O sprite iluminado precisa de shader próprio** (opaco, com recorte de alpha): o shader de sprite do URP não recebe luz 3D, não projeta sombra e não escreve profundidade.
+4. **Três pontos da bíblia não são viáveis como estão escritos** (`game-architecture.md` §10.8): luz volumétrica (o URP não tem), desfoque do primeiro plano (só com DoF Bokeh, mais caro) e pixel uniforme nas camadas fundas (impossível em perspectiva). Cada um tem alternativa proposta.
+5. **A P1 tem 48 unidades de largura (2,4 telas).** O spike leva **uma** tela à qualidade final; o resto da P1 fica em graybox até a 5.14.
+6. **Ambiente de execução:** a sessão em nuvem em que este plano foi escrito **não tem o Unity instalado** e não alcança os servidores da Unity. Sem resolver isso, o agente não consegue rodar os testes, gerar as capturas nem medir FPS (§10.5, decisão 1).
+
+### 10.3 Plano da história 5.10 — Spike 2,5D + beauty corner da P1
+
+Branch própria. Uma tarefa por commit, testes verdes a cada passo.
+
+| # | Tarefa | Verificação |
+|---|---|---|
+| 1 | **Retrato de antes:** capturas da P1 atual e teste que registra posição e tamanho de todos os colisores da P1 | Teste novo verde antes de qualquer mudança |
+| 2 | **Renderer:** `Renderer25D.asset` (Forward+, SSAO) no índice 1 do URP Asset; sombras de luzes adicionais ligadas | `Act1_Sewers` e salas de teste abrem e ficam iguais às capturas de antes |
+| 3 | **Câmera:** `RoomCamera2D.HalfExtentsAtPlayPlane`; câmera do Prólogo em perspectiva (25°, 25,37 de distância, renderer 1) | Testes atuais sem alteração + testes novos de enquadramento 20 × 11,25 |
+| 4 | **Shader `SpriteLit25D`** e material; sombra e recebimento de sombra no `SpriteRenderer` | Dante (ainda quadrado) recebe luz, projeta sombra e fica em foco no DoF |
+| 5 | **Prefab de arte:** `Art_prologue_metro_platform.prefab` instanciado pelo setup; comando separado para montar o prefab | Regerar a cena não altera o prefab; teste "arte sem colisor nem lógica" |
+| 6 | **Kit do metrô para uma tela:** plataforma com borda amarela, parede de azulejo com faixa da Linha 7, colunas com vergalhão, teto com trecho desabado, trilhos, vagão descarrilado (objeto-herói), bilheteria, placas, cartazes, cabos, entulho, pichação; túnel recuando com luzes ao longe | Mínimos da bíblia §8 conferidos por contagem |
+| 7 | **Luz e atmosfera:** ambiente quase preto; luz-chave com sombra (fresta do teto ou interior do vagão), preenchimento âmbar de emergência, contraste frio; fluorescente falhando (`LightFlicker`); névoa, poeira, feixe; Volume com bloom, tonemapping, DoF, vinheta, grão | Cada luz tem fonte visível; ao menos uma animada |
+| 8 | **Dante e Kitty em sprite:** parado (6 quadros) e corrida (8), paleta mestre, normal map, olhos de Kitty emissivos e luz própria | Pixels nítidos e uniformes em 1080p e 1440p |
+| 9 | **Capturas e medição:** `docs/art-review/beauty-corner-p1/` (1080p e 1440p; com e sem personagens; antes e depois) e FPS em 1080p | Checklist da bíblia §12 preenchido item a item |
+| 10 | **Parada:** nada é marcado como pronto; aguarda aprovação visual do usuário | — |
+
+Tela escolhida *(proposta)*: o trecho do **vagão e da bilheteria** (centro em x ≈ 9 da P1), porque junta dois objetos-herói, a via e a boca do túnel.
+
+### 10.4 Riscos novos
+
+| Risco | Mitigação |
+|---|---|
+| Qualidade da pixel art (texturas, vagão, Dante, Kitty) depende de quem a produz | Decisão 2 abaixo; paleta da bíblia §5.2 travada em qualquer caso; aprovação visual antes de escalar |
+| `SpriteRenderer` não projetar ou receber sombra como esperado | Plano B com quad e `MeshRenderer` (`game-architecture.md` §10.4) |
+| DoF Bokeh + SSAO + sombra derrubarem os 60 FPS | Medir no passo 9; plano B: DoF Gaussian, SSAO em meia resolução |
+| Sprites cintilando com a câmera em movimento | Encaixe da câmera na grade de pixel; plano B no shader |
+| Graybox das outras salas do Prólogo ficar estranho com pós-processamento | Conferir no passo 3; se preciso, Volume local só na área migrada |
+
+### 10.5 Decisões que faltam (do usuário)
+
+1. **Onde o Unity roda na Fase 2.**
+   - **A. Na sua máquina** *(recomendado)*: o agente escreve código, shaders e scripts de Editor; você roda o setup, os testes e o comando de captura e envia as imagens. Mais lento por rodada, mas mede FPS de verdade.
+   - **B. Na nuvem:** instalar o Unity 6000.3.1f1 no ambiente da sessão. Exige liberar os servidores da Unity na rede do ambiente e uma licença ativável sem interface gráfica. Sem placa de vídeo, serve para testes e capturas, mas **não** para medir FPS.
+2. **Quem produz a pixel art** (pendência 3 da §8).
+   - **A. PixelLab com paleta travada + retoque seu no Aseprite** (o que a bíblia §9 prevê). Precisa de acesso à API do PixelLab na sessão, ou de você gerar e enviar os arquivos.
+   - **B. O agente desenha por código** (scripts que pintam cada textura e quadro com a paleta travada, desenho intencional, sem ruído). Não depende de ninguém, mas o teto de qualidade é mais baixo, principalmente em personagens e animação.
+   - **C. Misto** *(recomendado)*: cenário e texturas pelo agente (B); Dante e Kitty pelo PixelLab/Aseprite (A).
+3. **Luz volumétrica:** aceitar o feixe em malha aditiva preso a uma luz real como exceção à regra "não simular luz com sprite semitransparente"? (`game-architecture.md` §10.8, item 1)
+4. **Pixel uniforme:** aceitar que a regra vale para o plano de jogo, e não para as camadas fundas? (§10.8, item 3)
+5. **Tela do beauty corner:** vagão + bilheteria, ou outra?
+6. **Moodboard:** as capturas do Pinterest ainda não estão em `docs/planning/art/moodboard/`. Sem elas, o item "lado a lado com as referências" do checklist será feito só com Hollow Knight, Replaced e SacriFire.
+
+### 10.6 Handoff
+
+- **Escopo:** major (confirmado).
+- **Feito nesta fase:** esta revisão e `game-architecture.md` §10. Nenhum código foi escrito.
+- **Não feito de propósito:** `project-context.md`, `epics.md` e `sprint-status.yaml` só mudam depois da aprovação (Fase 3 do prompt), para que nenhum documento afirme o que ainda não foi validado.
+- **Próximo passo depois da aprovação:** `gds-create-story` para a 5.10 com as tarefas da §10.3, em branch própria.

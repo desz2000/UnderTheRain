@@ -35,6 +35,7 @@ namespace UnderTheRain.Editor
         private const string NarrativeDataDir = "Assets/_Project/Data/Narrative";
         private const string ScenePath = "Assets/_Project/Scenes/Zones/Prologue_Ruins.unity";
 
+        private const string ZoneArtDir = "Assets/_Project/Art/Tilesets/Prologue";
         private const string GroundLayer = "Ground";
         private const string OneWayLayer = "OneWayPlatform";
         private const string PlayerHitboxLayer = "PlayerHitbox";
@@ -76,6 +77,8 @@ namespace UnderTheRain.Editor
             AssetDatabase.SaveAssets();
 
             EnemySetupUtility.EnsureCombatLayers();
+            // Zone art: every texture comes from one colour ramp, so backdrop, masses and edges belong together.
+            ZoneArtKit.EnsureKit(ZoneArtDir, ZoneArtKit.ProloguePalette);
             int ground = LayerMask.NameToLayer(GroundLayer);
             int oneWay = LayerMask.NameToLayer(OneWayLayer);
             int pHit = LayerMask.NameToLayer(PlayerHitboxLayer);
@@ -89,7 +92,7 @@ namespace UnderTheRain.Editor
             var cam = camGo.AddComponent<Camera>();
             cam.orthographic = true;
             cam.orthographicSize = 5.4f;
-            cam.backgroundColor = new Color(0.039f, 0.051f, 0.070f, 1f);
+            cam.backgroundColor = new Color(0.024f, 0.043f, 0.055f, 1f);
             cam.clearFlags = CameraClearFlags.SolidColor;
             camGo.transform.position = new Vector3(-8f, 1.5f, -10f);
             camGo.AddComponent<AudioListener>();
@@ -234,6 +237,9 @@ namespace UnderTheRain.Editor
             trSo.FindProperty("initialRoom").objectReferenceValue = p1;
             trSo.ApplyModifiedPropertiesWithoutUndo();
 
+            // Dress the solids only now: caps and edges depend on which neighbours cover them.
+            ZoneArtKit.SkinSolids();
+
             foreach (var room in new[] { p2, p3, p4, p5, p5a, p6, tunnel })
             {
                 room.gameObject.SetActive(false);
@@ -283,7 +289,6 @@ namespace UnderTheRain.Editor
             Rect("TicketBooth_Platform", r, o, 10f, 4.5f, 23f, 5f, LedgeColor);
 
             DecorRect("Rails", r, o, -4f, -2.55f, 11f, -2.45f, new Color(0.32f, 0.30f, 0.27f));
-            for (int i = 0; i < 5; i++) DecorRect($"Pillar_{i}", r, o, -21f + i * 9f, 0f, -20.2f + i * 9f, 11f, new Color(0.20f, 0.22f, 0.24f));
             DecorRect("StationSignStrip", r, o, -21f, 8.5f, -14f, 9.2f, new Color(0.55f, 0.20f, 0.18f, 0.85f));
             Graffiti("Graffiti_Mezzanine", r, o, -6f, 6.2f);
 
@@ -404,7 +409,6 @@ namespace UnderTheRain.Editor
             Rect("Ceiling", r, o, -22f, 15f, 22f, 16f, CeilColor);
             WallWithDoors("Wall_Left", r, o, -22f, -21f, 0f, 15f, 0f);
             WallWithDoors("Wall_Right", r, o, 21f, 22f, 0f, 15f, 7.2f);
-            DecorRect("ServiceCorridorBack", r, o, -21f, 0f, 21f, 15f, new Color(0.14f, 0.15f, 0.17f));
 
             Rect("Floor_West", r, o, -22f, -4f, -16f, 0f, FloorColor);
             Rect("Floor_East", r, o, -14f, -4f, 22f, 0f, FloorColor);
@@ -454,7 +458,6 @@ namespace UnderTheRain.Editor
             Rect("Ceiling", r, o, -32f, 17f, 32f, 18f, CeilColor);
             WallWithDoors("Wall_Left", r, o, -32f, -31f, 0f, 17f, 7.2f);
             WallWithDoors("Wall_Right", r, o, 31f, 32f, 0f, 17f, 0f, 12.8f);
-            DecorRect("LabPanelsBack", r, o, -10f, 0f, 31f, 17f, new Color(0.18f, 0.24f, 0.26f));
             DecorRect("LabLightStrip", r, o, -10f, 16.3f, 31f, 16.5f, CyanLight);
 
             Rect("Floor_Base", r, o, -32f, -4f, 32f, 0f, FloorColor);
@@ -523,7 +526,6 @@ namespace UnderTheRain.Editor
             WallWithDoors("Wall_Left", r, o, -12f, -11f, 0f, 12f, 0f);
             Rect("Wall_Right", r, o, 11f, -1f, 12f, 12f, WallColor);
             Rect("Floor", r, o, -12f, -1f, 12f, 0f, FloorColor);
-            DecorRect("ArchiveBack", r, o, -11f, 0f, 11f, 12f, new Color(0.10f, 0.12f, 0.14f));
 
             OneWay("Rack_1", r, o, -9f, -4f, 2.8f);
             OneWay("Rack_2", r, o, 1f, 6f, 2.8f);
@@ -551,12 +553,11 @@ namespace UnderTheRain.Editor
             Rect("Wall_Left_Lower", r, o, -14f, -38f, -13f, 0f, WallColor);
             WallWithDoors("Wall_Right", r, o, 13f, 14f, -33.6f, 5f, -33.6f);
             Rect("Wall_Right_Base", r, o, 13f, -38f, 14f, -33.6f, WallColor);
-            DecorRect("ShaftBack", r, o, -13f, -33.6f, 13f, 5f, new Color(0.11f, 0.12f, 0.13f));
             DecorRect("DrainPipe", r, o, 9f, -33f, 9.6f, 4f, new Color(0.22f, 0.24f, 0.22f));
             DecorRect("ShelterGlow", r, o, -13f, -33.6f, 13f, -30.5f, new Color(0.98f, 0.70f, 0.30f, 0.25f), -9);
 
             Rect("Entry_Ledge", r, o, -13f, -2f, -7.5f, 0f, FloorColor);
-            Rect("Bottom_Floor", r, o, -13f, -38f, 13f, -33.6f, new Color(0.16f, 0.19f, 0.22f));
+            Rect("Bottom_Floor", r, o, -13f, -38f, 13f, -33.6f, FloorColor);
 
             OneWay("Thin_1", r, o, -7f, 3f, -2.8f);
             OneWay("Thin_2", r, o, -7f, 3f, -5.6f);
@@ -602,21 +603,47 @@ namespace UnderTheRain.Editor
 
         // ───────────────────────────── helpers ─────────────────────────────
         private static RoomBounds Room(string objName, string id, Vector2 o, float x1, float y1, float x2, float y2)
-            => CreateRoom(objName, id, o + new Vector2((x1 + x2) * 0.5f, (y1 + y2) * 0.5f), new Vector2(x2 - x1, y2 - y1));
+        {
+            var room = CreateRoom(objName, id, o + new Vector2((x1 + x2) * 0.5f, (y1 + y2) * 0.5f), new Vector2(x2 - x1, y2 - y1));
+            // The lab rooms swap the tiled wall for panels of the same ramp (same zone, same art pattern).
+            ZoneArtKit.AddBackdrop(room.transform, UnityEngine.Rect.MinMaxRect(o.x + x1, o.y + y1, o.x + x2, o.y + y2), id.Contains("lab"), o.y);
+            return room;
+        }
+
+        private static bool IsMassColor(Color color)
+            => color == FloorColor || color == WallColor || color == CeilColor || color == PitColor;
 
         private static GameObject Rect(string name, Transform parent, Vector2 o, float x1, float y1, float x2, float y2, Color color)
             => CreateBlock(name, parent, s_sprite, s_ground, o + new Vector2((x1 + x2) * 0.5f, (y1 + y2) * 0.5f), new Vector2(x2 - x1, y2 - y1), color);
 
         private static SpriteRenderer DecorRect(string name, Transform parent, Vector2 o, float x1, float y1, float x2, float y2, Color color, int order = -10)
         {
+            var worldRect = UnityEngine.Rect.MinMaxRect(o.x + x1, o.y + y1, o.x + x2, o.y + y2);
+
+            // Fake walls look exactly like the masses they hide; other large opaque decor becomes a tinted panel.
+            bool mass = IsMassColor(color);
+            if (mass || (color.a >= 0.99f && worldRect.width >= 1f && worldRect.height >= 1f))
+            {
+                return ZoneArtKit.Tiled(name, parent, worldRect, mass ? ZoneArtKit.Mass : ZoneArtKit.Panel, order,
+                    mass ? Color.white : ZoneArtKit.ZoneTint(color));
+            }
+
             var go = new GameObject(name);
             go.transform.SetParent(parent, false);
-            go.transform.position = o + new Vector2((x1 + x2) * 0.5f, (y1 + y2) * 0.5f);
+            go.transform.position = worldRect.center;
             go.transform.localScale = new Vector3(x2 - x1, y2 - y1, 1f);
             var sr = go.AddComponent<SpriteRenderer>();
             sr.sprite = s_sprite;
-            sr.color = color;
+            // Opaque flat decor (pipes, rails, cables) is pulled into the zone ramp; lights and translucent marks keep their colour.
+            bool isLight = color == WarmLight || color == CyanLight;
+            sr.color = !isLight && color.a >= 0.99f ? ZoneArtKit.ZoneTint(color) : color;
             sr.sortingOrder = order;
+
+            // Every light source also lights its surroundings.
+            if (color == WarmLight || color == CyanLight)
+            {
+                ZoneArtKit.AddGlow(name + "_Glow", parent, worldRect.center, color, 5f, order - 1);
+            }
             return sr;
         }
 
@@ -624,6 +651,7 @@ namespace UnderTheRain.Editor
         {
             var go = CreateBlock(name, parent, s_sprite, s_oneWay, o + new Vector2((x1 + x2) * 0.5f, topY - 0.15f),
                 new Vector2(x2 - x1, 0.3f), new Color(0.30f, 0.33f, 0.36f));
+            ZoneArtKit.SkinOneWay(go, o.x + x1, o.x + x2, o.y + topY);
             go.GetComponent<BoxCollider2D>().usedByEffector = true;
             var effector = go.AddComponent<PlatformEffector2D>();
             effector.useOneWay = true;
@@ -1057,10 +1085,16 @@ namespace UnderTheRain.Editor
             go.transform.SetParent(parent, false);
             go.transform.position = worldPos;
             go.transform.localScale = new Vector3(size.x, size.y, 1f);
-            var sr = go.AddComponent<SpriteRenderer>();
-            sr.sprite = sprite;
-            sr.color = color;
             go.AddComponent<BoxCollider2D>().size = Vector2.one;
+
+            // The block only carries the collider; ZoneArtKit adds its art as children (one-ways skin themselves).
+            if (layer == s_ground)
+            {
+                var kind = IsMassColor(color) ? ZoneArtKit.SolidKind.Mass
+                    : color == LedgeColor ? ZoneArtKit.SolidKind.Structure
+                    : ZoneArtKit.SolidKind.Panel;
+                ZoneArtKit.RegisterSolid(go, new UnityEngine.Rect(worldPos - size * 0.5f, size), kind, ZoneArtKit.ZoneTint(color));
+            }
             return go;
         }
 

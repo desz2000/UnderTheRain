@@ -49,12 +49,15 @@ Ver [5-9-enemy-sight-chase-and-flying-drones.md](../implementation/stories/5-9-e
   - a arte de mapa é gerada **com recursos do próprio Unity** (texturas pintadas por script de Editor, sprites em mosaico, brilhos), no estilo de metroidvania 2D em pixel art das referências enviadas;
   - o PixelLab fica reservado para os **personagens e inimigos** (Fase D).
 - **Como foi implementado (`ZoneArtKit`):**
-  - uma **rampa de 7 tons de uma só família de cor** por zona, mais dois acentos de luz. Prólogo: ardósia azul-esverdeada fria, luz âmbar na estação e ciano no laboratório;
-  - todas as texturas saem dessa rampa: massa escura de chão e parede, pedra talhada das estruturas, borda iluminada em todo topo exposto, linha de luz nas faces laterais, sombra por baixo, parede de fundo (azulejo na estação, painéis rebitados no laboratório), pilastras, arcos, grade das plataformas one-way e brilho das lâmpadas;
+  - uma **rampa de 7 tons de uma só família de cor** por zona, mais dois acentos de luz. Prólogo: cinzas sujos e quentes de estação abandonada, ferrugem e fuligem, o ocre desbotado da Linha 7, luz âmbar na estação e ciano no laboratório (a primeira versão, azulada e com arcos no fundo, foi rejeitada em 2026-11-14);
+  - todas as texturas saem dessa rampa: massa escura de chão e parede, pedra talhada das estruturas, borda iluminada em todo topo exposto, linha de luz nas faces laterais, sombra por baixo, parede de fundo (azulejo de metrô na estação, painéis rebitados no laboratório), colunas, canos, cabos, grade das plataformas one-way e brilho das lâmpadas;
+  - objetos de metrô pintados pelo mesmo kit: vagão descarrilado, bilheteria, trilhos com dormentes, caixotes, bancos, placa da Linha 7, cartazes rasgados, grades de ventilação, carcaça do protótipo e o grafite da resistência;
+  - montes de escombros espalhados automaticamente sobre os pisos expostos (sem colisão, longe das portas);
+  - fundo em camadas com parallax (`ParallaxLayer`): parede distante, colunas e canos, e cabos pretos em primeiro plano;
   - 32 px por unidade, filtro Point, texturas em `Assets/_Project/Art/Tilesets/Prologue/`;
   - o setup continua construindo retângulos lógicos com colisor; a arte entra como filhos, e a borda iluminada só aparece onde nenhum vizinho cobre o topo.
 - **Prévia:** `UnderTheRain > Art > Render Prologue Previews` grava imagens das salas em `docs/art-review/prologue-unity/`.
-- **Falta:** aprovação visual do usuário; props próprios (vagão, bilheteria, gerador, terminal, carcaça do protótipo, grafite), que hoje são painéis tingidos ou retângulos; aplicar um kit à Zona 1 (Esgotos) com rampa própria.
+- **Falta:** aprovação visual do usuário; sprites próprios para gerador, terminais, painéis de Kitty e portas (hoje persianas tingidas ou retângulos); aplicar um kit à Zona 1 (Esgotos) com rampa própria.
 
 ### Fase C — Prólogo elevado · **opção B aprovada**
 

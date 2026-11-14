@@ -245,8 +245,9 @@ Provar **um ciclo completo do loop central**, com polimento de jogo real:
 
 **Arte de mapa (decisão de 2026-11-14)**
 29. **Cada zona tem um único padrão de arte**, gerado dentro do Unity pelo `ZoneArtKit` a partir de **uma rampa de cor** (7 tons de uma família + 2 acentos de luz). Chão, paredes, estruturas e fundo saem da mesma rampa. Não misture tilesets de origens diferentes numa zona; o PixelLab fica para personagens e inimigos.
+29a. Fundo em camadas: `ZoneArtKit.AddBackdrop` cria a parede distante, as colunas e os cabos de primeiro plano como filhos com `ParallaxLayer` (fator 0 = preso ao mundo, 1 = preso à câmera, negativo = primeiro plano). O componente roda depois da câmera (`DefaultExecutionOrder(200)`) e a camada precisa sobrar além da sala na proporção do fator.
 30. O setup continua criando retângulos lógicos com colisor (`Rect`, `OneWay`). O bloco não tem `SpriteRenderer`: a arte entra como filhos que cancelam a escala do pai (`ZoneArtKit.Tiled`), e `ZoneArtKit.SkinSolids()` roda depois de todas as salas, porque a borda iluminada depende de quais vizinhos cobrem cada topo.
-31. A cor passada a `Rect` define o material: cores de massa (`FloorColor`, `WallColor`, `CeilColor`, `PitColor`) viram massa escura, `LedgeColor` vira estrutura de pedra, e qualquer outra cor vira painel tingido puxado para a rampa da zona.
+31. A cor passada a `Rect` define o material: cores de massa (`FloorColor`, `WallColor`, `CeilColor`, `PitColor`) viram massa escura, `LedgeColor` vira estrutura de pedra, e qualquer outra cor vira persiana metálica tingida, puxada para a rampa da zona. Blocos com "Wagon" ou "Crate" no nome e os decorativos `Rails`, `TicketBooth_Front`, `WarPrototype_Carcass` e `StationSignStrip` recebem sprite próprio.
 32. `UnderTheRain > Art > Render Prologue Previews` (ou `-executeMethod UnderTheRain.Editor.ArtPreviewRenderer.RenderProloguePreviews`) grava imagens das salas em `docs/art-review/prologue-unity/` sem entrar no Play Mode.
 
 **Visual**

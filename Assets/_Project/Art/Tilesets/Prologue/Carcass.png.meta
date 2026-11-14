@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: e729e0075d17679418b3e4a87bf098ea
+guid: 9e28e918b433bd24d8cfbcf1f43425a2
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 186552759161523940
-    second: Arch_0
+      213: 6036468054448637649
+    second: Carcass_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -100,13 +100,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Arch_0
+      name: Carcass_0
       rect:
         serializedVersion: 2
-        x: 3
-        y: 0
-        width: 90
-        height: 124
+        x: 7
+        y: 1
+        width: 114
+        height: 149
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -115,8 +115,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 4ee01bdfeb4c69200800000000000000
-      internalID: 186552759161523940
+      spriteID: 1d6876386b7d5c350800000000000000
+      internalID: 6036468054448637649
       vertices: []
       indices: 
       edges: []
@@ -135,7 +135,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Arch_0: 186552759161523940
+      Carcass_0: 6036468054448637649
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

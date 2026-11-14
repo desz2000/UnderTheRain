@@ -68,6 +68,11 @@ namespace UnderTheRain.Editor
                 }
 
                 cam.transform.position = new Vector3(center.x, center.y, -10f);
+                foreach (var root in scene.GetRootGameObjects())
+                {
+                    // Scripts do not run in edit mode: place every parallax layer for this camera position.
+                    foreach (var layer in root.GetComponentsInChildren<ParallaxLayer>(false)) layer.ApplyFor(cam.transform.position);
+                }
                 cam.Render();
 
                 RenderTexture.active = target;

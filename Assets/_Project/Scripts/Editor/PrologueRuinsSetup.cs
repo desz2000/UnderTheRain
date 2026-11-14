@@ -92,7 +92,7 @@ namespace UnderTheRain.Editor
             var cam = camGo.AddComponent<Camera>();
             cam.orthographic = true;
             cam.orthographicSize = 5.4f;
-            cam.backgroundColor = new Color(0.024f, 0.043f, 0.055f, 1f);
+            cam.backgroundColor = new Color(0.035f, 0.038f, 0.038f, 1f);
             cam.clearFlags = CameraClearFlags.SolidColor;
             camGo.transform.position = new Vector3(-8f, 1.5f, -10f);
             camGo.AddComponent<AudioListener>();
@@ -620,11 +620,23 @@ namespace UnderTheRain.Editor
         {
             var worldRect = UnityEngine.Rect.MinMaxRect(o.x + x1, o.y + y1, o.x + x2, o.y + y2);
 
-            // Fake walls look exactly like the masses they hide; other large opaque decor becomes a tinted panel.
+            // Station objects with a painted sprite of their own.
+            if (name.Contains("Rails"))
+            {
+                // The strip marks the top of the track bed: ballast, sleepers and the rail sit on that line.
+                float bedTop = worldRect.center.y;
+                return ZoneArtKit.Tiled(name, parent, UnityEngine.Rect.MinMaxRect(worldRect.xMin, bedTop, worldRect.xMax, bedTop + 0.375f),
+                    ZoneArtKit.Track, -2, Color.white);
+            }
+            if (name == "TicketBooth_Front") return ZoneArtKit.Fit(name, parent, worldRect, ZoneArtKit.Booth, order);
+            if (name == "WarPrototype_Carcass") return ZoneArtKit.Fit(name, parent, worldRect, ZoneArtKit.Carcass, order);
+            if (name == "StationSignStrip") return ZoneArtKit.Stamp(name, parent, ZoneArtKit.SignPlate, worldRect.center, order);
+
+            // Fake walls look exactly like the masses they hide; other large opaque decor becomes a tinted shutter.
             bool mass = IsMassColor(color);
             if (mass || (color.a >= 0.99f && worldRect.width >= 1f && worldRect.height >= 1f))
             {
-                return ZoneArtKit.Tiled(name, parent, worldRect, mass ? ZoneArtKit.Mass : ZoneArtKit.Panel, order,
+                return ZoneArtKit.Tiled(name, parent, worldRect, mass ? ZoneArtKit.Mass : ZoneArtKit.Shutter, order,
                     mass ? Color.white : ZoneArtKit.ZoneTint(color));
             }
 
@@ -687,9 +699,8 @@ namespace UnderTheRain.Editor
 
         private static void Graffiti(string name, Transform parent, Vector2 o, float x, float y)
         {
-            // Resistance symbol (image only): a slashed ring made of two strokes.
-            DecorRect(name + "_Ring", parent, o, x - 0.6f, y - 0.6f, x + 0.6f, y + 0.6f, GraffitiColor, -3);
-            DecorRect(name + "_Slash", parent, o, x - 0.12f, y - 0.9f, x + 0.12f, y + 0.9f, new Color(0.10f, 0.10f, 0.11f, 0.9f), -2);
+            // Resistance symbol (image only): a sprayed ring with a slash through it.
+            ZoneArtKit.Stamp(name, parent, ZoneArtKit.Graffiti, o + new Vector2(x, y), -3);
         }
 
         private static void SecretWall(string name, Transform parent, Vector2 o, float x1, float y1, float x2, float y2, string persistentId, params SpriteRenderer[] covers)
@@ -1090,10 +1101,12 @@ namespace UnderTheRain.Editor
             // The block only carries the collider; ZoneArtKit adds its art as children (one-ways skin themselves).
             if (layer == s_ground)
             {
-                var kind = IsMassColor(color) ? ZoneArtKit.SolidKind.Mass
+                Sprite prop = name.Contains("Wagon") ? ZoneArtKit.Wagon : name.Contains("Crate") ? ZoneArtKit.Crate : null;
+                var kind = prop != null ? ZoneArtKit.SolidKind.Prop
+                    : IsMassColor(color) ? ZoneArtKit.SolidKind.Mass
                     : color == LedgeColor ? ZoneArtKit.SolidKind.Structure
                     : ZoneArtKit.SolidKind.Panel;
-                ZoneArtKit.RegisterSolid(go, new UnityEngine.Rect(worldPos - size * 0.5f, size), kind, ZoneArtKit.ZoneTint(color));
+                ZoneArtKit.RegisterSolid(go, new UnityEngine.Rect(worldPos - size * 0.5f, size), kind, ZoneArtKit.ZoneTint(color), prop);
             }
             return go;
         }

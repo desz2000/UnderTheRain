@@ -85,7 +85,7 @@ namespace UnderTheRain.Editor
             var sr = player.AddComponent<SpriteRenderer>();
             sr.sprite = sprite;
             sr.color = new Color(0.31f, 0.8f, 0.77f);
-            player.transform.localScale = new Vector3(0.8f, 1.6f, 1f);
+            player.transform.localScale = new Vector3(0.7f, 1.3f, 1f);
             var rb = player.AddComponent<Rigidbody2D>();
             rb.constraints = RigidbodyConstraints2D.FreezeRotation;
             player.AddComponent<BoxCollider2D>().size = Vector2.one;

@@ -377,12 +377,14 @@ namespace UnderTheRain.Editor
             var vaultCover = DecorRect("Vault_FakeWall", r, o, 26.5f, 8f, 29f, 10.5f, WallColor, 5);
             SecretWall("Secret_OfficeVault", r, o, 27f, 8f, 29f, 10.5f, "p3_office_vault", vaultCover);
 
-            EnemySetupUtility.CreateWorkerRobot("Worker_1_Flat", r, s_sprite, o + new Vector2(-20f, 0.65f));
-            EnemySetupUtility.CreateWorkerRobot("Worker_2_Slab", r, s_sprite, o + new Vector2(1f, 3.45f));
-            EnemySetupUtility.CreateWorkerRobot("Worker_3_UnderSlab", r, s_sprite, o + new Vector2(1f, 0.65f));
-            EnemySetupUtility.CreateWorkerRobot("Worker_4_Bridge", r, s_sprite, o + new Vector2(20f, 0.65f));
+            EnemySetupUtility.CreateWorkerRobot("Worker_1_Flat", r, s_sprite, o + new Vector2(-20f, 0f));
+            EnemySetupUtility.CreateWorkerRobot("Worker_2_Slab", r, s_sprite, o + new Vector2(1f, 2.8f));
+            EnemySetupUtility.CreateWorkerRobot("Worker_3_UnderSlab", r, s_sprite, o + new Vector2(1f, 0f));
+            EnemySetupUtility.CreateWorkerRobot("Worker_4_Bridge", r, s_sprite, o + new Vector2(20f, 0f));
             // Feet at 5.5: jump apex (3.2) + baton hitbox (~1.0) cannot reach it, so the shot is the tool.
-            EnemySetupUtility.CreateDormantScout("DormantScoutTarget", r, s_sprite, o + new Vector2(10.5f, 6.1f));
+            EnemySetupUtility.CreateDormantScout("DormantScoutTarget", r, s_sprite, o + new Vector2(10.5f, 5.5f));
+            // First drone, right after the shot lesson: it comes for Dante, so the shot (or a timed baton hit) is tested.
+            EnemySetupUtility.CreateDrone("Drone_ShotLesson", r, s_sprite, o + new Vector2(14f, 3.6f));
 
             CreateBatteryCell(r, o + new Vector2(6f, 0.5f));
             CreateSignpost("Hint_Baton", r, o + new Vector2(-25f, 0.5f), "[Clique Esq.] Bastão — o 3º golpe é mais forte");
@@ -488,16 +490,16 @@ namespace UnderTheRain.Editor
             CreateSignpost("Hint_ArchivePanel", r, o + new Vector2(23.5f, 13.3f), "Painel do arquivo. [E] Kitty");
 
             // Corridor scout (teaches R in a tight space).
-            EnemySetupUtility.CreateScoutRobot("Scout_Corridor", r, s_sprite, o + new Vector2(-24f, 7.9f));
+            EnemySetupUtility.CreateScoutRobot("Scout_Corridor", r, s_sprite, o + new Vector2(-24f, 7.2f));
             CreateSignpost("Hint_KittyInterference", r, o + new Vector2(-28f, 7.7f), "[R] Kitty: interferir no robô (gasta bateria)");
             CreateSignpost("Clue_LabReveal", r, o + new Vector2(-5f, 7.7f), "Isto não é manutenção do metrô... é equipamento da Domus Corp.");
             CreateBatteryCell(r, o + new Vector2(8f, 7.7f));
             CreateSignpost("Hint_Medkit", r, o + new Vector2(14f, 0.5f), "[Q] Kit médico");
 
             // Arena encounter: robots dormant until Dante drops in; shutter + gate lock until all fall.
-            var a1 = EnemySetupUtility.CreateRobot("Arena_Scout_A", r, s_sprite, o + new Vector2(-4f, 0.7f), EnemySetupUtility.Scout.AsDormant(6f));
-            var a2 = EnemySetupUtility.CreateRobot("Arena_Scout_B", r, s_sprite, o + new Vector2(12f, 0.7f), EnemySetupUtility.Scout.AsDormant(6f));
-            var a3 = EnemySetupUtility.CreateRobot("Arena_Worker", r, s_sprite, o + new Vector2(4f, 0.65f), EnemySetupUtility.Worker.AsDormant(6f));
+            var a1 = EnemySetupUtility.CreateRobot("Arena_Scout_A", r, s_sprite, o + new Vector2(-4f, 0f), EnemySetupUtility.Scout.AsDormant(6f));
+            var a2 = EnemySetupUtility.CreateRobot("Arena_Scout_B", r, s_sprite, o + new Vector2(12f, 0f), EnemySetupUtility.Scout.AsDormant(6f));
+            var a3 = EnemySetupUtility.CreateRobot("Arena_Worker", r, s_sprite, o + new Vector2(4f, 0f), EnemySetupUtility.Worker.AsDormant(6f));
             var shutter = Rect("Arena_Shutter", r, o, 15f, 6.7f, 18f, 7.2f, new Color(0.55f, 0.25f, 0.22f));
             var gate = Rect("Arena_Gate", r, o, 19.4f, 0f, 20f, 6.7f, new Color(0.55f, 0.25f, 0.22f));
             shutter.SetActive(false);
@@ -535,7 +537,7 @@ namespace UnderTheRain.Editor
             CreateSignpost("Log_Memo", r, o + new Vector2(5f, 0.5f), "MEMORANDO — Projeto engavetado. Laboratório lacrado. Acesso pela Linha 7 encerrado.");
 
             CreateBatteryCell(r, o + new Vector2(-7f, 3.4f));
-            EnemySetupUtility.CreateDormantScout("Archive_DormantScout", r, s_sprite, o + new Vector2(8f, 6.2f));
+            EnemySetupUtility.CreateDormantScout("Archive_DormantScout", r, s_sprite, o + new Vector2(8f, 5.6f));
             CreateUpgrade("BatteryCapacityUpgrade", r, o + new Vector2(0.5f, 9.1f), UpgradeType.BatteryCapacity, 25f, "prologue_archive_battery_upgrade");
         }
 
@@ -569,7 +571,9 @@ namespace UnderTheRain.Editor
             OneWay("Thin_11", r, o, 1f, 6f, -28f);
             OneWay("Thin_12", r, o, -5f, 0f, -30.8f);
 
-            EnemySetupUtility.CreateScoutRobot("Scout_Landing", r, s_sprite, o + new Vector2(0f, -13.3f));
+            EnemySetupUtility.CreateScoutRobot("Scout_Landing", r, s_sprite, o + new Vector2(0f, -14f));
+            // Drone in the open shaft: pressures the descent from the air (drop through to break its line of sight).
+            EnemySetupUtility.CreateDrone("Drone_Shaft", r, s_sprite, o + new Vector2(6f, -19f));
 
             // Hidden niche in the left wall, hinted by a flickering lamp at its mouth.
             Rect("Niche_Floor", r, o, -13f, -25f, -10f, -22.4f, WallColor);
@@ -873,7 +877,7 @@ namespace UnderTheRain.Editor
         {
             var player = new GameObject("Dante") { tag = "Player" };
             player.transform.position = new Vector3(-20f, 1f, 0f);
-            player.transform.localScale = new Vector3(0.8f, 1.6f, 1f);
+            player.transform.localScale = new Vector3(0.7f, 1.3f, 1f);
             var sr = player.AddComponent<SpriteRenderer>();
             sr.sprite = sprite;
             sr.color = new Color(0.306f, 0.804f, 0.769f, 1f);

@@ -292,7 +292,7 @@ namespace UnderTheRain.Editor
             }
 
             // Scout robot patrolling the passage (affected by Kitty, deals contact damage, can be destroyed)
-            EnemySetupUtility.CreateScoutRobot("SewerScoutRobot", parent, sprite, new Vector2(47f, 0.7f));
+            EnemySetupUtility.CreateScoutRobot("SewerScoutRobot", parent, sprite, new Vector2(47f, 0f));
         }
 
         private static GameObject CreatePlayer(
@@ -305,7 +305,7 @@ namespace UnderTheRain.Editor
         {
             var player = new GameObject("Dante") { tag = "Player" };
             player.transform.position = new Vector3(-9f, 1f, 0f);
-            player.transform.localScale = new Vector3(0.8f, 1.6f, 1f);
+            player.transform.localScale = new Vector3(0.7f, 1.3f, 1f);
             var sr = player.AddComponent<SpriteRenderer>();
             sr.sprite = sprite;
             sr.color = new Color(0.306f, 0.804f, 0.769f, 1f);

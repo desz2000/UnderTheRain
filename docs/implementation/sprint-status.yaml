@@ -2,14 +2,14 @@
 # Gerado a partir de docs/planning/epics.md
 
 generated: 2026-11-13 01:10
-last_updated: 2026-11-13 21:00
+last_updated: 2026-11-14 00:30
 project: Under The Rain
 project_key: NOKEY
 tracking_system: file-system
 story_location: "docs/implementation"
 
 # Foco inicial: Épicos 1 a 5 (Vertical Slice do Ato I)
-# Épico 5 — ordem de execução sugerida: 5.1 → 5.4 → 5.6 → 5.8 → 5.5 → 5.2 → 5.7 → 5.3 (ver docs/planning/epics.md)
+# Épico 5 — ordem de execução sugerida: 5.1 → 5.4 → 5.6 → 5.9 → 5.8 → 5.5 → 5.2 → 5.7 → 5.3 (ver docs/planning/epics.md)
 development_status:
   epic-1: done
   1-1-folder-structure-asmdefs-core-scene: done
@@ -43,6 +43,7 @@ development_status:
   5-6-prologue-scale-and-complexity-pass: done
   5-7-enemy-telegraphed-attacks-and-hazards: backlog
   5-8-sewers-hub-expansion: backlog
+  5-9-enemy-sight-chase-and-flying-drones: review
   epic-5-retrospective: optional
 
   epic-6: backlog

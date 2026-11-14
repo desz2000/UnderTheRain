@@ -85,7 +85,7 @@ sources:
 
 > **Mapa de referência:** [level-map.md](gdd/gdd-Under-The-Rain-2026-11-13/level-map.md) (Prólogo = Zona 0 com 6 salas; Zona 1 = Esgotos com 13 salas). Mudança de escopo registrada em [sprint-change-proposal-2026-11-13.md](sprint-change-proposal-2026-11-13.md).
 >
-> **Ordem de execução sugerida:** 5.1 ✓ → 5.4 ✓ (greybox v1) → **5.6** → **5.8** → 5.5 → 5.2 → **5.7** → 5.3 (as chaves não foram renumeradas). Escala e complexidade das salas: [proposta de level design](gdd/gdd-Under-The-Rain-2026-11-13/level-design-proposal-zone0-zone1.md), escopo aprovado em 2026-11-13.
+> **Ordem de execução sugerida:** 5.1 ✓ → 5.4 ✓ (greybox v1) → 5.6 ✓ → **5.9** → **5.8** → 5.5 → 5.2 → **5.7** → 5.3 (as chaves não foram renumeradas). Escala e complexidade das salas: [proposta de level design](gdd/gdd-Under-The-Rain-2026-11-13/level-design-proposal-zone0-zone1.md), escopo aprovado em 2026-11-13.
 
 ### 5.1 Salas dos Esgotos, Abrigo Inicial e Confronto Narrativo (Icarus)
 - **Chave:** `5-1-sewers-rooms-initial-shelter-and-icarus`
@@ -171,6 +171,18 @@ sources:
   3. o vão da Cisterna é visível e intransponível sem Dash;
   4. o ponto de Wall Jump é visível e inalcançável sem a habilidade;
   5. as ligações com o Prólogo e com a 5.5 continuam funcionando, sem spawn sobre trigger.
+
+### 5.9 Inimigos que Enxergam e Perseguem, Drones Voadores e Dante Menor
+- **Chave:** `5-9-enemy-sight-chase-and-flying-drones`
+- **Pilar reforçado:** Combate legível, com tipos de robô complementares (§5.10), e Kitty como ferramenta de combate (§5.11).
+- **Objetivo:** Dar percepção aos robôs da colmeia: cone de visão com linha de visão bloqueada por paredes, alerta curto e legível, perseguição sem cair de beiradas, busca na última posição conhecida e volta ao posto. O robô que avista Dante alerta os vizinhos (mente coletiva), e levar dano também alerta. Novo inimigo **Drone** (voador, frágil, mergulho telegrafado que a interferência de Kitty cancela). Dante fica menor que os robôs de chão (0,7×1,3 contra Batedor 1,0×1,7 e Operário 1,4×1,9).
+- **Aceite no Unity:** No Play Mode:
+  1. um robô que vê Dante mostra o alerta e o persegue; atrás de uma parede, continua patrulhando;
+  2. o robô para na beirada em vez de cair e volta ao posto depois de perder Dante;
+  3. robôs próximos de quem avistou Dante também são alertados;
+  4. o drone mostra a antecipação antes de mergulhar, e `R` (Kitty) cancela o ataque;
+  5. Dante é visivelmente menor que Batedores e Operários; P2 continua sem inimigos.
+- **Relação com a 5.7:** a investida telegrafada dos robôs de chão continua na 5.7, que reaproveita o estado de telegrafia criado aqui.
 
 ---
 

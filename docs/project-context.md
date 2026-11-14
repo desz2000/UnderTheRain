@@ -236,5 +236,12 @@ Provar **um ciclo completo do loop central**, com polimento de jogo real:
 22. **Saídas em poço (alçapões) usam `RoomExitTrigger.retryWhileInside`** e têm um piso de segurança embaixo: se a transição estiver ocupada, Dante pousa no trigger e ele tenta de novo, em vez de cair para fora do mundo.
 23. **Testes PlayMode zeram o estado de sessão no `[SetUp]`/`[TearDown]`** (`ArenaEncounter`, `SecretWallReveal`, `CatExplorationPoint`, `PlayerUpgradeSession`). O `SubsystemRegistration` roda uma vez por execução do Play Mode, não por teste.
 
+**Inimigos com percepção (5.9)**
+24. Todo robô criado por `EnemySetupUtility.CreateRobot` tem `EnemyAwareness` (cone de visão, linha de visão bloqueada pela layer `Ground`, alerta, memória e chamado da colmeia). O componente é passivo: quem o avança é o `PatrolInterferenceTarget`, e só com o robô acordado e sem hesitar.
+25. `CreateRobot` recebe a posição dos **pés** do robô de chão (o piso onde ele pisa) e o centro do posto para drones. Nunca passe o centro de um robô de chão: mudar a escala da spec o afundaria no piso.
+26. Robôs movidos por transform checam o terreno antes de andar na perseguição (raycast de parede, raycast de beirada, coleira e `RoomBounds.ContainsPoint`). A patrulha simples continua confiando na amplitude definida no setup.
+27. Em testes PlayMode de comportamento, monte os objetos numa **cena vazia criada pelo teste** e crie o GameObject **inativo** antes de adicionar os componentes; ative no fim. Senão cada `Awake` roda no `AddComponent` e não encontra os componentes adicionados depois.
+28. A hitbox do bastão é filha de Dante e escala com ele. Mudar o tamanho de Dante muda o alcance efetivo do golpe.
+
 **Visual**
 17. Partículas no URP 2D precisam de um material válido (`Sprites/Default`) para não renderizarem rosa. A chuva (`SewerRainAmbience`) fica só nas áreas a céu aberto (superfície). Prólogo e Esgotos são secos.

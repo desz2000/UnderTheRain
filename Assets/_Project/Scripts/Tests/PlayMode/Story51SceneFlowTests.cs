@@ -109,15 +109,21 @@ namespace UnderTheRain.Tests.PlayMode
             ActivateRoomAt(new Vector3(174f, 1f, 0f));
             yield return null;
 
-            var point = GameObject.Find("MaintenanceVent").GetComponent<CatExplorationPoint>();
-            Assert.IsNotNull(point, "Maintenance vent not found in P4.");
+            CatExplorationPoint.ResetSession();
+            var vent = GameObject.Find("MaintenanceVent");
+            Assert.IsNotNull(vent, "Maintenance vent not found in P4.");
+            var point = vent.GetComponent<CatExplorationPoint>();
+            Assert.IsNotNull(point, "Maintenance vent has no CatExplorationPoint.");
+            Assert.IsFalse(point.IsCompleted, "Clean session: the vent starts closed.");
             point.Complete();
 
             yield return LoadScene(PrologueScene);
             ActivateRoomAt(new Vector3(174f, 1f, 0f));
             yield return null;
 
-            var reloaded = GameObject.Find("MaintenanceVent").GetComponent<CatExplorationPoint>();
+            var reloadedVent = GameObject.Find("MaintenanceVent");
+            Assert.IsNotNull(reloadedVent, "Maintenance vent not found after reload.");
+            var reloaded = reloadedVent.GetComponent<CatExplorationPoint>();
             Assert.IsNotNull(reloaded);
             Assert.IsTrue(reloaded.IsCompleted, "The door Kitty opened should stay open in the same session.");
         }

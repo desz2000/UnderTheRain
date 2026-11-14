@@ -26,6 +26,7 @@ namespace UnderTheRain.World
         private Collider2D _playerCollider;
         private Collider2D _zone;
         private float _outsideTimer;
+        private bool _reopenOnEnable;
 
         public bool IsActive { get; private set; }
         public bool IsCleared { get; private set; }
@@ -52,8 +53,23 @@ namespace UnderTheRain.World
             }
         }
 
+        private void OnEnable()
+        {
+            if (!_reopenOnEnable) return;
+            _reopenOnEnable = false;
+            SetLocks(false);
+        }
+
         private void OnDisable()
         {
+            // Room switched off mid-fight (respawn, transition): end the fight so it never comes back sealed.
+            // The locks are reopened in OnEnable, because toggling siblings while the room itself is being
+            // deactivated is not allowed.
+            if (IsActive)
+            {
+                IsActive = false;
+                _reopenOnEnable = true;
+            }
             UnsubscribePlayer();
         }
 
@@ -63,16 +79,24 @@ namespace UnderTheRain.World
             var player = other.GetComponentInParent<PlayerController>();
             if (player == null) return;
 
+            // Both safety nets (locks clear of Dante, abort when outside) need his body collider.
+            var body = player.GetComponent<Collider2D>();
+            if (body == null)
+            {
+                Debug.LogWarning($"[ArenaEncounter] {name}: player has no Collider2D; the arena will not start.", this);
+                return;
+            }
+
             var health = player.GetComponent<HealthComponent>();
             if (health != null && health.IsDead) return;
-            Begin(health);
+            Begin(health, body);
         }
 
-        private void Begin(HealthComponent playerHealth)
+        private void Begin(HealthComponent playerHealth, Collider2D playerBody)
         {
             IsActive = true;
             _outsideTimer = 0f;
-            _playerCollider = playerHealth != null ? playerHealth.GetComponent<Collider2D>() : null;
+            _playerCollider = playerBody;
             // Locks close in Update, each one only once Dante is clear of it: a lock appearing inside him
             // would push him out of the arena (e.g. on top of the shutter) and soft-lock the fight.
 

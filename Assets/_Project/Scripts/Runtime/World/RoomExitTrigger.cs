@@ -14,8 +14,12 @@ namespace UnderTheRain.World
         [Tooltip("Room (RoomBounds.RoomId) to enter in the target scene. Empty = that scene's initial room.")]
         [SerializeField] private string targetSceneRoomId;
         [SerializeField] private string playerTag = "Player";
+        [Tooltip("Keep retrying while the player stays inside (e.g. a pit exit he cannot climb out of if a transition was busy).")]
+        [SerializeField] private bool retryWhileInside;
 
         private RoomTransitionController _controller;
+
+        public RoomBounds TargetRoom => targetRoom;
 
         private void Awake()
         {
@@ -45,6 +49,13 @@ namespace UnderTheRain.World
             }
 
             _controller?.TransitionToRoom(other.transform, targetRoom, targetSpawnId);
+        }
+
+        private void OnTriggerStay2D(Collider2D other)
+        {
+            if (!retryWhileInside) return;
+            if (_controller != null && _controller.IsTransitioning) return;
+            OnTriggerEnter2D(other);
         }
 
         public void Configure(RoomBounds destination, string spawnId)

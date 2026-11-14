@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using UnityEngine;
-using UnderTheRain.Combat;
 
 namespace UnderTheRain.Player
 {
@@ -39,25 +38,6 @@ namespace UnderTheRain.Player
             if (type == UpgradeType.BatteryCapacity) BatteryBonus += amount;
             else HealthBonus += Mathf.RoundToInt(amount);
             return true;
-        }
-    }
-
-    /// <summary>
-    /// Re-applies session upgrades to Dante's freshly created components in every scene.
-    /// </summary>
-    public sealed class PlayerUpgradeApplier : MonoBehaviour
-    {
-        private void Start()
-        {
-            if (PlayerUpgradeSession.BatteryBonus > 0f && TryGetComponent(out BatteryComponent battery))
-            {
-                battery.IncreaseMax(PlayerUpgradeSession.BatteryBonus);
-            }
-
-            if (PlayerUpgradeSession.HealthBonus > 0 && TryGetComponent(out HealthComponent health))
-            {
-                health.IncreaseMax(PlayerUpgradeSession.HealthBonus);
-            }
         }
     }
 }

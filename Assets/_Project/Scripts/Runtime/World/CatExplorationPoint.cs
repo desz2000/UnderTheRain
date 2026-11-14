@@ -33,7 +33,7 @@ namespace UnderTheRain.World
         private static readonly HashSet<string> CompletedIds = new HashSet<string>();
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
-        private static void ResetSession()
+        public static void ResetSession()
         {
             CompletedIds.Clear();
         }

@@ -27,7 +27,8 @@ namespace UnderTheRain.Enemies
         private Color _baseColor;
 
         public EnemyFaction Faction => faction;
-        public bool IsAffectedByCat => faction == EnemyFaction.CollectiveMachine;
+        // A powered-down robot is not a valid Kitty target (it cannot hesitate while dormant either).
+        public bool IsAffectedByCat => faction == EnemyFaction.CollectiveMachine && !IsDormant;
         public bool IsHesitating => _hesitationTimer > 0f;
         public bool IsDormant { get; private set; }
 
@@ -70,6 +71,12 @@ namespace UnderTheRain.Enemies
 
         private void Update()
         {
+            // Ticks in every state so a robot that wakes up is not still immune from before.
+            if (_immunityTimer > 0f)
+            {
+                _immunityTimer = Mathf.Max(0f, _immunityTimer - Time.deltaTime);
+            }
+
             if (_hesitationTimer > 0f)
             {
                 _hesitationTimer = Mathf.Max(0f, _hesitationTimer - Time.deltaTime);
@@ -97,11 +104,6 @@ namespace UnderTheRain.Enemies
                     }
                 }
                 return;
-            }
-
-            if (_immunityTimer > 0f)
-            {
-                _immunityTimer = Mathf.Max(0f, _immunityTimer - Time.deltaTime);
             }
 
             Vector3 pos = transform.position;

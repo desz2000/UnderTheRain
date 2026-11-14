@@ -22,7 +22,7 @@ namespace UnderTheRain.World
         public bool IsRevealed { get; private set; }
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
-        private static void ResetSession()
+        public static void ResetSession()
         {
             RevealedIds.Clear();
         }
@@ -35,6 +35,12 @@ namespace UnderTheRain.World
                 IsRevealed = true;
                 SetAlpha(revealedAlpha);
             }
+        }
+
+        private void OnEnable()
+        {
+            // A fade cut short by the room deactivating would otherwise stay half-way for the session.
+            if (IsRevealed) SetAlpha(revealedAlpha);
         }
 
         private void OnTriggerEnter2D(Collider2D other)

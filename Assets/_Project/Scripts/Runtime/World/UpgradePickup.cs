@@ -20,6 +20,11 @@ namespace UnderTheRain.World
         private void Awake()
         {
             GetComponent<Collider2D>().isTrigger = true;
+            if (string.IsNullOrEmpty(persistentId))
+            {
+                Debug.LogError($"[UpgradePickup] {name} has no persistentId and can never be collected.", this);
+                return;
+            }
             if (PlayerUpgradeSession.IsCollected(persistentId))
             {
                 gameObject.SetActive(false);
@@ -30,7 +35,12 @@ namespace UnderTheRain.World
         {
             var player = other.GetComponentInParent<PlayerController>();
             if (player == null) return;
-            if (!PlayerUpgradeSession.TryCollect(persistentId, upgradeType, amount)) return;
+            if (!PlayerUpgradeSession.TryCollect(persistentId, upgradeType, amount))
+            {
+                // Same id already taken elsewhere (duplicate pickup): don't leave an inert orb behind.
+                if (PlayerUpgradeSession.IsCollected(persistentId)) gameObject.SetActive(false);
+                return;
+            }
 
             if (upgradeType == UpgradeType.BatteryCapacity)
             {

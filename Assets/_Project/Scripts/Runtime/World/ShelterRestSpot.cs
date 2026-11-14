@@ -56,15 +56,19 @@ namespace UnderTheRain.World
             }
         }
 
-        private void HandleInteractPressed()
+        private void HandleInteractPressed() => TryRest();
+
+        /// <summary>Rests if Dante is in range: restores him fully and makes this the respawn point.</summary>
+        public bool TryRest()
         {
-            if (_playerInRange == null) return;
+            if (_playerInRange == null) return false;
 
             _playerInRange.GetComponent<HealthComponent>()?.RestoreFull();
             _playerInRange.GetComponent<BatteryComponent>()?.RestoreFull();
             _playerInRange.GetComponent<MedkitComponent>()?.RestoreFull();
             _playerInRange.GetComponent<PlayerDeathHandler>()?.SetRespawnPoint(transform.position);
             Debug.Log("[ShelterRestSpot] Rested: health, battery and medkits restored to 100%, respawn updated.");
+            return true;
         }
     }
 }

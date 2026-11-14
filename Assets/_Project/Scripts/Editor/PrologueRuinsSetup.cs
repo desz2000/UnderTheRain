@@ -208,6 +208,12 @@ namespace UnderTheRain.Editor
             // One-way shortcut: P4 hatch (opened by Kitty's panel) → tunnel → P1. P1's hatch never opens from above.
             var hatchExit = CreateRoomExit("Hatch_ToTunnel", p4.transform, P4Origin + new Vector2(-15f, -3.7f), new Vector2(2f, 0.6f));
             hatchExit.Configure(tunnel, "from_p4");
+            // Safety floor under the hatch: if a transition is busy, Dante lands on the trigger and it retries
+            // instead of falling out of the world.
+            Rect("Hatch_SafetyFloor", p4.transform, P4Origin, -16f, -4.5f, -14f, -4f, FloorColor);
+            var hatchSo = new SerializedObject(hatchExit);
+            hatchSo.FindProperty("retryWhileInside").boolValue = true;
+            hatchSo.ApplyModifiedPropertiesWithoutUndo();
             CreateSpawnPoint("Spawn_from_p4", tunnel.transform, "from_p4", TunnelOrigin + new Vector2(69f, 1f));
             Exit("Exit_TunnelToP1", tunnel, TunnelOrigin, -72f, -1, 0f).Configure(p1, "from_tunnel");
             CreateSpawnPoint("Spawn_from_tunnel", p1.transform, "from_tunnel", P1Origin + new Vector2(15.5f, 1f));
@@ -496,13 +502,15 @@ namespace UnderTheRain.Editor
             var gate = Rect("Arena_Gate", r, o, 19.4f, 0f, 20f, 6.7f, new Color(0.55f, 0.25f, 0.22f));
             shutter.SetActive(false);
             gate.SetActive(false);
-            CreateArena("Arena_TestChamber", r, o, -10f, 0f, 19.4f, 6.5f, "prologue_p5_arena",
+            // Zone starts at -13 so the crane niche (a secret reached only from the arena) counts as inside.
+            CreateArena("Arena_TestChamber", r, o, -13f, 0f, 19.4f, 6.5f, "prologue_p5_arena",
                 new[] { shutter, gate }, new[] { a1, a2, a3 });
 
             // Secret: the crane cable runs into the arena's left wall, which is fake at floor level.
             DecorRect("Crane_Cable_Niche", r, o, -10.6f, 2.5f, -10.4f, 17f, new Color(0.08f, 0.08f, 0.08f), 6);
             CreateBatteryCell(r, o + new Vector2(-12f, 0.5f));
-            var nicheCover = DecorRect("Niche_FakeWall", r, o, -11f, 0f, -10f, 2.5f, WallColor, 5);
+            // The fake wall covers the whole niche (and its cell), like P6's shaft niche.
+            var nicheCover = DecorRect("Niche_FakeWall", r, o, -13f, 0f, -10f, 2.5f, WallColor, 5);
             SecretWall("Secret_CraneNiche", r, o, -11f, 0f, -10.2f, 2.5f, "p5_crane_niche", nicheCover);
         }
 
@@ -853,18 +861,6 @@ namespace UnderTheRain.Editor
             asset.lines = lines;
             EditorUtility.SetDirty(asset);
             return asset;
-        }
-
-        private static void CreateDecor(string name, Transform parent, Sprite sprite, Vector2 worldPos, Vector2 size, Color color)
-        {
-            var go = new GameObject(name);
-            go.transform.SetParent(parent, false);
-            go.transform.position = worldPos;
-            go.transform.localScale = new Vector3(size.x, size.y, 1f);
-            var sr = go.AddComponent<SpriteRenderer>();
-            sr.sprite = sprite;
-            sr.color = color;
-            sr.sortingOrder = -10;
         }
 
         private static GameObject CreatePlayer(

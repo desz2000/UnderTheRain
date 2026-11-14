@@ -6,7 +6,7 @@ using UnderTheRain.World;
 namespace UnderTheRain.Enemies
 {
     /// <summary>
-    /// Basic hive scout: patrols (via <see cref="PatrolInterferenceTarget"/>), hurts Dante on body contact,
+    /// Hive robot body: moves via <see cref="PatrolInterferenceTarget"/> (patrol and chase), hurts Dante on body contact,
     /// takes damage from melee/battery shots and drops parts on death.
     /// While Kitty's interference makes it hesitate, its contact hitbox is disabled.
     /// </summary>
@@ -22,12 +22,14 @@ namespace UnderTheRain.Enemies
 
         private HealthComponent _health;
         private PatrolInterferenceTarget _patrol;
+        private EnemyAwareness _awareness;
         private Coroutine _flashRoutine;
 
         private void Awake()
         {
             _health = GetComponent<HealthComponent>();
             _patrol = GetComponent<PatrolInterferenceTarget>();
+            _awareness = GetComponent<EnemyAwareness>();
             if (bodyRenderer == null) bodyRenderer = GetComponent<SpriteRenderer>();
         }
 
@@ -55,6 +57,8 @@ namespace UnderTheRain.Enemies
         private void HandleDamaged(DamageContext ctx)
         {
             _patrol.Wake();
+            // Getting hit gives Dante away even from behind or from out of sight.
+            if (_awareness != null) _awareness.AlertToTarget();
             if (bodyRenderer == null) return;
 
             if (_flashRoutine != null) StopCoroutine(_flashRoutine);

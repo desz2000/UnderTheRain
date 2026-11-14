@@ -1,13 +1,13 @@
 ---
 story_id: '5-9-enemy-sight-chase-and-flying-drones'
 epic: 'epic-5'
-status: review
+status: done
 created: 2026-11-14
 ---
 
 # Story 5.9: Inimigos que Enxergam e Perseguem, Drones Voadores e Dante Menor
 
-Status: review
+Status: done
 
 **Pilar reforçado:** Combate legível, com telegrafia e tipos de robô complementares (§5.10), Kitty como ferramenta de combate (§5.11) e "Ato I ensina" sem ser fácil demais (§5.12).
 
@@ -40,8 +40,8 @@ para que cada encontro seja uma ameaça ativa que pede posicionamento, e não um
 - [x] **T5 — Setup:** `EnemySetupUtility.CreateRobot` passa a receber a posição dos **pés**, liga a percepção e o glifo em todo robô e ganha a spec `Drone` (`CreateDrone`). Novos tamanhos: Dante 0,7×1,3 · Batedor 1,0×1,7 · Operário 1,4×1,9 · Dormente 1,0×1,5 · Drone 1,0×0,7. Drones em P3 (`Drone_ShotLesson`) e P6 (`Drone_Shaft`).
 - [x] **T6 — Testes:** `EnemyAwarenessModelTests` (7, EditMode) e `Story59EnemyAiTests` (10, PlayMode).
 - [x] **T7 — Validação via CLI:** cenas `Prologue_Ruins` e `Act1_Sewers` regeradas; **EditMode 59/59** e **PlayMode 36/36**; sem warnings.
-- [ ] **T8 — Validação manual no Play Mode** (ver "Pontos a observar").
-- [ ] **T9 — gds-code-review.**
+- [x] **T8 — Validação manual no Play Mode.** Validada pelo usuário em 2026-11-14: IA dos robôs, drone e tamanho de Dante aprovados.
+- [ ] **T9 — gds-code-review.** Não executado; registrado em `deferred-work.md`.
 
 ## Dev Notes
 

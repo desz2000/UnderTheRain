@@ -243,5 +243,11 @@ Provar **um ciclo completo do loop central**, com polimento de jogo real:
 27. Em testes PlayMode de comportamento, monte os objetos numa **cena vazia criada pelo teste** e crie o GameObject **inativo** antes de adicionar os componentes; ative no fim. Senão cada `Awake` roda no `AddComponent` e não encontra os componentes adicionados depois.
 28. A hitbox do bastão é filha de Dante e escala com ele. Mudar o tamanho de Dante muda o alcance efetivo do golpe.
 
+**Arte de mapa (decisão de 2026-11-14)**
+29. **Cada zona tem um único padrão de arte**, gerado dentro do Unity pelo `ZoneArtKit` a partir de **uma rampa de cor** (7 tons de uma família + 2 acentos de luz). Chão, paredes, estruturas e fundo saem da mesma rampa. Não misture tilesets de origens diferentes numa zona; o PixelLab fica para personagens e inimigos.
+30. O setup continua criando retângulos lógicos com colisor (`Rect`, `OneWay`). O bloco não tem `SpriteRenderer`: a arte entra como filhos que cancelam a escala do pai (`ZoneArtKit.Tiled`), e `ZoneArtKit.SkinSolids()` roda depois de todas as salas, porque a borda iluminada depende de quais vizinhos cobrem cada topo.
+31. A cor passada a `Rect` define o material: cores de massa (`FloorColor`, `WallColor`, `CeilColor`, `PitColor`) viram massa escura, `LedgeColor` vira estrutura de pedra, e qualquer outra cor vira painel tingido puxado para a rampa da zona.
+32. `UnderTheRain > Art > Render Prologue Previews` (ou `-executeMethod UnderTheRain.Editor.ArtPreviewRenderer.RenderProloguePreviews`) grava imagens das salas em `docs/art-review/prologue-unity/` sem entrar no Play Mode.
+
 **Visual**
 17. Partículas no URP 2D precisam de um material válido (`Sprites/Default`) para não renderizarem rosa. A chuva (`SewerRainAmbience`) fica só nas áreas a céu aberto (superfície). Prólogo e Esgotos são secos.

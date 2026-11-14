@@ -1,13 +1,13 @@
 ---
 story_id: '5-6-prologue-scale-and-complexity-pass'
 epic: 'epic-5'
-status: review
+status: done
 created: 2026-11-13
 ---
 
 # Story 5.6: Prólogo em Escala — Tamanho, Complexidade e Segredos
 
-Status: review
+Status: done
 
 **Pilar reforçado:** Loop central e "eu quero voltar ali" (§5.1), descoberta e segredos (§5.8), "Ato I ensina" sem ser fácil demais (§5.12) e abrigos como pontos de ritmo (§5.6).
 
@@ -49,7 +49,7 @@ para sentir desde o início um metroidvania de verdade, em que explorar compensa
   - [x] novo `Story56PrologueScaleTests` (7 na entrega; 9 após a correção da arena, commit 43d555b; 11 após a revisão);
   - [x] novo `UpgradeTests` (3, EditMode).
 - [x] **T6 — Validação via CLI:** cenas geradas; **EditMode 52/52** e **PlayMode 22/22** na entrega; sem warnings. Após a correção da arena e a revisão: esperado **EditMode 52** e **PlayMode 26** (pendente de rodar no Unity).
-- [ ] **T7 — Validação manual no Play Mode** (sensação, tempo de 20–32 min, legibilidade dos segredos).
+- [x] **T7 — Validação manual no Play Mode** (sensação, tempo de 20–32 min, legibilidade dos segredos). Validada pelo usuário em 2026-11-13, junto com os testes EditMode e PlayMode após a revisão.
 
 ### Review Findings
 

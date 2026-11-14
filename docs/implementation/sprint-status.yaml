@@ -2,7 +2,7 @@
 # Gerado a partir de docs/planning/epics.md
 
 generated: 2026-11-13 01:10
-last_updated: 2026-11-13 15:30
+last_updated: 2026-11-13 21:00
 project: Under The Rain
 project_key: NOKEY
 tracking_system: file-system
@@ -40,7 +40,7 @@ development_status:
   5-3-first-misanthrope-boss-and-encrypted-map: backlog
   5-4-prologue-expansion-tutorial-rooms: done
   5-5-sewers-gallery-duct-and-sealed-door: backlog
-  5-6-prologue-scale-and-complexity-pass: review
+  5-6-prologue-scale-and-complexity-pass: done
   5-7-enemy-telegraphed-attacks-and-hazards: backlog
   5-8-sewers-hub-expansion: backlog
   epic-5-retrospective: optional
